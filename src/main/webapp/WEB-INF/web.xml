@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
                              http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-         version="2.5">
+         version="2.5"><!-- http://Java.sun.com/xml/ns/javaee  j -> J로 바꾸니까 됨 (왜?) -->
 
     <display-name>Archetype Created Web Application</display-name>
 
@@ -27,6 +27,17 @@
             <param-value>/WEB-INF/config/dispatcher-servlet.xml</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
+        
+        
+        
+        <multipart-config>
+        	<max-file-size>31457280</max-file-size>   <!-- 30mb-->
+        	<max-request-size>1004857600</max-request-size>  <!-- 100mb -->
+    	</multipart-config> 
+    
+    
+    
+    
     </servlet>
 
     <welcome-file-list>

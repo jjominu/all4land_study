@@ -51,6 +51,13 @@
 
 	<dependencies>
 		<!-- 표준프레임워크 실행환경 -->
+		
+		
+		
+		
+		
+		
+		
 		<dependency>
     <groupId>org.postgresql</groupId>
     <artifactId>postgresql</artifactId>
@@ -62,6 +69,18 @@
   <artifactId>mybatis-spring</artifactId>
   <version>2.1.2</version>
 </dependency>
+
+<!-- commons io 파일 관련 의존성-->
+<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+<dependency>
+    <groupId>commons-io</groupId>
+    <artifactId>commons-io</artifactId>
+    <version>2.11.0</version>
+</dependency>
+
+
+
+
 
 
         <dependency>

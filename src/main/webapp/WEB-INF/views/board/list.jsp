@@ -30,5 +30,6 @@
 	</tbody>
 </table>
 <a href="callBoardWrite.do">작성</a>
+
 </body>
 </html>
