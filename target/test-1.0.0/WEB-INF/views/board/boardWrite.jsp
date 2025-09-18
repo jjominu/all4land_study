@@ -32,5 +32,15 @@
 		<button type="submit">작성</button>
 	</form>
 		<a href="list.do">돌아가기</a>
+		
+		
+		<form action="" method="post" enctype="multipart/form-data">
+        <ul>
+            <li>상품명 <input type="text" name="itemName"></li>
+            <li>단일<input type="file" name="attachFile" ></li>
+            <li>복수 파일들<input type="file" multiple="multiple" name="imageFiles" ></li>
+        </ul>
+        <input type="submit"/>
+    </form>
 </body>
 </html>

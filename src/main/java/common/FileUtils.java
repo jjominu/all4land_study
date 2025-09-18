@@ -44,10 +44,10 @@ public class FileUtils {
 			//파일 리스트 개수 만큼 리턴할 파일 리스트에 담아주고 생성
 			for(MultipartFile mf : list) {
 				FileVO boardFile = new FileVO();
-				boardFile.setSeq(seq);
-				boardFile.setFileSize(mf.getSize());
-				boardFile.setOriginalFileName(mf.getOriginalFilename());
-				boardFile.setFilePath(root_path + attach_path);
+//				boardFile.setSeq(seq);
+//				boardFile.setFileSize(mf.getSize());
+//				boardFile.setOriginalFileName(mf.getOriginalFilename());
+//				boardFile.setFilePath(root_path + attach_path);
 				fileList.add(boardFile);
 				
 				file = new File(root_path + attach_path + mf.getOriginalFilename());

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -72,47 +73,6 @@ public class BoardController {
 		
 		return new ModelAndView("redirect:/board/list.do");
 	}
-	
-	 @PostMapping("/items/new")
-	    public String saveItem(@ModelAttribute ItemForm form, RedirectAttributes redirectAttributes) throws IOException {
-	        UploadFile attachFile = fileStore.storeFile(form.getAttachFile());
-	        List<UploadFile> storeImageFiles = fileStore.storeFiles(form.getImageFiles());
-
-	        //데이터베이스에 저장
-	        Item item = new Item();
-	        item.setItemName(form.getItemName());
-	        item.setAttachFile(attachFile);
-	        item.setImageFiles(storeImageFiles);
-	        itemRepository.save(item);
-
-	        redirectAttributes.addAttribute("itemId", item.getId());
-	        return "redirect:/items/{itemId}";
-	    }
-	 @RequestMapping("/insertBoard.do")
-		//Command 객체 : 사용자가 전송한 데이터를 매핑한 VO를 바로 생성
-		//				사용자 입력 값이 많아지면 코드가 길어지기 때문에 간략화 가능
-		//              사용자 입력 input의 name 속성과 VO 멤버변수의 이름을 매핑해주는 것이 중요
-		public String insertBoard(BoardVO vo, HttpServletRequest request,
-				MultipartHttpServletRequest mhsr) throws IOException {
-			System.out.println("글 등록 처리");
-			
-			//파일 업로드 처리
-			MultipartFile uploadFile = vo.getUploadFile();
-			if(!uploadFile.isEmpty()) {
-				String fileName = uploadFile.getOriginalFilename();
-				uploadFile.transferTo(new File("C:/Dev211/" + fileName));
-			}
-			
-			int seq = BoardService.getBoardSeq();
-			
-			FileUtils fileUtils = new FileUtils();
-			List<BoardFileVO> fileList = fileUtils.parseFileInfo(seq, request, mhsr);
-			
-			boardService.insertBoard(vo);
-			
-			//화면 네비게이션(게시글 등록 완료 후 게시글 목록으로 이동)
-			return "redirect:getBoardList.do";
-		}
 	
 	
 }
