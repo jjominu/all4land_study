@@ -1,23 +1,23 @@
 package board;
 
+import java.sql.Time;
+import java.time.LocalDateTime;
+
 public class BoardVO {
 
-	private int id;
+	private int boardId;
 	private String title;
 	private int view ;
-	public int getId() {
-		return id;
+	private String content ;
+	private LocalDateTime createTimestamp;
+	public int getBoardId() {
+		return boardId;
 	}
-	public void setId(int id) {
-		this.id = id;
+	public void setBoardId(int boardId) {
+		this.boardId = boardId;
 	}
 	public String getTitle() {
 		return title;
-	}
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return super.toString();
 	}
 	public void setTitle(String title) {
 		this.title = title;
@@ -34,5 +34,10 @@ public class BoardVO {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	private String content ;
+	public LocalDateTime getCreateTimestamp() {
+		return createTimestamp;
+	}
+	public void setCreateTimestamp(LocalDateTime createTimestamp) {
+		this.createTimestamp = createTimestamp;
+	}
 }

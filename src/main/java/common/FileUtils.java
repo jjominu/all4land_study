@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -15,45 +17,19 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import board.FileVO;
 
 public class FileUtils {
-
-	public List<FileVO> parseFileInfo(int seq, HttpServletRequest request, 
-			MultipartHttpServletRequest mhsr) throws IOException {
-		if(ObjectUtils.isEmpty(mhsr)) {
-			return null;
-		}
-		
-		List<FileVO> fileList = new ArrayList<FileVO>();
-		
-		//서버의 절대 경로 얻기
-		String root_path = request.getSession().getServletContext().getRealPath("/");
-		String attach_path = "/upload/";
-		
-		//위 경로의 폴더가 없으면 폴더 생성
-		File file = new File(root_path + attach_path);
-		if(file.exists() == false) {
-			file.mkdir();
-		}
-		
-		//파일 이름들을 iterator로 담음
-		Iterator<String> iterator = mhsr.getFileNames();
-		
-		while(iterator.hasNext()) {
-			//파일명으로 파일 리스트 꺼내오기
-			List<MultipartFile> list = mhsr.getFiles(iterator.next());
-			
-			//파일 리스트 개수 만큼 리턴할 파일 리스트에 담아주고 생성
-			for(MultipartFile mf : list) {
-				FileVO boardFile = new FileVO();
-//				boardFile.setSeq(seq);
-//				boardFile.setFileSize(mf.getSize());
-//				boardFile.setOriginalFileName(mf.getOriginalFilename());
-//				boardFile.setFilePath(root_path + attach_path);
-				fileList.add(boardFile);
-				
-				file = new File(root_path + attach_path + mf.getOriginalFilename());
-				mf.transferTo(file);
-			}
-		}
-		return fileList;
-	}
+	//@Resource(name = "upload_path") // Servlet-content.xml 의 이름과 맞아야함! bean등록필수
+	String upload_path ="C:\\Users\\dadsd\\Desktop\\upload";
+	
+	  public static String uploadFile(String originalName,byte[] fileData) throws Exception{
+	        
+	        //uuid 생성
+	        
+	        UUID uid = UUID.randomUUID(); //랜덤으로 붙힐 숫자 생성
+	        String savedName = uid.toString()+"_"+originalName; //저장할이름에 랜덤숫자+파일이름
+	        File target = new File("C:\\Users\\dadsd\\Desktop\\upload",savedName);
+	        //파일 복사
+	        FileCopyUtils.copy(fileData, target);
+	        return savedName; 
+	        
+	    }
 }

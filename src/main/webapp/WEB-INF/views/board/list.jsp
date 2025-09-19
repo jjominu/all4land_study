@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-   <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> <!-- c라는 거 쓸려면 이거 필수 ! -->>
+   <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> <!-- c라는 거 쓸려면 이거 필수 ! -->
+   
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,22 +9,42 @@
 <title>Insert title here</title>
 </head>
 <body>
+<%@ include file="../include/style.jsp"%>
+<jsp:include page="../include/header.jsp"></jsp:include>
+<jsp:include page="../include/footer.jsp"></jsp:include>
+<div>
+		<select name="searchType">
+			<option value="title" <c:if test="">selected</c:if>>제목</option>
+			<option value="text" <c:if test="">selected</c:if>>내용</option>
+			<option value="title_text" <c:if test="'}">selected</c:if>>제목+내용
+			</option>
+			<option value="nick" <c:if test="">selected</c:if>>작성자</option>
+		</select>
+
+
+		<input type="text" name="keyword" />
+
+
+		<button type="button" id="searchBtn">검색</button>
+	</div>
 <table border=1>
 	<thead>
 		<tr>
 			<th>id</th>
 			<th>제목</th>
 			<th>조회수</th>
+			<th>생성일</th>
 		</tr>
 	</thead>
 		
 	<tbody>
 		<c:forEach items="${list}" var="list">
 			<tr>
-				<td>${list.id}</td>
-				<td><a href="getDetail.do?id=${list.id}">${list.title}</a></td>
+				<td>${list.boardId}</td>
+				<td><a href="getDetail.do?boardId=${list.boardId}">${list.title}</a></td>
 				<td>${list.view}</td>
-				
+				<td>${list.createTimestamp}</td>
+      
 			</tr>
 		</c:forEach>
 		
@@ -32,4 +53,16 @@
 <a href="callBoardWrite.do">작성</a>
 
 </body>
+<script>
+		document.getElementById("searchBtn").onclick = function () {
+			let searchType = document.getElementsByName("searchType")[0].value;
+			let keyword = document.getElementsByName("keyword")[0].value;
+
+
+			let url = "/board/search?searchType=" + searchType + "&keyword=" + keyword;
+			location.href = encodeURI(url);
+		};
+	</script>
+
+
 </html>

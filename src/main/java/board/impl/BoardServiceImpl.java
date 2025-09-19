@@ -18,6 +18,7 @@ public class BoardServiceImpl implements BoardService{
 	
 	@Override
 	public List<BoardVO> getList() {
+		boardDAO.getList().get(0).getBoardId();
 		return boardDAO.getList();
 		 
 	}
@@ -30,8 +31,14 @@ public class BoardServiceImpl implements BoardService{
 	}
 
 	@Override
+	public void updateBoard(BoardVO boardVO) {
+		boardDAO.updateBoard(boardVO);
+		
+	}
+
+	@Override
 	public void insertBoard(BoardVO boardVO) {
-		System.out.println("Service :" + boardVO.getId());
+		System.out.println("Service :" + boardVO.getBoardId());
 		boardDAO.insertBoard(boardVO);
 		
 	}

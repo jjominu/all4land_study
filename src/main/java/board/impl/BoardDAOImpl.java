@@ -18,13 +18,14 @@ public class BoardDAOImpl implements BoardDAO {
 	
 	@Override
 	public List<BoardVO> getList() {
+		System.out.println(sqlSession.selectList("board.getList").get(0));
 		return sqlSession.selectList("board.getList");
 		
 	}
 	
 	@Override
-	public void deleteBoard(int id) {
-		sqlSession.delete("board.deleteBoard",id);
+	public void deleteBoard(int boardId) {
+		sqlSession.delete("board.deleteBoard",boardId);
 		
 	}
 	
@@ -35,10 +36,17 @@ public class BoardDAOImpl implements BoardDAO {
 	}
 	
 	@Override
-	public BoardVO getDetail(int id) {
-		System.out.println("dsadsad");
-		sqlSession.update("board.increaseView",id);
-		return sqlSession.selectOne("board.getDetail",id); 
+	public BoardVO getDetail(int boardId) {
+		System.out.println(boardId);
+		
+		sqlSession.update("board.increaseView",boardId);
+		return sqlSession.selectOne("board.getDetail",boardId); 
+	}
+
+	@Override
+	public void updateBoard(BoardVO boardVO) {
+		sqlSession.update("board.updateBoard", boardVO);
+		
 	}
 
 }
