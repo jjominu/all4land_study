@@ -34,4 +34,9 @@
     <update id="updateBoard" parameterType="BoardVO">
     	update tb_board set title=#{title}, content=#{content} where board_id = #{boardId}
     </update>
+    
+    <select id="searchBoard" parameterType="BoardVO" resultType="BoardVO">
+    
+    	select * from tb_board where #{}
+    </select>
 </mapper>
