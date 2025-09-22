@@ -2,6 +2,9 @@ package board;
 
 import java.util.List;
 
+import board.vo.BoardSearchRequestVO;
+import board.vo.BoardVO;
+
 public interface BoardDAO {
 
 	public List<BoardVO> getList();
@@ -9,4 +12,5 @@ public interface BoardDAO {
 	public void insertBoard(BoardVO boardVO);
 	public BoardVO getDetail(int id);
 	public void updateBoard(BoardVO boardVO);
+	public List<BoardVO> searchBoard(BoardSearchRequestVO vo);
 }

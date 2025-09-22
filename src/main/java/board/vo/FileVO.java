@@ -1,4 +1,4 @@
-package board;
+package board.vo;
 
 public class FileVO {
 	public class BoardFileVO {

@@ -11,26 +11,19 @@
 <jsp:include page="../include/footer.jsp"></jsp:include>
 <body>
 	<form action="updateBoard.do">
-	<table>
-		<colgroup>
-			<col width="50%">
-			<col width="*">
-	</colgroup>
-			<tbody>
-				<tr>
-
-					<th scope="row">제목</th>
-					<td><input type="text" id ="title" name="title" value="${detail.title}"></td>
-			</tbody>
-			<tbody>
-				<tr>
-					<td scope="row">내용
-					 	<textarea rows="10" cols="50" name="content" >${detail.content}</textarea>
-					 </td>
-				</tr>
-			</tbody>
-	</table>
-		<button type="submit">수정</button>
+			<th scope="row">id</th>
+				 	<p>
+			
+			<input type="text" id ="boardId" name="boardId" value="${detail.boardId}" readonly>
+			<p>
+			<th scope="row">제목</th>
+			<p>
+			<input type="text" id ="title" name="title" value="${detail.title}">
+			<p>
+			<tr scope="row">내용</tr>
+			<p>
+			<textarea rows="10" cols="50" name="content" >${detail.content}</textarea>
+			<button type="submit">수정</button>
 	</form>
 		<a href="list.do">돌아가기</a>
 		

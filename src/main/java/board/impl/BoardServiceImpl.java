@@ -8,7 +8,8 @@ import org.springframework.stereotype.Service;
 
 import board.BoardDAO;
 import board.BoardService;
-import board.BoardVO;
+import board.vo.BoardSearchRequestVO;
+import board.vo.BoardVO;
 
 @Service
 public class BoardServiceImpl implements BoardService{
@@ -18,7 +19,6 @@ public class BoardServiceImpl implements BoardService{
 	
 	@Override
 	public List<BoardVO> getList() {
-		boardDAO.getList().get(0).getBoardId();
 		return boardDAO.getList();
 		 
 	}
@@ -47,6 +47,12 @@ public class BoardServiceImpl implements BoardService{
 	public BoardVO getDetail(int id) {
 		
 		return boardDAO.getDetail(id);
+	}
+
+	@Override
+	public List<BoardVO> searchBoard(BoardSearchRequestVO vo) {
+
+		return boardDAO.searchBoard(vo);
 	}
 	
 

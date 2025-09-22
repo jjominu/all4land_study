@@ -2,6 +2,9 @@ package board.web;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,6 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.groups.Default;
 
 import org.apache.commons.io.FileUtils;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
@@ -20,16 +26,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import board.BoardService;
-import board.BoardVO;
-import board.SearchBoardResponseVO;
+import board.vo.BoardSearchRequestVO;
+import board.vo.BoardVO;
 
-@Controller
+@RestController
 @RequestMapping("/board")
 public class BoardController {
 	
@@ -37,10 +44,9 @@ public class BoardController {
 	BoardService bs;
 	
 
-	@RequestMapping("/list.do")
+	@RequestMapping("/list.do")//리스트 조회
 	public ModelAndView list() throws Exception{
 		List<BoardVO> list = bs.getList();
-		System.out.println(list.get(0).getCreateTimestamp());
 
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("/board/list");
@@ -48,7 +54,7 @@ public class BoardController {
 		return mav;
 	}
 	
-	@RequestMapping("/callBoardWrite.do")
+	@RequestMapping("/callBoardWrite.do")//작성페이지접근
 	public ModelAndView boardWrite()throws Exception {
 		ModelAndView mav = new ModelAndView("/board/boardWrite");
 		return mav;
@@ -66,9 +72,10 @@ public class BoardController {
 //	}
 	
 	
-	@RequestMapping("/getDetail.do")
+	@RequestMapping("/getDetail.do")//상세정봊조ㅗㅎ
 	public ModelAndView getDetail(HttpServletRequest request)throws Exception {
 		BoardVO detail = bs.getDetail(Integer.parseInt(request.getParameter("boardId")));
+		detail.setImgName(common.FileUtils.imgutil(detail.getImgName()));
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("board/detail");
 		mav.addObject("detail", detail);
@@ -118,23 +125,34 @@ public class BoardController {
 		BoardVO boardVO = new BoardVO();
 		boardVO.setTitle(request.getParameter("title"));
 		boardVO.setContent(request.getParameter("content"));
-		bs.insertBoard(boardVO);
 		String savedName = file.getOriginalFilename();
         savedName = common.FileUtils.uploadFile(savedName,file.getBytes());
+        boardVO.setImgName(savedName);
+		bs.insertBoard(boardVO);
 
         return new ModelAndView("redirect:/board/list.do");
         
     }
 	
-	@RequestMapping("/search")
+	@RequestMapping("/search.do")
 	public ModelAndView search(HttpServletRequest request) {
-		SearchBoardResponseVO s = new SearchBoardResponseVO();
-		s.setSearchType(request.getParameter("searchType"));
-		s.setSearchType(request.getParameter("keyword"));
-		bs.
+		BoardSearchRequestVO bsrVO = new BoardSearchRequestVO();
+		
+		bsrVO.setSearchType(request.getParameter("searchType"));
+		bsrVO.setKeyword(request.getParameter("keyword"));
+		List<BoardVO> list = bs.searchBoard(bsrVO);
+		System.out.println(list);
+		ModelAndView mav = new ModelAndView("/board/list");
+		mav.addObject("list",list);
 
+		return mav;
 	}
-    
+	
+	
+	
+
+
+   
   
 	
 	

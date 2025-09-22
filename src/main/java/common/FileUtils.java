@@ -3,6 +3,7 @@ package common;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -14,7 +15,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import board.FileVO;
+import board.vo.FileVO;
 
 public class FileUtils {
 	//@Resource(name = "upload_path") // Servlet-content.xml 의 이름과 맞아야함! bean등록필수
@@ -32,4 +33,21 @@ public class FileUtils {
 	        return savedName; 
 	        
 	    }
+		public static String imgutil(String fileName) throws   Exception{
+			try {
+	        File file= new File("C:\\Users\\dadsd\\Desktop\\upload\\"+fileName);
+			byte[] imageBytes =FileCopyUtils.copyToByteArray(file);
+			String imageBase64 = Base64.getEncoder().encodeToString(imageBytes);
+			String imageUrl = "data:image/png;base64," + imageBase64;
+			return imageUrl;
+
+			}
+			catch (Exception e1){
+				String imageUrl = null;
+				return imageUrl;
+
+			}
+
+
+		}
 }

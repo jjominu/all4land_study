@@ -1,6 +1,7 @@
-package board;
+package board.vo;
 
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 public class BoardVO {
@@ -9,7 +10,8 @@ public class BoardVO {
 	private String title;
 	private int view ;
 	private String content ;
-	private LocalDateTime createTimestamp;
+	private Timestamp createTimestamp;
+	private String imgName;
 	public int getBoardId() {
 		return boardId;
 	}
@@ -34,10 +36,17 @@ public class BoardVO {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public LocalDateTime getCreateTimestamp() {
+	public Timestamp getCreateTimestamp() {
 		return createTimestamp;
 	}
-	public void setCreateTimestamp(LocalDateTime createTimestamp) {
+	public void setCreateTimestamp(Timestamp createTimestamp) {
 		this.createTimestamp = createTimestamp;
 	}
+	public String getImgName() {
+		return imgName;
+	}
+	public void setImgName(String imgName) {
+		this.imgName = imgName;
+	}
+	
 }

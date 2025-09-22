@@ -7,11 +7,11 @@
 		<result column="view" property="view" />
 		<result column="content" property="content" />
 		<result column="create_timestamp" property="createTimestamp"/>
-		
+		<result column="img_name" property="imgName"/>
 	</resultMap>
     
 	<select id="getList" resultType="BoardVO"> <!-- 모든 게시글 가져오기-->
-		SELECT * FROM tb_board ;
+		SELECT * FROM tb_board ORDER BY create_timestamp DESC;
 	</select>
 	
 	<select id="getDetail" resultType="BoardVO" parameterType="int"> <!-- 글 상세정보 들어가기 -->
@@ -19,24 +19,28 @@
 		
 	</select>
 	<insert id="insertBoard" parameterType="BoardVO"><!-- 게시글 작성하기-->
-		insert into tb_board( title,content) values(#{title},#{content})
+		insert into tb_board( title,content,img_name) values(#{title},#{content},#{imgName})
 	</insert>
 	
 	
     <delete id="deleteBoard" parameterType="int"> <!-- 게시글 삭제하기 -->
-    delete from tb_board where  board_id =#{boardId};
+    	delete from tb_board where  board_id =#{boardId};
     </delete>
     
     <update id="increaseView" parameterType="int" > <!-- 상세정보 조회할 때 조회수 증가 -->
-    		update tb_board set view = view +1 where  board_id = ${boardId};
+    	update tb_board set view = view +1 where  board_id = ${boardId};
     </update>
     
     <update id="updateBoard" parameterType="BoardVO">
     	update tb_board set title=#{title}, content=#{content} where board_id = #{boardId}
     </update>
     
-    <select id="searchBoard" parameterType="BoardVO" resultType="BoardVO">
-    
-    	select * from tb_board where #{}
+    <select id="searchBoard" parameterType="BoardSearchRequestVO" resultType="BoardVO">
+    	<if test="searchType=='title'">
+	    	select * from tb_board where title LIKE CONCAT('%',#{keyword},'%') ORDER BY create_timestamp DESC; 
+	    </if>
+	     <if test="searchType=='content'">
+	    	select * from tb_board where content LIKE CONCAT('%',#{keyword},'%') ORDER BY create_timestamp DESC; 
+	    </if>
     </select>
 </mapper>

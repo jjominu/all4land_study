@@ -8,7 +8,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import board.BoardDAO;
-import board.BoardVO;
+import board.vo.BoardSearchRequestVO;
+import board.vo.BoardVO;
 
 @Repository
 public class BoardDAOImpl implements BoardDAO {
@@ -18,7 +19,6 @@ public class BoardDAOImpl implements BoardDAO {
 	
 	@Override
 	public List<BoardVO> getList() {
-		System.out.println(sqlSession.selectList("board.getList").get(0));
 		return sqlSession.selectList("board.getList");
 		
 	}
@@ -47,6 +47,12 @@ public class BoardDAOImpl implements BoardDAO {
 	public void updateBoard(BoardVO boardVO) {
 		sqlSession.update("board.updateBoard", boardVO);
 		
+	}
+
+	@Override
+	public List<BoardVO> searchBoard(BoardSearchRequestVO vo) {
+		List<BoardVO> ls = sqlSession.selectList("board.searchBoard", vo);
+		return ls;
 	}
 
 }

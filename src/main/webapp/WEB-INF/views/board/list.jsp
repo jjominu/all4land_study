@@ -15,21 +15,20 @@
 <div>
 		<select name="searchType">
 			<option value="title" <c:if test="">selected</c:if>>제목</option>
-			<option value="text" <c:if test="">selected</c:if>>내용</option>
-			<option value="title_text" <c:if test="'}">selected</c:if>>제목+내용
-			</option>
-			<option value="nick" <c:if test="">selected</c:if>>작성자</option>
+			<option value="content" <c:if test="">selected</c:if>>내용</option>
+		<!--  	<option value="title_text" <c:if test="'}">selected</c:if>>제목+내용</option>
+			<option value="nick" <c:if test="">selected</c:if>>작성자</option>-->
 		</select>
 
 
-		<input type="text" name="keyword" />
+		<input type="text" name="keyword" " />
 
 
 		<button type="button" id="searchBtn">검색</button>
 	</div>
 <table border=1>
 	<thead>
-		<tr>
+		<tr  style="text-align: center;">
 			<th>id</th>
 			<th>제목</th>
 			<th>조회수</th>
@@ -39,7 +38,7 @@
 		
 	<tbody>
 		<c:forEach items="${list}" var="list">
-			<tr>
+			<tr >
 				<td>${list.boardId}</td>
 				<td><a href="getDetail.do?boardId=${list.boardId}">${list.title}</a></td>
 				<td>${list.view}</td>
@@ -59,9 +58,11 @@
 			let keyword = document.getElementsByName("keyword")[0].value;
 
 
-			let url = "/board/search?searchType=" + searchType + "&keyword=" + keyword;
+			let url = "/board-test/board/search.do?searchType=" + searchType + "&keyword=" + keyword;
 			location.href = encodeURI(url);
 		};
+		
+		
 	</script>
 
 

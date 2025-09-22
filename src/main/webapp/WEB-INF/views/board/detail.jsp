@@ -13,37 +13,49 @@
 <jsp:include page="../include/footer.jsp"></jsp:include>
 <body>
 
- <h2>Detail page</h2>
+ <h2>상세페이지</h2>
     <table border="1">
-        <th> 정보 </th>
-        <th> 데이터 </th>
         <tr>
-            
-            
-            </td>
-        </tr>
-      
-        <tr>
-            <td>id</td><td>${detail.boardId}</td>
+            <td>id</td>
+            <td>${detail.boardId}</td>
         </tr>
         <tr>
-            <td>제목</td><td>${detail.title}</td>
+            <td>제목</td>
+            <td>${detail.title}</td>
         </tr>
        
         <tr>
-            <td>내용</td><td>${detail.content}</td>
+            <td>내용</td>
+            <td>${detail.content}</td>
         </tr>
        
         <tr>
-            <td>조회수</td><td>${detail.view}</td>
+            <td>조회수</td>
+            <td>${detail.view}</td>
         </tr>
+         <tr>
+            <td>사진</td>
+          <c:if test="${empty detail.imgName}">
+	          <td>
+	          	사진이 없습니다.
+	          </td>
+          </c:if>
+            <c:if test="${not empty detail.imgName}">
+	            <td>
+	            	<img src='${detail.imgName}'style="max-width:50%; min-height:50px">
+	            </td>
+            </c:if>
+            
+        </tr>
+        
         
     </table>
      
     		<a href="list.do">돌아가기</a>
     		<a href="delete.do?boardId=${detail.boardId}">삭제하기</a>
     		<a href="callBoardUpdate.do?boardId=${detail.boardId}">수정하기</a>
-    		
-    		
 </body>
+<script>
+
+</script>
 </html>

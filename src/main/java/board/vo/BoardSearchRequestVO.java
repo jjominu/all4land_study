@@ -1,6 +1,6 @@
-package board;
+package board.vo;
 
-public class SearchBoardResponseVO {
+public class BoardSearchRequestVO {
 
 	private String searchType;
 	private String keyword;
