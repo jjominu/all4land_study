@@ -23,7 +23,7 @@
 		</select>
 
 
-		<input type="text" name="keyword" />
+		<input type="text" name="keyword" value="${bsrVO.keyword }"/>
 
 
 		<button type="button" id="searchBtn">검색</button>
@@ -43,7 +43,7 @@
 			<tr >
 				<td><a href="getDetail.do?boardId=${list.boardId}">${list.title}</a></td>
 				<td>${list.view}</td>
-      			<td><fmt:formatDate pattern="yyyy-MM-dd  HH시mm분ss초" value="${list.createTimestamp }"/>
+      			<td><fmt:formatDate pattern="yyyy-MM-dd  hh시mm분ss초" value="${list.createTimestamp }"/>
 </td>
       
 			</tr>
@@ -73,17 +73,18 @@
 </ul>
 </body>
 <script>
+	
+		
 		document.getElementById("searchBtn").onclick = function () {
-			let searchType = document.getElementsByName("searchType")[0].value;
-			let keyword = document.getElementsByName("keyword")[0].value;
+		    let searchType = document.getElementsByName("searchType")[0].value;
+		    let keyword = document.getElementsByName("keyword")[0].value;
 
-
-			let url = "/board-test/board/search.do?searchType=" + searchType + "&keyword=" + keyword;
-			location.href = encodeURI(url);
+		    let url = "/board-test/board/search.do?searchType=" + searchType + "&keyword=" + keyword ;
+		    location.href = encodeURI(url);
 		};
 		
 		
-	</script>
+</script>
 
 
 </html>

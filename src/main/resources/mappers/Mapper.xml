@@ -41,14 +41,41 @@
     </update>
     
     <select id="searchBoard" parameterType="BoardSearchRequestVO" resultType="BoardVO">
-    	<if test="searchType=='title'">
+    <if test="searchType=='title'">
+     SELECT
+            *
+        FROM
+            tb_board
+        WHERE title LIKE CONCAT('%',#{keyword},'%')
+        ORDER BY create_timestamp desc
+        LIMIT #{perPageNum} OFFSET #{pageStart}
+        </if>
+        <if test="searchType=='content'">
+	    	SELECT
+            *
+        FROM
+            tb_board
+        WHERE content LIKE CONCAT('%',#{keyword},'%')
+        ORDER BY create_timestamp desc
+        LIMIT #{perPageNum} OFFSET #{pageStart}
+	    </if> --> 	
+   <!-- <if test="searchType=='title'">
 	    	select * from tb_board where title LIKE CONCAT('%',#{keyword},'%') ORDER BY create_timestamp DESC; 
 	    </if>
 	     <if test="searchType=='content'">
 	    	select * from tb_board where content LIKE CONCAT('%',#{keyword},'%') ORDER BY create_timestamp DESC; 
-	    </if>
+	    </if> --> 	
     </select>
     <select id="totalBoardCnt" resultType="int">
-    	select count(*) from tb_board
+
+    	  select count(*) from tb_board 
+    	
     </select>
+    
+     <select id="totalBoardCntbySearch" parameterType="BoardSearchRequestVO" resultType="int">
+
+    	   select count(*) from tb_board WHERE title LIKE CONCAT('%',#{keyword},'%')
+    	
+    </select>
+   
 </mapper>

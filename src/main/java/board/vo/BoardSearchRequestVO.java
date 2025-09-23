@@ -1,6 +1,6 @@
 package board.vo;
 
-public class BoardSearchRequestVO {
+public class BoardSearchRequestVO extends CriteriaVO{
 
 	private String searchType;
 	private String keyword;
@@ -16,4 +16,9 @@ public class BoardSearchRequestVO {
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
 	}
+	@Override
+	public String toString() {
+		return "BoardSearchRequestVO [searchType=" + searchType + ", keyword=" + keyword +"page"+super.getPage() +"pageNum"+super.getPerPageNum()+"]";
+	}
+
 }

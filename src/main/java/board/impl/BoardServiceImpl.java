@@ -61,6 +61,12 @@ public class BoardServiceImpl implements BoardService{
 		
 		return  boardDAO.totalBoardCnt();
 	}
+
+	@Override
+	public int totalBoardCntbySearch(BoardSearchRequestVO vo) {
+		
+		return boardDAO.totalBoardCntbySearch(vo);
+	}
 	
 
 	

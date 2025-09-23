@@ -82,7 +82,7 @@ public class BoardController {
 	}
 
 	
-	@RequestMapping(value="/delete.do" )
+	@RequestMapping(value="/delete.do" ,method=RequestMethod.POST)
 	public ModelAndView deleteBoard(HttpServletRequest request)throws Exception {
 		bs.deleteBoard(Integer.parseInt(request.getParameter("boardId"))  );
 		return new ModelAndView("redirect:/board/list.do");
@@ -130,11 +130,24 @@ public class BoardController {
 	public ModelAndView search(HttpServletRequest request) {
 		BoardSearchRequestVO bsrVO = new BoardSearchRequestVO();
 		
+	    	
 		bsrVO.setSearchType(request.getParameter("searchType"));
 		bsrVO.setKeyword(request.getParameter("keyword"));
+		if(request.getParameter("page")!=null)bsrVO.setPage(Integer.parseInt(request.getParameter("page")));
+		
+		
+		PageUtil pageUtil = new PageUtil(); 
+	    pageUtil.setCri(bsrVO);
+	    pageUtil.setTotalCount(bs.totalBoardCntbySearch(bsrVO));
+
+	    System.out.println(bsrVO.toString());
+		
 		List<BoardVO> list = bs.searchBoard(bsrVO);
 		ModelAndView mav = new ModelAndView("/board/list");
 		mav.addObject("list",list);
+		mav.addObject("pageUtil",pageUtil);
+		mav.addObject("bsrVO",bsrVO);
+
 
 		return mav;
 	}

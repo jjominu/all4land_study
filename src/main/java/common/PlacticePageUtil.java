@@ -44,6 +44,8 @@ public class PlacticePageUtil {
 		startPage = endPage - displayPageNum +1;
 		
 		
+		
+		
 	}
 	public boolean isPrevPage() {
 		return prevPage;

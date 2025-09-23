@@ -15,4 +15,5 @@ public interface BoardDAO {
 	public void updateBoard(BoardVO boardVO);
 	public List<BoardVO> searchBoard(BoardSearchRequestVO vo);
 	public int totalBoardCnt();
+	public int totalBoardCntbySearch(BoardSearchRequestVO vo);
 }

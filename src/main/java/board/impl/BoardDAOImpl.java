@@ -52,7 +52,7 @@ public class BoardDAOImpl implements BoardDAO {
 
 	@Override
 	public List<BoardVO> searchBoard(BoardSearchRequestVO vo) {
-		List<BoardVO> ls = sqlSession.selectList("board.searchBoard", vo);
+		List<BoardVO> ls = sqlSession.selectList("board.searchBoard",vo);
 		return ls;
 	}
 
@@ -60,6 +60,12 @@ public class BoardDAOImpl implements BoardDAO {
 	public int totalBoardCnt() {
 		
 		return sqlSession.selectOne("board.totalBoardCnt");
+	}
+
+	@Override
+	public int totalBoardCntbySearch(BoardSearchRequestVO vo) {
+		
+		return  sqlSession.selectOne("board.totalBoardCntbySearch",vo);
 	}
 
 }
