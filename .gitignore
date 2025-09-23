@@ -1,0 +1,18 @@
+# Eclipse project files
+.classpath
+.project
+.settings/
+.factorypath
+
+# Maven build directory
+/target/
+
+# Logs
+*.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Eclipse annotations
+.apt_generated/
