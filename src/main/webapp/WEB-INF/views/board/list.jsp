@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> <!-- c라는 거 쓸려면 이거 필수 ! -->
+   <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+   
    
 <!DOCTYPE html>
 <html>
@@ -12,7 +14,7 @@
 <%@ include file="../include/style.jsp"%>
 <jsp:include page="../include/header.jsp"></jsp:include>
 <jsp:include page="../include/footer.jsp"></jsp:include>
-<div>
+<div  style="display: flex; justify-content: center; align-items: center; height: 50px; border: 1px solid black;">
 		<select name="searchType">
 			<option value="title" <c:if test="">selected</c:if>>제목</option>
 			<option value="content" <c:if test="">selected</c:if>>내용</option>
@@ -21,15 +23,15 @@
 		</select>
 
 
-		<input type="text" name="keyword" " />
+		<input type="text" name="keyword" />
 
 
 		<button type="button" id="searchBtn">검색</button>
-	</div>
-<table border=1>
+</div>
+<div style="display: flex; justify-content: center; align-items: center;">
+<table border=3 >
 	<thead>
 		<tr  style="text-align: center;">
-			<th>id</th>
 			<th>제목</th>
 			<th>조회수</th>
 			<th>생성일</th>
@@ -39,18 +41,36 @@
 	<tbody>
 		<c:forEach items="${list}" var="list">
 			<tr >
-				<td>${list.boardId}</td>
 				<td><a href="getDetail.do?boardId=${list.boardId}">${list.title}</a></td>
 				<td>${list.view}</td>
-				<td>${list.createTimestamp}</td>
+      			<td><fmt:formatDate pattern="yyyy-MM-dd  HH시mm분ss초" value="${list.createTimestamp }"/>
+</td>
       
 			</tr>
 		</c:forEach>
 		
 	</tbody>
 </table>
+</div>
 <a href="callBoardWrite.do">작성</a>
 
+  <ul class="btn-group pagination">
+    <c:if test="${pageUtil.prev}">
+	    <li>
+	        <a href='<c:url value="/board/list.do?page=${pageUtil.startPage-1 }"/>'><i class="fa ">이전</i></a>
+	    </li>
+    </c:if>
+    <c:forEach begin="${pageUtil.startPage }" end="${pageUtil.endPage }" var="pageNum">
+	    <li>
+	        <a href='<c:url value="/board/list.do?page=${pageNum }"/>'><i class="fa">${pageNum }</i></a>
+	    </li>
+    </c:forEach>
+    <c:if test="${pageUtil.next && pageUtil.endPage >0 }">
+	    <li>
+	        <a href='<c:url value="/board/list.do?page=${pageUtil.endPage+1 }"/>'><i class="fa ">다음</i></a>
+	    </li>
+    </c:if>
+</ul>
 </body>
 <script>
 		document.getElementById("searchBtn").onclick = function () {

@@ -10,8 +10,13 @@
 		<result column="img_name" property="imgName"/>
 	</resultMap>
     
-	<select id="getList" resultType="BoardVO"> <!-- 모든 게시글 가져오기-->
-		SELECT * FROM tb_board ORDER BY create_timestamp DESC;
+	<select id="getList" parameterType="CriteriaVO" resultType="BoardVO"> <!-- 모든 게시글 가져오기-->
+		 SELECT
+            *
+        FROM
+            tb_board
+        ORDER BY create_timestamp desc
+        LIMIT #{perPageNum} OFFSET #{pageStart}
 	</select>
 	
 	<select id="getDetail" resultType="BoardVO" parameterType="int"> <!-- 글 상세정보 들어가기 -->
@@ -42,5 +47,8 @@
 	     <if test="searchType=='content'">
 	    	select * from tb_board where content LIKE CONCAT('%',#{keyword},'%') ORDER BY create_timestamp DESC; 
 	    </if>
+    </select>
+    <select id="totalBoardCnt" resultType="int">
+    	select count(*) from tb_board
     </select>
 </mapper>

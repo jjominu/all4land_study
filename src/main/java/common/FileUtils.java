@@ -19,7 +19,7 @@ import board.vo.FileVO;
 
 public class FileUtils {
 	//@Resource(name = "upload_path") // Servlet-content.xml 의 이름과 맞아야함! bean등록필수
-	String upload_path ="C:\\Users\\dadsd\\Desktop\\upload";
+	public static String  upload_path ="C:\\Users\\dadsd\\Desktop\\upload";
 	
 	  public static String uploadFile(String originalName,byte[] fileData) throws Exception{
 	        
@@ -27,7 +27,7 @@ public class FileUtils {
 	        
 	        UUID uid = UUID.randomUUID(); //랜덤으로 붙힐 숫자 생성
 	        String savedName = uid.toString()+"_"+originalName; //저장할이름에 랜덤숫자+파일이름
-	        File target = new File("C:\\Users\\dadsd\\Desktop\\upload",savedName);
+	        File target = new File(upload_path,savedName);
 	        //파일 복사
 	        FileCopyUtils.copy(fileData, target);
 	        return savedName; 
@@ -35,7 +35,7 @@ public class FileUtils {
 	    }
 		public static String imgutil(String fileName) throws   Exception{
 			try {
-	        File file= new File("C:\\Users\\dadsd\\Desktop\\upload\\"+fileName);
+	        File file= new File(upload_path+fileName);
 			byte[] imageBytes =FileCopyUtils.copyToByteArray(file);
 			String imageBase64 = Base64.getEncoder().encodeToString(imageBytes);
 			String imageUrl = "data:image/png;base64," + imageBase64;

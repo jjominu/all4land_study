@@ -10,11 +10,9 @@
 <jsp:include page="../include/header.jsp"></jsp:include>
 <jsp:include page="../include/footer.jsp"></jsp:include>
 <body>
-	<form action="updateBoard.do">
-			<th scope="row">id</th>
-				 	<p>
-			
-			<input type="text" id ="boardId" name="boardId" value="${detail.boardId}" readonly>
+	<form action="updateBoard.do" method="post">
+
+			<input type="hidden" id ="boardId" name="boardId" value="${detail.boardId}" >
 			<p>
 			<th scope="row">제목</th>
 			<p>

@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
        <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> <!-- c라는 거 쓸려면 이거 필수 ! -->
+       <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+       <% pageContext.setAttribute("replaceChar","\n"); %> <!-- "\n" 이라는 객체 생성 -->
     
 <!DOCTYPE html>
 <html>
@@ -14,11 +16,9 @@
 <body>
 
  <h2>상세페이지</h2>
+ 
+
     <table border="1">
-        <tr>
-            <td>id</td>
-            <td>${detail.boardId}</td>
-        </tr>
         <tr>
             <td>제목</td>
             <td>${detail.title}</td>
@@ -26,7 +26,7 @@
        
         <tr>
             <td>내용</td>
-            <td>${detail.content}</td>
+            <td>${fn:replace(detail.content,replaceChar,"<br/>")}</td> <!-- <br/>을 <\n>올 변환 -->
         </tr>
        
         <tr>
@@ -52,8 +52,15 @@
     </table>
      
     		<a href="list.do">돌아가기</a>
-    		<a href="delete.do?boardId=${detail.boardId}">삭제하기</a>
-    		<a href="callBoardUpdate.do?boardId=${detail.boardId}">수정하기</a>
+    		<form action="delete.do?boardId=${detail.boardId}" method="post">
+		   		<input type="hidden" name="boardId" value="${detail.boardId}">
+		    <button type="submit" class="link-button">삭제하기</button>
+		    </form>
+		    
+    	 	<form action="callBoardUpdate.do" method="post">
+		   		<input type="hidden" name="boardId" value="${detail.boardId}">
+		    <button type="submit" class="link-button">수정하기</button>
+</form>
 </body>
 <script>
 

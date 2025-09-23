@@ -10,6 +10,7 @@ import board.BoardDAO;
 import board.BoardService;
 import board.vo.BoardSearchRequestVO;
 import board.vo.BoardVO;
+import board.vo.CriteriaVO;
 
 @Service
 public class BoardServiceImpl implements BoardService{
@@ -18,8 +19,8 @@ public class BoardServiceImpl implements BoardService{
 	BoardDAO boardDAO;
 	
 	@Override
-	public List<BoardVO> getList() {
-		return boardDAO.getList();
+	public List<BoardVO> getList(CriteriaVO cri) {
+		return boardDAO.getList(cri);
 		 
 	}
 
@@ -53,6 +54,12 @@ public class BoardServiceImpl implements BoardService{
 	public List<BoardVO> searchBoard(BoardSearchRequestVO vo) {
 
 		return boardDAO.searchBoard(vo);
+	}
+
+	@Override
+	public int totalBoardCnt() {
+		
+		return  boardDAO.totalBoardCnt();
 	}
 	
 

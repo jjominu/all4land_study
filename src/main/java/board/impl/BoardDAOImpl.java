@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import board.BoardDAO;
 import board.vo.BoardSearchRequestVO;
 import board.vo.BoardVO;
+import board.vo.CriteriaVO;
 
 @Repository
 public class BoardDAOImpl implements BoardDAO {
@@ -18,8 +19,8 @@ public class BoardDAOImpl implements BoardDAO {
 	SqlSession sqlSession;
 	
 	@Override
-	public List<BoardVO> getList() {
-		return sqlSession.selectList("board.getList");
+	public List<BoardVO> getList(CriteriaVO cri) {
+		return sqlSession.selectList("board.getList",cri);
 		
 	}
 	
@@ -53,6 +54,12 @@ public class BoardDAOImpl implements BoardDAO {
 	public List<BoardVO> searchBoard(BoardSearchRequestVO vo) {
 		List<BoardVO> ls = sqlSession.selectList("board.searchBoard", vo);
 		return ls;
+	}
+
+	@Override
+	public int totalBoardCnt() {
+		
+		return sqlSession.selectOne("board.totalBoardCnt");
 	}
 
 }
