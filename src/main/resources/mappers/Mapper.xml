@@ -9,6 +9,8 @@
 		<result column="create_timestamp" property="createTimestamp"/>
 		<result column="img_name" property="imgName"/>
 	</resultMap>
+
+
     
 	<select id="getList" parameterType="CriteriaVO" resultType="BoardVO"> <!-- 모든 게시글 가져오기-->
 		 SELECT
@@ -23,9 +25,9 @@
 		SELECT * FROM tb_board where board_Id = #{boardId} 
 		
 	</select>
-	<insert id="insertBoard" parameterType="BoardVO"><!-- 게시글 작성하기-->
-		insert into tb_board( title,content,img_name) values(#{title},#{content},#{imgName})
-	</insert>
+	<select id="insertBoard" resultType="int" parameterType="BoardVO" ><!-- 게시글 작성하기-->
+		insert into tb_board( title,content) values(#{title},#{content}) RETURNING board_id;
+	</select>
 	
 	
     <delete id="deleteBoard" parameterType="int"> <!-- 게시글 삭제하기 -->
@@ -77,5 +79,16 @@
     	   select count(*) from tb_board WHERE title LIKE CONCAT('%',#{keyword},'%')
     	
     </select>
+    <insert id="uploadFile" parameterType="fileVO">
+    	insert into tb_file( board_id,origin_file_name,save_file_name,file_type) values(#{boardId},#{originFileName},#{saveFileName},#{fileType}) 
+    </insert>
+    
+     <select id="getFiles" resultType="FileVO" parameterType="int">
+    		SELECT f.* FROM tb_board t join tb_file f on t.board_id = f.board_id where t.board_Id = #{boardId} 
+    
+    </select>
    
+   <delete id="deleteFile" parameterType="int">
+   			delete from tb_file where file_id = ${file_id}
+   </delete>
 </mapper>

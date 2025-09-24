@@ -35,14 +35,19 @@
         </tr>
          <tr>
             <td>사진</td>
-          <c:if test="${empty detail.imgName}">
+          <c:if test="${empty result}">
 	          <td>
 	          	사진이 없습니다.
 	          </td>
           </c:if>
-            <c:if test="${not empty detail.imgName}">
+            <c:if test="${not empty result}">
 	            <td>
-	            	<img src='${detail.imgName}'style="max-width:50%; min-height:50px">
+	             <c:forEach items="${result}" var="result">
+				   
+				        <img src='${result}'style="max-width:20%; min-height:20px "border=2>
+				   
+    			</c:forEach>
+	            	
 	            </td>
             </c:if>
             

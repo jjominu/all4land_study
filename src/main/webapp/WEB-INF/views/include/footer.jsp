@@ -7,6 +7,6 @@
 <title>Insert title here</title>
 </head>
 <body>
-    <p style="position:absolute; bottom:0">Copyright 2025.  All rights reserved.<p>
+    <!--  <p style="position:relative; bottom:0">Copyright 2025.  All rights reserved.<p>-->
 </body>
 </html>

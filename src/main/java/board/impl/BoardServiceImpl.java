@@ -11,6 +11,7 @@ import board.BoardService;
 import board.vo.BoardSearchRequestVO;
 import board.vo.BoardVO;
 import board.vo.CriteriaVO;
+import board.vo.FileVO;
 
 @Service
 public class BoardServiceImpl implements BoardService{
@@ -38,9 +39,9 @@ public class BoardServiceImpl implements BoardService{
 	}
 
 	@Override
-	public void insertBoard(BoardVO boardVO) {
+	public int  insertBoard(BoardVO boardVO) {
 		System.out.println("Service :" + boardVO.getBoardId());
-		boardDAO.insertBoard(boardVO);
+		return boardDAO.insertBoard(boardVO);
 		
 	}
 
@@ -66,6 +67,25 @@ public class BoardServiceImpl implements BoardService{
 	public int totalBoardCntbySearch(BoardSearchRequestVO vo) {
 		
 		return boardDAO.totalBoardCntbySearch(vo);
+	}
+
+	@Override
+	public void uploadFile(FileVO fileVO) {
+
+		boardDAO.uploadFile(fileVO);
+	}
+
+	@Override
+	public List<FileVO> getFile(int id) {
+		
+
+		return boardDAO.getFile(id);
+	}
+
+	@Override
+	public void deleteFile(int file_id) {
+
+		boardDAO.deleteFile(file_id);
 	}
 	
 

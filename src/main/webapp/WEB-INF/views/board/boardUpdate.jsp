@@ -1,5 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,24 +11,77 @@
 <jsp:include page="../include/header.jsp"></jsp:include>
 <jsp:include page="../include/footer.jsp"></jsp:include>
 <body>
-	<form action="updateBoard.do" method="post">
+	<form action="updateBoard.do" method="post" enctype="multipart/form-data">
+	
+	<input type="hidden" id="boardId" name="boardId" value="${detail.boardId}">
+	<p>
+	<th scope="row">제목</th>
+	<p>
+	<input type="text" id="title" name="title" value="${detail.title}">
+	<p>
+	<tr scope="row">내용</tr>
+	<p>
+	<textarea rows="10" cols="50" name="content">${detail.content}</textarea>
+	<p>
+	<th scope="row">파일</th>
+	<div class="form-group" id="file-list">
+		<a href="#this" onclick="addFile()">파일추가</a>
+		<c:forEach items="${fileVO}" var="fileVO">
+		    <p>${fileVO.originFileName} 
+		       <button type="button" class="deleteBtn" data-file-id="${fileVO.fileId}">삭제</button>
+		    </p>
+		</c:forEach>
+	</div>
+	<input type="submit" value="작성하기">
+	<a href="list.do">돌아가기</a>
 
-			<input type="hidden" id ="boardId" name="boardId" value="${detail.boardId}" >
-			<p>
-			<th scope="row">제목</th>
-			<p>
-			<input type="text" id ="title" name="title" value="${detail.title}">
-			<p>
-			<tr scope="row">내용</tr>
-			<p>
-			<textarea rows="10" cols="50" name="content" >${detail.content}</textarea>
-			<button type="submit">수정</button>
-	</form>
-		<a href="list.do">돌아가기</a>
-		
-		
+</form>
+
 </body>
-</html>
-<script>
-document.getElementById("boardId").value = ${detail.title};
+<script type="text/javascript">
+	var i = 0;
+	
+	$(document).ready(function() {
+	    $("a[name='file-delete']").on("click", function(e) {
+	        e.preventDefault();
+	        deleteFile($(this));
+	    });
+	    
+	    $(document).on("click", ".deleteBtn", function() {
+	        var fileId = $(this).data('file-id');
+	        var $button = $(this);
+	        
+	        $.ajax({
+	            url: "deleteFile.do",
+	            type: "POST",
+	            data: { fileId: fileId },
+	            success: function(result) {
+	                console.log("성공:", result);
+	                $button.parent().remove(); 
+	            },
+	            error: function() {
+	                
+	            }
+	        });
+	    });
+	});
+	
+	function addFile() {
+	    var str = "<div class='file-group'><input type='file' name='file'><a href='#this' name='file-delete'>삭제</a></div>";
+	    if(i < 5) {
+	        $("#file-list").append(str);
+	        i++;
+	    }
+	    
+	    $("a[name='file-delete']").on("click", function(e) {
+	        e.preventDefault();
+	        deleteFile($(this));
+	        if(i > 0) i--;
+	    });
+	}
+	
+	function deleteFile(obj) {
+	    obj.parent().remove();
+	}
 </script>
+</html>

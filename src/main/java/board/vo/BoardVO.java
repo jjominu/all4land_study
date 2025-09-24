@@ -11,7 +11,6 @@ public class BoardVO {
 	private int view ;
 	private String content ;
 	private Timestamp createTimestamp;
-	private String imgName;
 	public int getBoardId() {
 		return boardId;
 	}
@@ -41,12 +40,6 @@ public class BoardVO {
 	}
 	public void setCreateTimestamp(Timestamp createTimestamp) {
 		this.createTimestamp = createTimestamp;
-	}
-	public String getImgName() {
-		return imgName;
-	}
-	public void setImgName(String imgName) {
-		this.imgName = imgName;
 	}
 	
 }

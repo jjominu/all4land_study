@@ -14,21 +14,23 @@
 <%@ include file="../include/style.jsp"%>
 <jsp:include page="../include/header.jsp"></jsp:include>
 <jsp:include page="../include/footer.jsp"></jsp:include>
-<div  style="display: flex; justify-content: center; align-items: center; height: 50px; border: 1px solid black;">
+<div  >
 		<select name="searchType">
 			<option value="title" <c:if test="">selected</c:if>>제목</option>
 			<option value="content" <c:if test="">selected</c:if>>내용</option>
 		<!--  	<option value="title_text" <c:if test="'}">selected</c:if>>제목+내용</option>
 			<option value="nick" <c:if test="">selected</c:if>>작성자</option>-->
 		</select>
-
-
 		<input type="text" name="keyword" value="${bsrVO.keyword }"/>
-
-
 		<button type="button" id="searchBtn">검색</button>
+		
+		
 </div>
-<div style="display: flex; justify-content: center; align-items: center;">
+<div>
+ <c:if test="${empty list}">
+ <p>데이터카 없어요.</p>
+	 </c:if>
+ <c:if test="${not empty list}">
 <table border=3 >
 	<thead>
 		<tr  style="text-align: center;">
@@ -39,19 +41,24 @@
 	</thead>
 		
 	<tbody>
+	
+	 
+	 
 		<c:forEach items="${list}" var="list">
 			<tr >
 				<td><a href="getDetail.do?boardId=${list.boardId}">${list.title}</a></td>
 				<td>${list.view}</td>
-      			<td><fmt:formatDate pattern="yyyy-MM-dd  hh시mm분ss초" value="${list.createTimestamp }"/>
-</td>
-      
+      			<td><fmt:formatDate pattern="yyyy-MM-dd  hh시mm분ss초" value="${list.createTimestamp }"/></td>
 			</tr>
 		</c:forEach>
+		 
 		
 	</tbody>
+	
 </table>
+</c:if>
 </div>
+
 <a href="callBoardWrite.do">작성</a>
 
   <ul class="btn-group pagination">

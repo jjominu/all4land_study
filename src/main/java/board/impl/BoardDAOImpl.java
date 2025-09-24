@@ -11,6 +11,7 @@ import board.BoardDAO;
 import board.vo.BoardSearchRequestVO;
 import board.vo.BoardVO;
 import board.vo.CriteriaVO;
+import board.vo.FileVO;
 
 @Repository
 public class BoardDAOImpl implements BoardDAO {
@@ -31,8 +32,8 @@ public class BoardDAOImpl implements BoardDAO {
 	}
 	
 	@Override
-	public void insertBoard(BoardVO boardVO) {
-		sqlSession.insert("board.insertBoard",boardVO);
+	public int insertBoard(BoardVO boardVO) {
+		return sqlSession.selectOne("board.insertBoard",boardVO);
 		
 	}
 	
@@ -67,5 +68,23 @@ public class BoardDAOImpl implements BoardDAO {
 		
 		return  sqlSession.selectOne("board.totalBoardCntbySearch",vo);
 	}
+
+	@Override
+	public void uploadFile(FileVO fileVO) {
+
+		sqlSession.insert("board.uploadFile",fileVO);
+	}
+
+	@Override
+	public List<FileVO> getFile(int boardId) {
+		return sqlSession.selectList("board.getFiles",boardId);
+	}
+
+	@Override
+	public void deleteFile(int fileId) {
+
+		sqlSession.delete("board.deleteFile",fileId);
+	}
+	
 
 }

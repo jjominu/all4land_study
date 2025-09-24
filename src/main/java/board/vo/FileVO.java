@@ -1,42 +1,49 @@
 package board.vo;
 
 public class FileVO {
-	public class BoardFileVO {
-		private int seq;
-		private int fseq;
-		private String originalFileName;
-		private String filePath;
-		private long fileSize;
-		public int getSeq() {
-			return seq;
-		}
-		public void setSeq(int seq) {
-			this.seq = seq;
-		}
-		public int getFseq() {
-			return fseq;
-		}
-		public void setFseq(int fseq) {
-			this.fseq = fseq;
-		}
-		public String getOriginalFileName() {
-			return originalFileName;
-		}
-		public void setOriginalFileName(String originalFileName) {
-			this.originalFileName = originalFileName;
-		}
-		public String getFilePath() {
-			return filePath;
-		}
-		public void setFilePath(String filePath) {
-			this.filePath = filePath;
-		}
-		public long getFileSize() {
-			return fileSize;
-		}
-		public void setFileSize(long fileSize) {
-			this.fileSize = fileSize;
-		}
-		
-}
+	private int boardId;
+	private int fileId;
+	private String originFileName;
+	private String saveFileName;
+	private int fileSize;
+	private String fileType;
+	public int getBoardId() {
+		return boardId;
+	}
+	public void setBoardId(int boardId) {
+		this.boardId = boardId;
+	}
+	public int getFileId() {
+		return fileId;
+	}
+	public void setFileId(int fileId) {
+		this.fileId = fileId;
+	}
+	public String getOriginFileName() {
+		return originFileName;
+	}
+	public void setOriginFileName(String originFileName) {
+		this.originFileName = originFileName;
+	}
+	public String getSaveFileName() {
+		return saveFileName;
+	}
+	public void setSaveFileName(String saveFileName) {
+		this.saveFileName = saveFileName;
+	}
+	public int getFileSize() {
+		return fileSize;
+	}
+	public void setFileSize(int fileSize) {
+		this.fileSize = fileSize;
+	}
+	public String getFileType() {
+		return fileType;
+	}
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
+	}
+	
+	
+	
 	}
