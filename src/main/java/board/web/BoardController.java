@@ -42,8 +42,7 @@ public class BoardController {
 	  
 	    pageUtil.setCri(cri);
 	    pageUtil.setTotalCount(bs.totalBoardCnt());
-	    System.out.println("CRI.page"+cri.getPage());
-	    System.out.println("CRI.pagePer"+cri.getPerPageNum());
+	    
 
 		List<BoardVO> list = bs.getList(cri);
 		ModelAndView mav = new ModelAndView();
@@ -61,16 +60,6 @@ public class BoardController {
 		return mav;
 	}
 	
-	
-//	@RequestMapping("/insertBoard.do")
-//	public ModelAndView insertBoard(HttpServletRequest request)throws Exception {
-//		BoardVO boardVO = new BoardVO();
-//		boardVO.setTitle(request.getParameter("title"));
-//		boardVO.setContent(request.getParameter("content"));
-//		bs.insertBoard(boardVO);
-//		ModelAndView mav = new ModelAndView("redirect:/board/list.do");
-//		return mav;
-//	}
 	
 	
 	@RequestMapping(value ="/getDetail.do",method=RequestMethod.GET)//상세정봊조ㅗㅎ
@@ -102,10 +91,7 @@ public class BoardController {
 	@RequestMapping(value="/callBoardUpdate.do", method=RequestMethod.POST)
 	public ModelAndView callboardUpdate(@RequestParam("boardId") String boardId)throws Exception {
 		BoardVO detail = bs.getDetail(Integer.parseInt(boardId) );
-		ModelAndView mav = new ModelAndView("/board/boardUpdate");
-		List<String> result = new ArrayList<String>();
-
-		
+		ModelAndView mav = new ModelAndView("/board/boardUpdate");		
 		List<FileVO> fileVO = bs.getFile(detail.getBoardId());
 		
 		mav.addObject("detail",detail);
@@ -125,27 +111,19 @@ public class BoardController {
 		int insertId = boardVO.getBoardId();
 		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>"+insertId);
 		if(file!=null) {
-		for(MultipartFile vo:file )  {
-            System.out.println  ("================== file start ==================");
-            System.out.println("파일 이름: "+vo.getName());
-            System.out.println("파일 실제 이름: "+vo.getOriginalFilename());
-            System.out.println("파일 크기: "+vo.getSize());
-            System.out.println("content type: "+vo.getContentType());
-            System.out.println("================== file   END ==================");
-            String savedName =vo.getOriginalFilename();
-    		if(!savedName.isEmpty()) {
-    			    		
-    			bs.uploadFile(common.FileUtils.uploadFile(vo,insertId));
-    			
-    		}
-		}}
-		return new ModelAndView("redirect:/board/list.do");
+			for(MultipartFile vo:file )  {
+	            String savedName =vo.getOriginalFilename();
+	    		if(!savedName.isEmpty()) {
+	    			    		
+	    			bs.uploadFile(common.FileUtils.uploadFile(vo,insertId));
+	    			
+	    		}
+			}
 		}
+		return new ModelAndView("redirect:/board/list.do");
+	}
 	
-	//	@RequestMapping("/input.do")
-//	public String input() {
-//		return "upload/input";
-//    }
+
   
 	@RequestMapping(value="/upload.do", method=RequestMethod.POST)
     public ModelAndView upload(MultipartFile[] file,HttpServletRequest request) throws Exception {
@@ -196,21 +174,14 @@ public class BoardController {
 		mav.addObject("pageUtil",pageUtil);
 		mav.addObject("bsrVO",bsrVO);
 
-
 		return mav;
 	}
+	
 	@RequestMapping(value="/deleteFile.do",method=RequestMethod.POST)
 	public void deleteFile(HttpServletRequest req) {
 		int id = Integer.parseInt(req.getParameter("fileId"));
 		bs.deleteFile(id);
 	}
 	
-	
-	
 
-
-   
-  
-	
-	
 }

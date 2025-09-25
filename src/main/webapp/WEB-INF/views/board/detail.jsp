@@ -8,7 +8,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>게시판 상세</title>
 </head>
 <%@ include file="../include/style.jsp"%>
 <jsp:include page="../include/header.jsp"></jsp:include>
@@ -56,7 +56,8 @@
         
     </table>
      
-    		<a href="list.do">돌아가기</a>
+    		
+    		<button onclick="window.history.back();">돌아가기</button>
     		<form action="delete.do?boardId=${detail.boardId}" method="post">
 		   		<input type="hidden" name="boardId" value="${detail.boardId}">
 		    <button type="submit" class="link-button">삭제하기</button>

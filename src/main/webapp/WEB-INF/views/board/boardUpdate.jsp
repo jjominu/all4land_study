@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>게시판</title>
+<title>게시판 수정</title>
 </head>
 <%@ include file="../include/style.jsp"%>
 <jsp:include page="../include/header.jsp"></jsp:include>
@@ -33,7 +33,8 @@
 		</c:forEach>
 	</div>
 	<input type="submit" value="작성하기">
-	<a href="list.do">돌아가기</a>
+	<button onclick="window.history.back();">돌아가기</button>
+
 
 </form>
 

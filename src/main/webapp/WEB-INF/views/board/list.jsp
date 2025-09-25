@@ -8,16 +8,16 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>게시판</title>
 </head>
 <body>
 <%@ include file="../include/style.jsp"%>
 <jsp:include page="../include/header.jsp"></jsp:include>
 <jsp:include page="../include/footer.jsp"></jsp:include>
 <div  >
-		<select name="searchType">
-			<option value="title" <c:if test="">selected</c:if>>제목</option>
-			<option value="content" <c:if test="">selected</c:if>>내용</option>
+		<select name="searchType" >
+			<option value="title" <c:if test="${bsrVO.searchType=='title'}">selected</c:if>>제목</option>
+			<option value="content" <c:if test="${bsrVO.searchType=='content'}">selected</c:if>>내용</option>
 		<!--  	<option value="title_text" <c:if test="'}">selected</c:if>>제목+내용</option>
 			<option value="nick" <c:if test="">selected</c:if>>작성자</option>-->
 		</select>
@@ -48,7 +48,7 @@
 			<tr >
 				<td><a href="getDetail.do?boardId=${list.boardId}">${list.title}</a></td>
 				<td>${list.view}</td>
-      			<td><fmt:formatDate pattern="yyyy-MM-dd  hh시mm분ss초" value="${list.createTimestamp }"/></td>
+      			<td><fmt:formatDate pattern="yyyy-MM-dd  HH시mm분" value="${list.createTimestamp }"/></td>
 			</tr>
 		</c:forEach>
 		 
@@ -62,6 +62,8 @@
 <a href="callBoardWrite.do">작성</a>
 
   <ul class="btn-group pagination">
+  	<c:if test="${empty bsrVO }">
+  
     <c:if test="${pageUtil.prev}">
 	    <li>
 	        <a href='<c:url value="/board/list.do?page=${pageUtil.startPage-1 }"/>'><i class="fa ">이전</i></a>
@@ -77,7 +79,29 @@
 	        <a href='<c:url value="/board/list.do?page=${pageUtil.endPage+1 }"/>'><i class="fa ">다음</i></a>
 	    </li>
     </c:if>
+    </c:if>
+    
+    
+    
+    <c:if test="${not empty bsrVO }">
+     <c:if test="${pageUtil.prev}">
+     <li>
+	        <a href='<c:url value="/board/search.do?searchType=${bsrVO.searchType}&keyword=${bsrVO.keyword}&page=${pageUtil.startPage-1 }"/>'><i class="fa ">이전</i></a>
+	    </li>
+    </c:if>
+    <c:forEach begin="${pageUtil.startPage }" end="${pageUtil.endPage }" var="pageNum">
+	    <li>
+	        <a href='<c:url value="/board/search.do?searchType=${bsrVO.searchType}&keyword=${bsrVO.keyword}&page=${pageNum }"/>'><i class="fa">${pageNum }</i></a>
+	    </li>
+    </c:forEach>
+    <c:if test="${pageUtil.next && pageUtil.endPage >0 }">
+	    <li>
+	        <a href='<c:url value="/board/search.do?searchType=${bsrVO.searchType}&keyword=${bsrVO.keyword}&page=${pageUtil.endPage+1 }"/>'><i class="fa ">다음</i></a>
+	    </li>
+    </c:if>
+    </c:if>
 </ul>
+
 </body>
 <script>
 	
