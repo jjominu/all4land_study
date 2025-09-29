@@ -29,7 +29,9 @@ public class FileUtils {
 	        fileVO.setSaveFileName(uid.toString());
 	        fileVO.setBoardId(insertId);
 	        fileVO.setFileSize((int)file.getSize());
+	        System.out.println((int)file.getSize());
 	        fileVO.setFileType(file.getContentType());
+	        
 	        File target = new File(upload_path,fileVO.getSaveFileName()+fileVO.getOriginFileName());
 	        FileCopyUtils.copy(file.getBytes(), target);
 	        return fileVO; 

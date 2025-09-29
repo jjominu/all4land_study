@@ -10,7 +10,7 @@
 <jsp:include page="../include/header.jsp"></jsp:include>
 <jsp:include page="../include/footer.jsp"></jsp:include>
 <body>
-<div class="mb-3">
+<div class="container">
 	<form id="form1" class="form-group"action="upload.do" method="post" enctype="multipart/form-data" >
 	 	<th scope="row">제목</th>
 	 
@@ -23,18 +23,18 @@
 		
 		
 		<div class="form-group" id="file-list">
-        	<a href="#this" onclick="addFile()">파일추가</a>
-	        <div class="file-group">
-	            <input class="form-control" type="file" name="file"><a href='#this' name='file-delete'>삭제</a>
-	        </div>
+        	<button class="btn btn-primary" type="button" onclick="addFile()" >파일추가</button>
+        	
+	        <div class="file-group"><input class="form-control" type="file" name="file"><a href='#this' name='file-delete'>삭제</a></div>
     	</div>
 		<p>
-		<input type="submit" value="작성하기">
+		<input class="form-control" type="submit"  value="작성하기">
 	</form>
 	<p>
 		<button class="btn btn-primary" onclick="window.history.back();">돌아가기</button>
+</div>
+</body>
 
- </body>
  <script type="text/javascript">
  var i = 1;
     $(document).ready(function() {
@@ -46,16 +46,22 @@
  
     function addFile() {
     	
-        var str = "<div class='file-group'><input type='file' name='file'><a href='#this' name='file-delete'>삭제</a></div>";
+        
+         var str="<div class='file-group'><input class='form-control' type='file' name='file'><a href='#this' name='file-delete'>삭제</a></div>"
         if(i<5){
 	        $("#file-list").append(str);
 	        i++;
+	        console.log(i);
         }
         $("a[name='file-delete']").on("click", function(e) {
         	
             e.preventDefault();
             deleteFile($(this));
-            if(i>0)i--;
+            if(i>0){
+            	i=i-1;
+            	};
+	        console.log(i);
+
         	
             
         });

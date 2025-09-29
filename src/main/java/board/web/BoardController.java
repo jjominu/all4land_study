@@ -33,10 +33,10 @@ public class BoardController {
 	
 
 	@RequestMapping(value="/list.do",method=RequestMethod.GET)//리스트 조회
-	public ModelAndView list(HttpServletRequest request) throws Exception{
+	public ModelAndView list(@RequestParam( defaultValue = "1") int page ) throws Exception{
 
 		CriteriaVO cri = new CriteriaVO();
-		if(request.getParameter("page")!=null)cri.setPage(Integer.parseInt(request.getParameter("page")));
+		cri.setPage(page);
 		
 	    PageUtil pageUtil = new PageUtil();
 	  
@@ -62,9 +62,9 @@ public class BoardController {
 	
 	
 	
-	@RequestMapping(value ="/getDetail.do",method=RequestMethod.GET)//상세정봊조ㅗㅎ
-	public ModelAndView getDetail(HttpServletRequest request)throws Exception {
-		BoardVO detail = bs.getDetail(Integer.parseInt(request.getParameter("boardId")));
+	@RequestMapping(value ="/getDetail.do",method=RequestMethod.POST)//상세정봊조ㅗㅎ
+	public ModelAndView getDetail(@RequestParam("boardId") int boardId) throws Exception {
+		BoardVO detail = bs.getDetail(boardId);
 		List<String> result = new ArrayList<String>();
 
 		
@@ -83,8 +83,8 @@ public class BoardController {
 
 	
 	@RequestMapping(value="/delete.do" ,method=RequestMethod.POST)
-	public ModelAndView deleteBoard(HttpServletRequest request)throws Exception {
-		bs.deleteBoard(Integer.parseInt(request.getParameter("boardId"))  );
+	public ModelAndView deleteBoard(@RequestParam int boardId)throws Exception {
+		bs.deleteBoard(boardId);
 		return new ModelAndView("redirect:/board/list.do");
 	}
 	
@@ -101,12 +101,14 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value ="/updateBoard.do" , method=RequestMethod.POST)
-	public ModelAndView boardUpdate(MultipartFile[] file,HttpServletRequest request)throws Exception {
+	public ModelAndView boardUpdate(MultipartFile[] file,@RequestParam int boardId,
+														 @RequestParam String title,
+														 @RequestParam String content)throws Exception {
 		
 		BoardVO boardVO = new BoardVO();
-		boardVO.setBoardId(Integer.parseInt(request.getParameter("boardId")));
-		boardVO.setTitle(request.getParameter("title"));
-		boardVO.setContent(request.getParameter("content"));
+		boardVO.setBoardId(boardId);
+		boardVO.setTitle(title);
+		boardVO.setContent(content);
 		bs.updateBoard(boardVO);
 		int insertId = boardVO.getBoardId();
 		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>"+insertId);
@@ -126,10 +128,10 @@ public class BoardController {
 
   
 	@RequestMapping(value="/upload.do", method=RequestMethod.POST)
-    public ModelAndView upload(MultipartFile[] file,HttpServletRequest request) throws Exception {
+    public ModelAndView upload(MultipartFile[] file,@RequestParam String title,@RequestParam String content) throws Exception {
 		BoardVO boardVO = new BoardVO();
-		boardVO.setTitle(request.getParameter("title"));
-		boardVO.setContent(request.getParameter("content"));
+		boardVO.setTitle(title);
+		boardVO.setContent(content);
 		int insertId = bs.insertBoard(boardVO);
 		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>"+insertId);
 		for(MultipartFile vo:file )  {
@@ -153,13 +155,14 @@ public class BoardController {
     }
 	
 	@RequestMapping(value="/search.do", method=RequestMethod.GET)
-	public ModelAndView search(HttpServletRequest request) {
+	public ModelAndView search(@RequestParam String searchType,
+								@RequestParam String keyword,
+								@RequestParam( defaultValue = "1") int page) {
 		BoardSearchRequestVO bsrVO = new BoardSearchRequestVO();
 		
-	    	
-		bsrVO.setSearchType(request.getParameter("searchType"));
-		bsrVO.setKeyword(request.getParameter("keyword"));
-		if(request.getParameter("page")!=null)bsrVO.setPage(Integer.parseInt(request.getParameter("page")));
+		bsrVO.setSearchType(searchType);
+		bsrVO.setKeyword(keyword);
+		bsrVO.setPage(page);
 		
 		
 		PageUtil pageUtil = new PageUtil(); 
@@ -178,9 +181,8 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/deleteFile.do",method=RequestMethod.POST)
-	public void deleteFile(HttpServletRequest req) {
-		int id = Integer.parseInt(req.getParameter("fileId"));
-		bs.deleteFile(id);
+	public void deleteFile(@RequestParam int fileId) {
+		bs.deleteFile(fileId);
 	}
 	
 

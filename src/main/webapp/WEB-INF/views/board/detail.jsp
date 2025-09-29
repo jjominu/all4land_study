@@ -14,59 +14,57 @@
 <jsp:include page="../include/header.jsp"></jsp:include>
 <jsp:include page="../include/footer.jsp"></jsp:include>
 <body>
+<div class="container">
+        <div class="card-body">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th style="width: 15%">제목</th>
+                        <td>${detail.title}</td>
+                    </tr>
+                    <tr>
+                        <th>내용</th>
+                        <td>${fn:replace(detail.content,replaceChar,"<br/>")}</td>
+                    </tr>
+                    <tr>
+                        <th>조회수</th>
+                        <td>${detail.view}</td>
+                    </tr>
+                    <tr>
+                        <th>첨부파일</th>
+                        <td>
+                            <c:if test="${empty result}">
+                                <span>첨부파일이 없습니다.</span>
+                            </c:if>
+                            <c:if test="${not empty result}">
+                                <c:forEach items="${result}" var="result">
+                                    <img src='${result}' class="img-thumbnail" style="max-width: 20%; min-height: 20px;">
+                                </c:forEach>
+                            </c:if>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
- <h2>상세페이지</h2>
+
  
+    <div class="mt-3">
+        <button onclick="window.history.back();" class="btn btn">돌아가기</button>
+        
+        <form action="delete.do?boardId=${detail.boardId}" method="post" class="d-inline">
+            <input type="hidden" name="boardId" value="${detail.boardId}">
+            <button type="submit" class="btn">삭제하기</button>
+        </form>
+        
+        <form action="callBoardUpdate.do" method="post" class="d-inline">
+            <input type="hidden" name="boardId" value="${detail.boardId}">
+            <button type="submit" class="btn">수정하기</button>
+        </form>
+    </div>
 
-    <table border="1">
-        <tr>
-            <td>제목</td>
-            <td>${detail.title}</td>
-        </tr>
-       
-        <tr>
-            <td>내용</td>
-            <td>${fn:replace(detail.content,replaceChar,"<br/>")}</td> <!-- <br/>을 <\n>올 변환 -->
-        </tr>
-       
-        <tr>
-            <td>조회수</td>
-            <td>${detail.view}</td>
-        </tr>
-         <tr>
-            <td>사진</td>
-          <c:if test="${empty result}">
-	          <td>
-	          	사진이 없습니다.
-	          </td>
-          </c:if>
-            <c:if test="${not empty result}">
-	            <td>
-	             <c:forEach items="${result}" var="result">
-				   
-				        <img src='${result}'style="max-width:20%; min-height:20px "border=2>
-				   
-    			</c:forEach>
-	            	
-	            </td>
-            </c:if>
-            
-        </tr>
-        
-        
-    </table>
-     
-    		
-    		<button onclick="window.history.back();">돌아가기</button>
-    		<form action="delete.do?boardId=${detail.boardId}" method="post">
-		   		<input type="hidden" name="boardId" value="${detail.boardId}">
-		    <button type="submit" class="link-button">삭제하기</button>
-		    </form>
-		    
-    	 	<form action="callBoardUpdate.do" method="post">
-		   		<input type="hidden" name="boardId" value="${detail.boardId}">
-		    <button type="submit" class="link-button">수정하기</button>
-</form>
+</div>
+
 </body>
 <script>
 

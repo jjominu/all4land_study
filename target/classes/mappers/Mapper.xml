@@ -7,7 +7,6 @@
 		<result column="view" property="view" />
 		<result column="content" property="content" />
 		<result column="create_timestamp" property="createTimestamp"/>
-		<result column="img_name" property="imgName"/>
 	</resultMap>
 
 
@@ -80,7 +79,7 @@
     	
     </select>
     <insert id="uploadFile" parameterType="fileVO">
-    	insert into tb_file( board_id,origin_file_name,save_file_name,file_type) values(#{boardId},#{originFileName},#{saveFileName},#{fileType}) 
+    	insert into tb_file( board_id,origin_file_name,save_file_name,file_type,file_size) values(#{boardId},#{originFileName},#{saveFileName},#{fileType},#{fileSize}) 
     </insert>
     
      <select id="getFiles" resultType="FileVO" parameterType="int">
