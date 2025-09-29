@@ -1,9 +1,6 @@
-board\FileVO.class
-board\BoardVO.class
+board\impl\BoardDAOImpl.class
 board\BoardService.class
-board\FileVO$BoardFileVO.class
 board\BoardDAO.class
 board\impl\BoardServiceImpl.class
 common\FileUtils.class
 board\web\BoardController.class
-board\impl\BoardDAOImpl.class

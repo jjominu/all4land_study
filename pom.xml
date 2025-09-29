@@ -79,6 +79,12 @@
 	 		<version>1.4</version>
  		</dependency>
 
+<dependency>
+    <groupId>org.hibernate.validator</groupId>
+    <artifactId>hibernate-validator</artifactId>
+    <version>6.0.10.Final</version>
+</dependency>
+
 
         <dependency>
 		    <groupId>org.egovframe.rte</groupId>

@@ -32,7 +32,7 @@
 		 <button type="button" id="searchBtn" class="btn btn-primary"  style="min-width: 100px;">검색</button>
 	</div>
 
-	<c:if test="${empty list}"><p>데이터카 없어요.</p></c:if>
+	<c:if test="${empty list}"><p>데이터가 없어요.</p></c:if>
 	<c:if test="${not empty list}">
 		<table border=3 class="table" >
 			<thead>

@@ -18,11 +18,11 @@
 	<p>
 	<th scope="row">제목</th>
 	<p>
-	<input class="form-control" type="text" id="title" name="title" value="${detail.title}">
+	<input class="form-control" type="text" id="title" name="title"  value="${detail.title}" required maxlength="20">
 	<p>
 	<tr scope="row">내용</tr>
 	<p>
-	<textarea class="form-control" rows="10" cols="50" name="content">${detail.content}</textarea>
+	<textarea class="form-control" rows="10" cols="50" name="content" required maxlength="1000">${detail.content}</textarea>
 	<p>
 	<th scope="row">파일</th>
 	<div class="form-group" id="file-list">

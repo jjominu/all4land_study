@@ -14,11 +14,11 @@
 	<form id="form1" class="form-group"action="upload.do" method="post" enctype="multipart/form-data" >
 	 	<th scope="row">제목</th>
 	 
-	 	<input class="form-control" type="text" id ="TITLE" name="title" required>
+	 	<input class="form-control" type="text" id ="title" name="title" required maxlength="20">
 	 
 	 	<td scope="row">내용</td>
 	 	<p>
-		<textarea  class="form-control" rows="5" cols="50" name="content" required></textarea>
+		<textarea  class="form-control" rows="5" cols="50" name="content" required maxlength="1000"></textarea>
 	
 		
 		
@@ -37,6 +37,7 @@
 
  <script type="text/javascript">
  var i = 1;
+ var max= 5;
     $(document).ready(function() {
         $("a[name='file-delete']").on("click", function(e) {
             e.preventDefault();
@@ -53,23 +54,11 @@
 	        i++;
 	        console.log(i);
         }
-        $("a[name='file-delete']").on("click", function(e) {
-        	
-            e.preventDefault();
-            deleteFile($(this));
-            if(i>0){
-            	i=i-1;
-            	};
-	        console.log(i);
-
-        	
-            
-        });
+  
     }
  
     function deleteFile(obj) {
         obj.parent().remove();
     }
 </script>
- 
 </html>

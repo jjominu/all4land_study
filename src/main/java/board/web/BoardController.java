@@ -7,7 +7,11 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,6 +30,7 @@ import common.PageUtil;
 
 @RestController
 @RequestMapping("/board")
+@Validated
 public class BoardController {
 	
 	@Resource
@@ -102,8 +107,9 @@ public class BoardController {
 	
 	@RequestMapping(value ="/updateBoard.do" , method=RequestMethod.POST)
 	public ModelAndView boardUpdate(MultipartFile[] file,@RequestParam int boardId,
-														 @RequestParam String title,
+			@NotNull @RequestParam String title,
 														 @RequestParam String content)throws Exception {
+		try {
 		
 		BoardVO boardVO = new BoardVO();
 		boardVO.setBoardId(boardId);
@@ -122,13 +128,17 @@ public class BoardController {
 	    		}
 			}
 		}
+	}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 		return new ModelAndView("redirect:/board/list.do");
 	}
 	
 
   
 	@RequestMapping(value="/upload.do", method=RequestMethod.POST)
-    public ModelAndView upload(MultipartFile[] file,@RequestParam String title,@RequestParam String content) throws Exception {
+    public ModelAndView upload(MultipartFile[] file,@NotBlank String title,@RequestParam String content) throws Exception {
 		BoardVO boardVO = new BoardVO();
 		boardVO.setTitle(title);
 		boardVO.setContent(content);

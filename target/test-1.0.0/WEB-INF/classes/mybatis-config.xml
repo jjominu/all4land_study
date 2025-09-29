@@ -3,9 +3,14 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+    <settings><setting name="mapUnderscoreToCamelCase" value="true"/></settings>
 
     <typeAliases>
-       <typeAlias alias="BoardVO" type="board.BoardVO"/>
+       <typeAlias alias="BoardVO" type="board.vo.BoardVO"/>
+       <typeAlias alias="BoardSearchRequestVO" type="board.vo.BoardSearchRequestVO"/>
+       <typeAlias alias="CriteriaVO" type="board.vo.CriteriaVO"/>
+       <typeAlias alias="FileVO" type="board.vo.FileVO"/>
+       
     </typeAliases>
 
 </configuration>

@@ -7,7 +7,7 @@ import board.vo.BoardVO;
 import board.vo.CriteriaVO;
 import board.vo.FileVO;
 
-public interface BoardDAO {
+public interface BoardDAO{
 
 	public List<BoardVO> getList(CriteriaVO cri);
 	public void deleteBoard(int id);
