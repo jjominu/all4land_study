@@ -26,4 +26,6 @@
     </bean>
 
     <context:component-scan base-package="board"/>
+    <context:component-scan base-package="board.web, map"/>
+    
 </beans>

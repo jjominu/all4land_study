@@ -10,8 +10,6 @@ import javax.validation.constraints.NotNull;
 public class BoardVO {
 
 	private int boardId;
-
-	@NotBlank(message = "dasdsa")
 	private String title;
 	private int view ;
 	private String content ;
