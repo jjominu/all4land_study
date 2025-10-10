@@ -3,6 +3,7 @@
        <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> <!-- c라는 거 쓸려면 이거 필수 ! -->
        <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
        <% pageContext.setAttribute("replaceChar","\n"); %> <!-- "\n" 이라는 객체 생성 -->
+       <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
     
 <!DOCTYPE html>
 <html>
@@ -62,7 +63,45 @@
             <button type="submit" class="btn">수정하기</button>
         </form>
     </div>
-
+    <table class="table mt-5" >
+			<thead>
+				<tr  style="text-align: center;">
+					
+					
+				</tr>
+			</thead>
+		<tbody>
+		<c:if test="${not empty nextBoard }">
+				<tr>
+				
+				<td>다음글</td>
+				<td>
+					<form action="getDetail.do" method="post" class="d-inline">
+			            <input type="hidden" name="boardId" value="${nextBoard.boardId}">
+			            <button type="submit" class="btn">${nextBoard.title}</button>
+		        	</form>
+	        	</td>
+				<td style="text-align: center;">${nextBoard.view}</td>
+      			<td style="text-align: center;"><fmt:formatDate pattern="yyyy-MM-dd  HH시mm분" value="${nextBoard.createTimestamp}"/></td>
+      			
+			</tr>
+			</c:if>
+			<c:if test="${not empty previousBoard }">
+			<tr>
+				<td>이전글</td>
+				<td>
+					<form action="getDetail.do" method="post" class="d-inline">
+			            <input type="hidden" name="boardId" value="${previousBoard.boardId}">
+			            <button type="submit" class="btn">${previousBoard.title}</button>
+		        	</form>
+	        	</td>
+				<td style="text-align: center;">${previousBoard.view}</td>
+      			<td style="text-align: center;"><fmt:formatDate pattern="yyyy-MM-dd  HH시mm분" value="${previousBoard.createTimestamp}"/></td>
+      			
+			</tr>
+			</c:if>
+			</tbody>
+			</table>	
 </div>
 
 </body>

@@ -90,4 +90,33 @@
    <delete id="deleteFile" parameterType="int">
    			delete from tb_file where file_id = ${file_id}
    </delete>
+   
+   <select id="nextBoard" parameterType="int" resultType="BoardVO">
+select *
+from tb_board tb 
+where tb.board_id = (select previous_value
+from (SELECT
+    *,
+    lead(t.board_id, 1, 0) OVER (
+        ORDER BY create_timestamp
+    ) AS previous_value
+FROM
+    tb_board t) as f 
+    where f.board_id =#{id})
+   </select>
+   
+     <select id="previousBoard" parameterType="int"  resultType="BoardVO">
+select *
+from tb_board tb 
+where tb.board_id = (select previous_value
+from (SELECT
+    *,
+    lag(t.board_id, 1, 0) OVER (
+        ORDER BY create_timestamp
+    ) AS previous_value
+FROM
+    tb_board t) as f 
+    where f.board_id =#{id})
+    
+   </select>
 </mapper>

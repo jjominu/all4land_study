@@ -19,6 +19,7 @@ public class BoardServiceImpl implements BoardService{
 	@Resource
 	BoardDAO boardDAO;
 	
+
 	@Override
 	public List<BoardVO> getList(CriteriaVO cri) {
 		return boardDAO.getList(cri);
@@ -87,7 +88,17 @@ public class BoardServiceImpl implements BoardService{
 
 		boardDAO.deleteFile(file_id);
 	}
-	
+	@Override
+	public  BoardVO nextBoard(int id) {
+
+		return boardDAO.nextBoard(id);
+	}
+
+	@Override
+	public BoardVO previousBoard(int boardId) {
+		return boardDAO.previousBoard(boardId);
+	}
+
 
 	
 }

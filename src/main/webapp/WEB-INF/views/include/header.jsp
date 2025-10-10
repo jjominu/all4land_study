@@ -20,7 +20,7 @@
 		<div class="collapse navbar-collapse" id="navbarNav">
 			<ul class="navbar-nav">
 				<li class="nav-item"><a class="nav-link active"
-					aria-current="page" href="list.do">Home</a></li>
+					aria-current="page" href="home">Home</a></li>
 				<li class="nav-item"><a class="nav-link" href="list.do">Board</a>
 				</li>
 				<li class="nav-item"><a class="nav-link disabled" href="#">Disabled</a>

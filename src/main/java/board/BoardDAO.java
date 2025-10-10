@@ -20,4 +20,6 @@ public interface BoardDAO{
 	public void uploadFile(FileVO fileVO);
 	public List<FileVO> getFile(int boardId);
 	public void deleteFile(int fileId);
+	public  BoardVO nextBoard(int id);
+	public BoardVO previousBoard(int boardId);
 }

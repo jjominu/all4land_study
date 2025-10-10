@@ -20,4 +20,6 @@ public interface BoardService {
 	public void uploadFile(FileVO fileVO);
 	public List<FileVO> getFile(int id);
 	public void deleteFile(int fileId);
+	public  BoardVO nextBoard(int id);
+	public BoardVO previousBoard(int boardId);
 }

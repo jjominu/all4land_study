@@ -70,6 +70,9 @@ public class BoardController {
 	@RequestMapping(value ="/getDetail.do",method=RequestMethod.POST)//상세정봊조ㅗㅎ
 	public ModelAndView getDetail(@RequestParam("boardId") int boardId) throws Exception {
 		BoardVO detail = bs.getDetail(boardId);
+		BoardVO nextBoard = bs.nextBoard(boardId);
+		BoardVO previousBoard= bs.previousBoard(boardId);
+		
 		List<String> result = new ArrayList<String>();
 
 		
@@ -83,6 +86,10 @@ public class BoardController {
 		mav.setViewName("board/detail");
 		mav.addObject("detail", detail);
 		mav.addObject("result",result);
+		mav.addObject("nextBoard",nextBoard);
+		mav.addObject("previousBoard",previousBoard);
+
+		
 		return mav;
 	}
 

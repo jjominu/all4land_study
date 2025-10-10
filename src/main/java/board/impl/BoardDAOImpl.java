@@ -85,6 +85,18 @@ public class BoardDAOImpl implements BoardDAO {
 
 		sqlSession.delete("board.deleteFile",fileId);
 	}
+
+	@Override
+	public  BoardVO nextBoard(int id) {
+		return sqlSession.selectOne("board.nextBoard",id);
+	}
+
+	@Override
+	public BoardVO previousBoard(int boardId) {
+		
+		return sqlSession.selectOne("board.previousBoard",boardId);
+	}
+	
 	
 
 }
