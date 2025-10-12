@@ -21,25 +21,22 @@
   </style>
 
   <script type="text/javascript">
-    /* ===================== 전역 설정 ===================== */
-    var map, selectControl = null;
-
-    // ▶ 해양공간정보(WFS) 키
+    var map;
+    var selectControl = null;
     var KHOA_WFS_SERVICE_KEY = "2CFD93CC10232E97916E89B14";  // 네 키
-
-    // ▶ GeoServer WMS (필요시 바꿔도 됨)
     var GS_WMS_URL  = "http://localhost:9090/geoserver/map/wms";
     var GS_LAYER_NAME = "map:places"; // 네임스페이스:레이어명
-
-    // ▶ 지도 초기값 (EPSG:5179)
-    var mapCenterX = 956498.5710969, mapCenterY = 1819967.0629328;
-    var numZoomLevels = 11, zoomLevel = 1, minZoomLevel = 0;
+    var mapCenterX = 956498.5710969
+    var mapCenterY = 1819967.0629328;
+    var numZoomLevels = 11
+    var zoomLevel = 1
+    var minZoomLevel = 0;
+    
     var mapBounds = new OpenLayers.Bounds(123, 32, 132, 43);
 
     OpenLayers.IMAGE_RELOAD_ATTEMPTS = 3;
     OpenLayers.Util.onImageLoadErrorColor = "transparent";
 
-    /* ===================== 초기화 ===================== */
     function init() {
       var options = {
         projection: new OpenLayers.Projection("EPSG:5179"),
@@ -56,12 +53,8 @@
       map = new OpenLayers.Map("map", options);
 
       // 1) 개방海 베이스맵
-      if (typeof window.OtmsLayer !== "undefined" && window.OtmsLayer) {
-        map.addLayer(window.OtmsLayer);
-      } else {
-        alert("개방海 베이스맵(OtmsLayer)을 불러오지 못했습니다.");
-      }
-
+      map.addLayer(window.OtmsLayer);
+     
       // 2) 기본 컨트롤
       map.addControl(new OpenLayers.Control.Navigation());
       map.addControl(new OpenLayers.Control.LayerSwitcher());
@@ -102,53 +95,12 @@
       map.addLayer(gsWmsLayer);
     }
 
-    /* --- (선택) 클릭 시 WMS GetFeatureInfo --- */
-    function enableWmsGetFeatureInfo() {
-      map.events.register('singleclick', map, function(evt) {
-        if (!gsWmsLayer) return;
-        var params = {
-          REQUEST: "GetFeatureInfo",
-          EXCEPTIONS: "application/vnd.ogc.se_xml",
-          BBOX: map.getExtent().toBBOX(),
-          X: Math.floor(evt.xy.x),
-          Y: Math.floor(evt.xy.y),
-          INFO_FORMAT: "text/html",   // 필요시 application/vnd.ogc.gml
-          QUERY_LAYERS: GS_LAYER_NAME,
-          FEATURE_COUNT: 10,
-          Layers: GS_LAYER_NAME,
-          Styles: "",
-          Srs: map.getProjection(),
-          WIDTH: map.size.w,
-          HEIGHT: map.size.h,
-          format: "image/png",
-          transparent: true
-        };
-        var url = GS_WMS_URL + "?" + OpenLayers.Util.getParameterString(params);
-        // 팝업으로 결과 표시
-        OpenLayers.Request.GET({
-          url: url,
-          success: function(xhr) {
-            var html = xhr.responseText || "(no content)";
-            var popup = new OpenLayers.Popup.FramedCloud(
-              "wmsinfo",
-              map.getLonLatFromPixel(evt.xy),
-              new OpenLayers.Size(260, 180),
-              "<div style='max-width:240px; max-height:160px; overflow:auto;'>" + html + "</div>",
-              null, true
-            );
-            map.addPopup(popup, true);
-          },
-          failure: function() { alert("GetFeatureInfo 실패"); }
-        });
-      });
-    }
-
+  
     /* ===================== KHOA WFS ===================== */
     function getWFS(layerName) {
       var url = "http://www.khoa.go.kr/oceanmap/otmsWfsApi.do"
               + "?ServiceKey=" + encodeURIComponent(KHOA_WFS_SERVICE_KEY)
               + "&Layer=" + encodeURIComponent(layerName);
-      console.log("[WFS URL]", url);
 
       $.ajax({
         type: "GET",
@@ -182,37 +134,16 @@
         console.warn("GML v3 파싱 실패 → v2 재시도:", e);
       }
 
-      // v3 실패 시 v2
-      if (!features || !features.length) {
-        try {
-          var g2 = new OpenLayers.Format.GML({
-            featureNS: "http://mapprime.all4land.com/",
-            featureType: ft,
-            geometryName: "ag_geom",
-            internalProjection: map.getProjectionObject(),
-            externalProjection: map.getProjectionObject(),
-            extractAttributes: true
-          });
-          features = g2.read(xml) || [];
-        } catch (e2) {
-          console.error("GML v2 파싱 실패:", e2);
-        }
-      }
-
-      if (!features || !features.length) {
-        alert("표시할 피처가 없습니다. (featureType/geometryName/권한/BBOX 확인)");
-        return;
-      }
-
+     
       // 벡터 스타일
       var styleMap = new OpenLayers.StyleMap({
         "default": new OpenLayers.Style({
           pointRadius: 6, fillColor: "#1e90ff", fillOpacity: 0.35,
-          strokeColor: "#004a9f", strokeWidth: 2
+          
         }),
         "select": new OpenLayers.Style({
           pointRadius: 8, fillColor: "#ff8800", fillOpacity: 0.55,
-          strokeColor: "#cc5500", strokeWidth: 3
+         
         })
       });
 
@@ -224,36 +155,11 @@
       vLayer.addFeatures(features);
       map.addLayer(vLayer);
 
-      // 선택 컨트롤(중복 제거)
-      if (selectControl) { try { selectControl.deactivate(); map.removeControl(selectControl); } catch(e){} }
-      selectControl = new OpenLayers.Control.SelectFeature(vLayer, { clickout: true });
-      map.addControl(selectControl); selectControl.activate();
-
+      
       // 팝업
-      vLayer.events.on({
-        'featureselected': function(evt){
-          var f = evt.feature;
-          var title = f.attributes['gml:name'] || f.attributes['name'] || f.attributes['NM'] || '정보';
-          var addr  = f.attributes['rnadres']  || f.attributes['ADDR'] || f.attributes['etcadres'] || '';
-          var html = "<h2 style='margin:6px 0;'>" + String(title) + "</h2>"
-                   + "<div style='font-size:12px;'>" + String(addr) + "</div>";
-          var popup = new OpenLayers.Popup.FramedCloud(
-            "featurePopup",
-            f.geometry.getBounds().getCenterLonLat(),
-            new OpenLayers.Size(200,120),
-            html, null, true,
-            function(){ selectControl.unselect(f); }
-          );
-          f.popup = popup; popup.feature = f; map.addPopup(popup, true);
-        },
-        'featureunselected': function(evt){
-          var f = evt.feature; if (f && f.popup) { map.removePopup(f.popup); f.popup.destroy(); f.popup = null; }
-        }
-      });
+      
 
-      // 데이터 범위로 이동
-      var dataExtent = vLayer.getDataExtent();
-      if (dataExtent) map.zoomToExtent(dataExtent);
+     
     }
 
     // 로드 시 시작

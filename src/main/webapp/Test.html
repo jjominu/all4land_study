@@ -44,21 +44,7 @@
            layers : [ OtmsLayer ],
            controls : [],
            // 사용자 이벤트 등록 
-           eventListeners: {
-               featureover: function(e) {  // feature에 마우스오버시
-                   e.feature.renderIntent = "select";
-                   e.feature.layer.drawFeature(e.feature);
-                   console.log("featureover");
-               },
-               featureout: function(e) {   // feature에 마우스아웃시
-                   e.feature.renderIntent = "default";
-                   e.feature.layer.drawFeature(e.feature);
-                   console.log("featureout");
-               },
-               featureclick: function(e) { // feature에 마우스클릭시
-                   console.log("featureclick e.feature.id = " + e.feature.id);
-               }
-           }
+      
            };
        map = new OpenLayers.Map('map', options);       // html의 'map'div 태그에 지도를 그려주도록 세팅
             
