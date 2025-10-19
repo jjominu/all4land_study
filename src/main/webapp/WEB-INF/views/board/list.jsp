@@ -28,7 +28,7 @@
 		    <!-- <option value="title_text">제목+내용</option>
 		    <option value="nick">작성자</option> -->
 	 	 </select>
-		 <input type="text" name="keyword" value="${bsrVO.keyword}" class="form-control" placeholder="검색어 입력"/>
+		 <input type="text" name="keyword" value="<c:out value='${bsrVO.keyword}' escapeXml='true'/>" class="form-control" placeholder="검색어 입력"/>
 		 <button type="button" id="searchBtn" class="btn btn-primary"  style="min-width: 100px;">검색</button>
 	</div>
 
