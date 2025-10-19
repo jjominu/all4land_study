@@ -42,6 +42,21 @@
                                     <img src='${result}' class="img-thumbnail" style="max-width: 20%; min-height: 20px;">
                                 </c:forEach>
                             </c:if>
+
+                            <!-- [추가] 다운로드 목록 (fileId 기반) -->
+                            <c:if test="${not empty files}">
+                                <ul class="list-unstyled mt-2">
+                                    <c:forEach items="${files}" var="f">
+                                        <li class="mb-1">
+                                            <!-- [수정] fileId로 다운로드 -->
+                                            <a href="<c:url value='/board/download.do'>
+                                                        <c:param name='fileId' value='${f.fileId}'/>
+                                                     </c:url>">⬇ ${f.originFileName}</a>
+                                        </li>
+                                    </c:forEach>
+                                </ul>
+                            </c:if>
+                            <!-- [추가 끝] -->
                         </td>
                     </tr>
                 </tbody>
@@ -64,44 +79,44 @@
         </form>
     </div>
     <table class="table mt-5" >
-			<thead>
-				<tr  style="text-align: center;">
-					
-					
-				</tr>
-			</thead>
-		<tbody>
-		<c:if test="${not empty nextBoard }">
-				<tr>
-				
-				<td>다음글</td>
-				<td>
-					<form action="getDetail.do" method="post" class="d-inline">
-			            <input type="hidden" name="boardId" value="${nextBoard.boardId}">
-			            <button type="submit" class="btn">${nextBoard.title}</button>
-		        	</form>
-	        	</td>
-				<td style="text-align: center;">${nextBoard.view}</td>
-      			<td style="text-align: center;"><fmt:formatDate pattern="yyyy-MM-dd  HH시mm분" value="${nextBoard.createTimestamp}"/></td>
-      			
-			</tr>
-			</c:if>
-			<c:if test="${not empty previousBoard }">
-			<tr>
-				<td>이전글</td>
-				<td>
-					<form action="getDetail.do" method="post" class="d-inline">
-			            <input type="hidden" name="boardId" value="${previousBoard.boardId}">
-			            <button type="submit" class="btn">${previousBoard.title}</button>
-		        	</form>
-	        	</td>
-				<td style="text-align: center;">${previousBoard.view}</td>
-      			<td style="text-align: center;"><fmt:formatDate pattern="yyyy-MM-dd  HH시mm분" value="${previousBoard.createTimestamp}"/></td>
-      			
-			</tr>
-			</c:if>
-			</tbody>
-			</table>	
+            <thead>
+                <tr  style="text-align: center;">
+                    
+                    
+                </tr>
+            </thead>
+        <tbody>
+        <c:if test="${not empty nextBoard }">
+                <tr>
+                
+                <td>다음글</td>
+                <td>
+                    <form action="getDetail.do" method="post" class="d-inline">
+                        <input type="hidden" name="boardId" value="${nextBoard.boardId}">
+                        <button type="submit" class="btn">${nextBoard.title}</button>
+                    </form>
+                </td>
+                <td style="text-align: center;">${nextBoard.view}</td>
+                  <td style="text-align: center;"><fmt:formatDate pattern="yyyy-MM-dd  HH시mm분" value="${nextBoard.createTimestamp}"/></td>
+                  
+            </tr>
+            </c:if>
+            <c:if test="${not empty previousBoard }">
+            <tr>
+                <td>이전글</td>
+                <td>
+                    <form action="getDetail.do" method="post" class="d-inline">
+                        <input type="hidden" name="boardId" value="${previousBoard.boardId}">
+                        <button type="submit" class="btn">${previousBoard.title}</button>
+                    </form>
+                </td>
+                <td style="text-align: center;">${previousBoard.view}</td>
+                  <td style="text-align: center;"><fmt:formatDate pattern="yyyy-MM-dd  HH시mm분" value="${previousBoard.createTimestamp}"/></td>
+                  
+            </tr>
+            </c:if>
+            </tbody>
+            </table> 
 </div>
 
 </body>

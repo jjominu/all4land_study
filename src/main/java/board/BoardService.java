@@ -22,4 +22,6 @@ public interface BoardService {
 	public void deleteFile(int fileId);
 	public  BoardVO nextBoard(int id);
 	public BoardVO previousBoard(int boardId);
+	public FileVO getFileById(int fileId);
+
 }

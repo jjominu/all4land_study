@@ -98,6 +98,11 @@ public class BoardServiceImpl implements BoardService{
 	public BoardVO previousBoard(int boardId) {
 		return boardDAO.previousBoard(boardId);
 	}
+	
+	@Override
+    public FileVO getFileById(int fileId) {
+        return boardDAO.getFileById(fileId);
+    }
 
 
 	

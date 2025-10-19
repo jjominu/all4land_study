@@ -119,4 +119,7 @@ FROM
     where f.board_id =#{id})
     
    </select>
+    <select id="getFileById" parameterType="int" resultType="FileVO">
+        SELECT * FROM tb_file WHERE file_id = #{fileId}
+   </select>
 </mapper>

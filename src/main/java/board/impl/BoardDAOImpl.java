@@ -96,6 +96,10 @@ public class BoardDAOImpl implements BoardDAO {
 		
 		return sqlSession.selectOne("board.previousBoard",boardId);
 	}
+	 @Override
+	    public FileVO getFileById(int fileId) {
+	        return sqlSession.selectOne("board.getFileById", fileId);
+	    }
 	
 	
 

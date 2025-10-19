@@ -37,6 +37,7 @@
 		<table border=3 class="table" >
 			<thead>
 				<tr  style="text-align: center;">
+				    <th >번호</th>
 					<th >제목</th>
 					<th>조회수</th>
 					<th>생성일</th>
@@ -46,8 +47,11 @@
 	
 	 
 	 
-		<c:forEach items="${list}" var="list">
+		<c:forEach items="${list}" var="list"  varStatus="st">
 			<tr>
+			<td >
+		      ${pageUtil.totalCount - (pageUtil.cri.pageStart + st.index)}
+		    </td>
 				<td>
 					<form action="getDetail.do" method="post" class="d-inline">
 			            <input type="hidden" name="boardId" value="${list.boardId}">

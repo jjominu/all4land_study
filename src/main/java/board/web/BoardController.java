@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -80,6 +81,9 @@ public class BoardController {
         mav.addObject("nextBoard",nextBoard);
         mav.addObject("previousBoard",previousBoard);
 
+        // [추가] 다운로드 링크 출력을 위해 파일 메타 주입
+        mav.addObject("files", fileVO);
+        
         return mav;
     }
 
@@ -194,5 +198,20 @@ public class BoardController {
         // [참고] 다른 화면에서 즉시 삭제가 필요하면 계속 사용.
         // 이번 수정 흐름에서는 사용하지 않지만 남겨둠.
         bs.deleteFile(fileId);
+    }
+ // =================== 다운로드 엔드포인트 ===================
+    // [추가] fileId로 파일 메타 조회 후, FileUtils로 스트리밍
+    @RequestMapping(value="/download.do", method=RequestMethod.GET)
+    public void download(@RequestParam("fileId") int fileId, HttpServletResponse response) {
+        try {
+            FileVO fvo = bs.getFileById(fileId);
+            if (fvo == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+            common.FileUtils.streamDownload(response, fvo);
+        } catch (Exception e) {
+            try { response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);} catch (Exception ignore){}
+        }
     }
 }
