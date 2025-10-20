@@ -43,20 +43,17 @@
                                 </c:forEach>
                             </c:if>
 
-                            <!-- [추가] 다운로드 목록 (fileId 기반) -->
                             <c:if test="${not empty files}">
-                                <ul class="list-unstyled mt-2">
+                                <ul>
                                     <c:forEach items="${files}" var="f">
-                                        <li class="mb-1">
-                                            <!-- [수정] fileId로 다운로드 -->
+                                        <li >
                                             <a href="<c:url value='/board/download.do'>
                                                         <c:param name='fileId' value='${f.fileId}'/>
-                                                     </c:url>">⬇ ${f.originFileName}</a>
+                                                     </c:url>">${f.originFileName}</a>
                                         </li>
                                     </c:forEach>
                                 </ul>
                             </c:if>
-                            <!-- [추가 끝] -->
                         </td>
                     </tr>
                 </tbody>

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ObjectUtils;
@@ -64,34 +65,14 @@ public class FileUtils {
 
 
 		}
-		// ====================== 여기서부터 다운로드 관련 유틸 ======================
 
-	    // [추가] 디스크상의 실제 파일 객체 반환 (saveName + originName 조합)
-	    public static File resolveDownloadFile(FileVO fvo) {
-	        String filename = fvo.getSaveFileName() + fvo.getOriginFileName();
-	        return new File(upload_path, filename);
-	    }
-
-	    // [추가] Content-Disposition 헤더용 파일명 인코딩 (UTF-8, 공백 처리)
-	    public static String contentDispositionFilename(String originFileName) throws Exception {
-	        String enc = URLEncoder.encode(originFileName, "UTF-8").replaceAll("\\+", "%20");
-	        return "attachment; filename*=UTF-8''" + enc;
-	    }
-
-	    // [추가] 파일을 Response로 스트리밍 하는 공통 유틸
-	    //  - controller에서 FileVO만 넘기면 됨
-	    public static void streamDownload(javax.servlet.http.HttpServletResponse response, FileVO fvo) throws Exception {
-	        File file = resolveDownloadFile(fvo);
-
-	        if (!file.exists() || !file.isFile()) {
-	            response.setStatus(javax.servlet.http.HttpServletResponse.SC_NOT_FOUND);
-	            return;
-	        }
+	    public static void fileDownload(HttpServletResponse response, FileVO fvo) throws Exception {
+	        File file = new File(upload_path, fvo.getSaveFileName() + fvo.getOriginFileName());
 
 	        String ct = (fvo.getFileType()==null || fvo.getFileType().isEmpty())
 	                ? "application/octet-stream" : fvo.getFileType();
 	        response.setContentType(ct);
-	        response.setHeader("Content-Disposition", contentDispositionFilename(fvo.getOriginFileName()));
+	        response.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + URLEncoder.encode(fvo.getOriginFileName(), "UTF-8").replaceAll("\\+", "%20"));
 	        response.setHeader("Content-Length", String.valueOf(file.length()));
 
 	        try (FileInputStream in = new FileInputStream(file)) {

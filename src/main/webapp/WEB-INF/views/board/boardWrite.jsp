@@ -35,30 +35,26 @@
 </div>
 </body>
 
- <script type="text/javascript">
- var i = 1;
- var max= 5;
-    $(document).ready(function() {
-        $("a[name='file-delete']").on("click", function(e) {
-            e.preventDefault();
-            deleteFile($(this));
-        });
-    })
- 
-    function addFile() {
-    	
-        
-         var str="<div class='file-group'><input class='form-control' type='file' name='file'><a href='#this' name='file-delete'>삭제</a></div>"
-        if(i<5){
-	        $("#file-list").append(str);
-	        i++;
-	        console.log(i);
-        }
-  
+<script type="text/javascript">
+  var i = document.querySelectorAll('#file-list .file-group').length || 0;
+  var max = 5;
+
+  $(document).on('click', '.btn-delete-file, a[name="file-delete"]', function (e) {
+    e.preventDefault();
+    var $group = $(this).closest('.file-group');
+    if ($group.length) {
+      $group.remove();
+      if (i > 0) i--;
     }
- 
-    function deleteFile(obj) {
-        obj.parent().remove();
+  });
+
+  function addFile() {
+    var str = "<div class='file-group'><input class='form-control' type='file' name='file'><a href='#this' name='file-delete'>삭제</a></div>";
+    if (i < max) {
+      $("#file-list").append(str);
+      i++;
     }
+  }
 </script>
+
 </html>
