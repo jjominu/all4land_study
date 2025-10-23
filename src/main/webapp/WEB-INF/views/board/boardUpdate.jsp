@@ -83,9 +83,7 @@
     if (i < max) {
       document.getElementById("file-list").insertAdjacentHTML('beforeend', str);
       i++;
-    } else {
-      alert('파일은 최대 ' + max + '개까지 추가할 수 있습니다.');
-    }
+    } 
   }
 
   function deleteFile(obj) {

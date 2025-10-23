@@ -36,25 +36,31 @@
 </body>
 
 <script type="text/javascript">
-  var i = document.querySelectorAll('#file-list .file-group').length || 0;
-  var max = 5;
+var i = document.querySelectorAll('#file-list .file-group').length || 0;
+var maxFiles = 5;
 
-  $(document).on('click', '.btn-delete-file, a[name="file-delete"]', function (e) {
-    e.preventDefault();
-    var $group = $(this).closest('.file-group');
-    if ($group.length) {
-      $group.remove();
-      if (i > 0) i--;
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.classList.contains('btn-delete-file')) {
+        e.preventDefault();
+        var group = e.target.closest('.file-group');
+        if (group) {
+            group.remove();
+            if (i > 0) i--;
+        }
     }
-  });
+});
 
-  function addFile() {
-    var str = "<div class='file-group'><input class='form-control' type='file' name='file'><a href='#this' name='file-delete'>삭제</a></div>";
-    if (i < max) {
-      $("#file-list").append(str);
-      i++;
-    }
-  }
+function addFile() {
+    if (i < maxFiles) {
+        var str = "<div class='file-group'>" +
+                      "<input class='form-control' type='file' name='file'>" +
+                      "<button type='button' class='btn btn-delete-file'>삭제</button>" +
+                      "</div>";
+        document.getElementById("file-list").insertAdjacentHTML('beforeend', fileHtml);
+        i++;
+    } 
+}
 </script>
+
 
 </html>

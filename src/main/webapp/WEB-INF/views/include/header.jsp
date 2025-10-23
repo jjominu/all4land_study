@@ -23,10 +23,13 @@
 					aria-current="page" href="home">Home</a></li>
 				<li class="nav-item"><a class="nav-link" href="list.do">Board</a>
 				</li>
+				<li class="nav-item"><a class="nav-link" href="list.do">Board</a>
+				</li>
 				<li class="nav-item"><a class="nav-link disabled" href="#">Disabled</a>
 				</li>
 				<li class="nav-item"><a class="nav-link disabled">Disabled</a>
 				</li>
+				
 			</ul>
 		</div>
 	</div>

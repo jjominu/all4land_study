@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ko">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>개방海 + TL_FIRSTA_P(WFS) + GeoServer WMS</title>
+  <title>WFS TEST</title>
 
   <script src="jquery-3.1.1.min.js" type="text/javascript"></script>
   <script src="OpenLayers.js" type="text/javascript"></script>
@@ -52,7 +52,6 @@
      
       map.addControl(new OpenLayers.Control.Navigation());
       map.addControl(new OpenLayers.Control.LayerSwitcher());
-      map.addControl(new OpenLayers.Control.ScaleLine());
       map.addControl(new OpenLayers.Control.Attribution());
 
     
@@ -101,51 +100,13 @@
         url: encodeURI(url),
         dataType: "text",
         success: function (response) {
-          var clean = (typeof response === "string") ? response.replace(/<script\/>/g, "") : response;
-          parseGML(clean, layerName);
+          
         }
         
       });
     }
 
-    function parseGML(response, layerName) {
-      var xml = response, features = [];
-      var ft = (layerName || "").toLowerCase();
-
-        var g3 = new OpenLayers.Format.GML.v3({
-          featureNS: "http://mapprime.all4land.com/",
-          featureType: ft,               // tl_firsta_p
-          geometryName: "ag_geom",       // 지오메트리 필드명
-          srsName: "EPSG:5179",
-          internalProjection: map.getProjectionObject(),
-          externalProjection: map.getProjectionObject(),
-          extractAttributes: true
-        });
-        features = g3.read(xml) || [];
-      
-
-     
-      var styleMap = new OpenLayers.StyleMap({
-        "default": new OpenLayers.Style({
-          pointRadius: 6, fillColor: "#1e90ff", fillOpacity: 0.35,
-          
-        }),
-        "select": new OpenLayers.Style({
-          pointRadius: 8, fillColor: "#ff8800", fillOpacity: 0.55,
-         
-        })
-      });
-
-      var renderer = OpenLayers.Util.getParameters(window.location.href).renderer;
-      renderer = (renderer) ? [renderer] : OpenLayers.Layer.Vector.prototype.renderers;
-
-      var vLayer = new OpenLayers.Layer.Vector(layerName, { styleMap: styleMap, renderers: renderer });
-      vLayer.addFeatures(features);
-      map.addLayer(vLayer);
-
-    
-    }
-
+   
   </script>
 </head>
 

@@ -6,13 +6,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
+@RequestMapping("/map")
 public class MapController {
-	@RequestMapping(value="/oceanmap.do", method=RequestMethod.GET)
-	public ModelAndView oceanmap() {
-	    ModelAndView mav = new ModelAndView("map/map");
-	    mav.addObject("vworldKey", System.getenv("VWORLD_KEY"));     // 또는 설정값
-	    mav.addObject("safeMapKey", System.getenv("SAFEMAP_KEY"));   // 선택
-	    return mav;
+	@RequestMapping(value="/map.do", method=RequestMethod.GET)
+	public ModelAndView roadMap() {
+		
+		ModelAndView mav = new ModelAndView("map/test");
+		return mav;
+	   
 
 }
 	}
