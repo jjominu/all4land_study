@@ -41,6 +41,7 @@
 					<th >제목</th>
 					<th>조회수</th>
 					<th>생성일</th>
+					<th>작성자</th>
 				</tr>
 			</thead>
 		<tbody>
@@ -60,6 +61,8 @@
 	        	</td>
 				<td style="text-align: center;">${list.view}</td>
       			<td style="text-align: center;"><fmt:formatDate pattern="yyyy-MM-dd  HH시mm분" value="${list.createTimestamp}"/></td>
+      			<td style="text-align: center;">${list.createUser}</td>
+      			
 			</tr>
 		</c:forEach>
 		 
@@ -121,19 +124,7 @@
 </ul>
 </div>
 </body>
-<script>
-	
-		
-		document.getElementById("searchBtn").onclick = function () {
-		    let searchType = document.getElementsByName("searchType")[0].value;
-		    let keyword = document.getElementsByName("keyword")[0].value;
-
-		    let url = "/board-test/board/search.do?searchType=" + searchType + "&keyword=" + keyword ;
-		    location.href = encodeURI(url);
-		};
-		
-		
-</script>
+<script src="<c:url value='/js/board/board-list.js'/>"></script>
 
 
 </html>

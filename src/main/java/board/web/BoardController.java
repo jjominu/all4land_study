@@ -10,7 +10,10 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -50,8 +53,8 @@ public class BoardController {
         mav.setViewName("/board/list");
         mav.addObject("list",list);
         mav.addObject("pageUtil",pageUtil);
-
-        System.out.println(pageUtil.toString());
+        
+        System.out.println(list.get(0).getCreateUser());
         return mav;
     }
 
@@ -142,27 +145,46 @@ public class BoardController {
         return new ModelAndView("redirect:/board/list.do");
     }
 
-    @RequestMapping(value="/upload.do", method=RequestMethod.POST)
-    public ModelAndView upload(MultipartFile[] file,@NotBlank String title,@RequestParam String content) throws Exception {
-        BoardVO boardVO = new BoardVO();
-        boardVO.setTitle(title);
-        boardVO.setContent(content);
-        int insertId = bs.insertBoard(boardVO);
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>" + insertId);
-        for(MultipartFile vo:file )  {
-            System.out.println("================== file start ==================");
-            System.out.println("파일 이름: "+vo.getName());
-            System.out.println("파일 실제 이름: "+vo.getOriginalFilename());
-            System.out.println("파일 크기: "+vo.getSize());
-            System.out.println("content type: "+vo.getContentType());
-            System.out.println("================== file   END ==================");
-            String savedName =vo.getOriginalFilename();
-            if(savedName != null && !savedName.isEmpty()) {
-                bs.uploadFile(common.FileUtils.uploadFile(vo,insertId));
+    @RequestMapping(value = "/upload.do", method = RequestMethod.POST, consumes = "multipart/form-data")
+    public ModelAndView upload(
+            @Valid @ModelAttribute("board") BoardVO board,
+            BindingResult errors,
+            @RequestParam(value = "file", required = false) MultipartFile[] files
+    ) throws Exception {
+
+        // 폼 검증
+        if (errors.hasErrors()) {
+            ModelAndView mav = new ModelAndView("board/boardWrite");
+            List<String> fieldErrors = errors.getAllErrors().stream()
+                    .map(e -> e.getDefaultMessage())
+                    .toList();
+            mav.addObject("errorMessages", fieldErrors);
+            return mav;
+        }
+
+        // 파일 배열 검증(하나라도 실패하면 전체 실패)
+        List<String> fileErrors = common.FileUtils.validateFiles(files);
+        if (!fileErrors.isEmpty()) {
+            ModelAndView mav = new ModelAndView("board/boardWrite");
+            mav.addObject("errorMessages", fileErrors); // JSP에서 alert로 출력
+            System.out.println(fileErrors);
+            return mav;
+        }
+
+        int insertId = bs.insertBoard(board);
+
+        if (files != null) {
+            for (MultipartFile vo : files) {
+                if (vo != null && !vo.isEmpty()) {
+                    bs.uploadFile(common.FileUtils.uploadFile(vo, insertId));
+                }
             }
         }
         return new ModelAndView("redirect:/board/list.do");
     }
+
+
+
 
     @RequestMapping(value="/search.do", method=RequestMethod.GET)
     public ModelAndView search(@RequestParam String searchType,

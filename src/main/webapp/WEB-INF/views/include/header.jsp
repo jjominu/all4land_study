@@ -23,7 +23,7 @@
 					aria-current="page" href="home">Home</a></li>
 				<li class="nav-item"><a class="nav-link" href="list.do">Board</a>
 				</li>
-				<li class="nav-item"><a class="nav-link" href="list.do">Board</a>
+				<li class="nav-item"><a class="nav-link" href="/board-test/map/map.do">Board</a>
 				</li>
 				<li class="nav-item"><a class="nav-link disabled" href="#">Disabled</a>
 				</li>

@@ -1,5 +1,6 @@
 C:\workspace-egov\board-test\src\main\java\board\BoardDAO.java
 C:\workspace-egov\board-test\src\main\java\board\BoardService.java
+C:\workspace-egov\board-test\src\main\java\board\ClientWebConfigJava.java
 C:\workspace-egov\board-test\src\main\java\board\filter\CrossScriptingFilter.java
 C:\workspace-egov\board-test\src\main\java\board\filter\RequestWrapper.java
 C:\workspace-egov\board-test\src\main\java\board\impl\BoardDAOImpl.java
@@ -11,3 +12,4 @@ C:\workspace-egov\board-test\src\main\java\board\vo\FileVO.java
 C:\workspace-egov\board-test\src\main\java\board\web\BoardController.java
 C:\workspace-egov\board-test\src\main\java\common\FileUtils.java
 C:\workspace-egov\board-test\src\main\java\common\PageUtil.java
+C:\workspace-egov\board-test\src\main\java\map\MapController.java

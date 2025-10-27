@@ -1,116 +1,65 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="ko">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>WFS TEST</title>
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <title>OpenLayers 개방海 지도</title>
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.4.3/css/ol.css">
+    <style>
+      #map {
+        width: 100%;
+        height: 800px;
+      }
+    </style>
+    <script
+      src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.4.3/build/ol.js">
+    </script>
+  </head>
+  <body>
+    <h2>OpenLayers + 개방海 베이스맵</h2>
+    <div id="map"></div>
 
-  <script src="jquery-3.1.1.min.js" type="text/javascript"></script>
-  <script src="OpenLayers.js" type="text/javascript"></script>
-  <script src="http://www.khoa.go.kr/oceanmap/js/proj4js-1.1.0/lib/proj4js.js" type="text/javascript"></script>
-  <script src="http://www.khoa.go.kr/oceanmap/js/proj4js-1.1.0/lib/defs/EPSG5179.js" type="text/javascript"></script>
-  <script src="http://www.khoa.go.kr/oceanmap/js/gis/OtmsApi.js" type="text/javascript"></script>
-
-  <script src="http://www.khoa.go.kr/oceanmap/BASEMAP/otmsBasemapApi.do?ServiceKey=F062497BC44DD448FDAE699EE" type="text/javascript"></script>
-
-
-
-  <script type="text/javascript">
-    var map;
-    var selectControl = null;
-    var key = "2CFD93CC10232E97916E89B14";  
-    var GS_WMS_URL  = "http://localhost:9090/geoserver/places/wms";
-    var GS_LAYER_NAME = "places:places"; 
-    var mapCenterX = 956498.5710969
-    var mapCenterY = 1819967.0629328;
-    var numZoomLevels = 11
-    var zoomLevel = 1
-    var minZoomLevel = 0;
-    // 지도의 영역을 지정
-    var mapBounds = new OpenLayers.Bounds(123, 32, 132, 43);
-
-    OpenLayers.IMAGE_RELOAD_ATTEMPTS = 3;
-    OpenLayers.Util.onImageLoadErrorColor = "transparent";
-
-    function init() {
-      var options = {
-        projection: new OpenLayers.Projection("EPSG:5179"),
-        displayProjection: new OpenLayers.Projection("EPSG:4326"),
-        maxExtent: new OpenLayers.Bounds(-200000.0, -3015.4524, 3803015.4524, 4000000.0),
-        restrictedExtent: new OpenLayers.Bounds(37953.1466, 1126946.7253, 2152527.8074, 2873292.7040),
-        maxResolution: 1954.597389,
-        numZoomLevels: numZoomLevels,
-        zoom: zoomLevel,
-        minZoom: minZoomLevel,
-        allOverlays: true,
-        controls: []
-      };
-      map = new OpenLayers.Map("map", options);
-
-     
-      map.addLayer(window.OtmsLayer);
-     
-     
-      map.addControl(new OpenLayers.Control.Navigation());
-      map.addControl(new OpenLayers.Control.LayerSwitcher());
-      map.addControl(new OpenLayers.Control.Attribution());
-
-    
-      map.zoomToExtent(mapBounds.transform(map.displayProjection, map.projection));
-      map.setCenter([mapCenterX, mapCenterY], minZoomLevel);
-      map.zoomTo(1);
-
-  
-      addGeoServerWMS();
-
- 
-      getWFS();
-
-      
-      enableWmsGetFeatureInfo();
-    }
-
-    
-    var gsWmsLayer = null;
-    function addGeoServerWMS() {
-      var wmsParams = {
-        layers: GS_LAYER_NAME,
-        format: "image/png",
-        transparent: true,
-        srs: "EPSG:5179"
-      };
-      var wmsOptions = {
-        isBaseLayer: false,
-        singleTile: false,
-        ratio: 1.0,
-        transitionEffect: null
-      };
-      gsWmsLayer = new OpenLayers.Layer.WMS("GeoServer WMS ("+GS_LAYER_NAME+")", GS_WMS_URL, wmsParams, wmsOptions);
-      map.addLayer(gsWmsLayer);
-    }
-
-  
-    function getWFS() {
-      var layerName = "TL_FIRSTA_P";
-      var url = "http://www.khoa.go.kr/oceanmap/otmsWfsApi.do";
-          url += "?ServiceKey=" + key;
-          url += "&Layer=" + layerName;
-
-      $.ajax({
-        type: "GET",
-        url: encodeURI(url),
-        dataType: "text",
-        success: function (response) {
-          
-        }
-        
+    <script type="text/javascript">
+      // ===== 개방海 BASEMAP (EPSG:3857) =====
+      const khoaBaseMap = new ol.layer.Tile({
+        title: "KHOA 개방海 실시간 베이스맵",
+        source: new ol.source.TileWMS({
+          url: "http://www.khoa.go.kr/oceanmap/BASEMAP_RLTM3857/otmsBasemapApi.do",
+          params: {
+            SERVICE: "WMS",
+            REQUEST: "GetMap",
+            VERSION: "1.1.1",
+            LAYERS: "BASEMAP_RLTM3857",
+            FORMAT: "image/png",
+            TRANSPARENT: false,
+            TILED: true,
+            SRS: "EPSG:3857",
+            ServiceKey: "F062497BC44DD448FDAE699EE7E6A8B1" 
+          },
+          crossOrigin: "anonymous"
+        })
       });
-    }
 
-   
-  </script>
-</head>
+      // ===== 회색지도 (vWorld 예시) =====
+      const grayMap = new ol.layer.Tile({
+        title: "회색지도(vWorld)",
+        source: new ol.source.XYZ({
+          url: "http://xdworld.vworld.kr:8080/2d/gray/202002/{z}/{x}/{y}.png"
+        })
+      });
 
-<body onload="init()">
-    <div id="map" style="height:600px;"></div>
-</body>
+      // ===== 지도 객체 생성 =====
+      const map = new ol.Map({
+        target: "map",
+        layers: [khoaBaseMap], // 개방海 베이스맵만 표시
+        view: new ol.View({
+          projection: "EPSG:3857",
+          center: [14126669.41589247, 4493404.190498611], // 한반도 중심쯤
+          zoom: 7,
+          minZoom: 7,
+          maxZoom: 19
+        })
+      });
+    </script>
+  </body>
 </html>

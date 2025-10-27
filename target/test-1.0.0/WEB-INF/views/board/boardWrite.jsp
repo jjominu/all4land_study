@@ -1,76 +1,56 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>게시판 작성</title>
+  <meta charset="UTF-8">
+  <title>게시판 작성</title>
+  <%@ include file="../include/style.jsp"%>
 </head>
-<%@ include file="../include/style.jsp"%>
+
 <jsp:include page="../include/header.jsp"></jsp:include>
 <jsp:include page="../include/footer.jsp"></jsp:include>
+
 <body>
-<div class="container">
-	<form id="form1" class="form-group"action="upload.do" method="post" enctype="multipart/form-data" >
-	 	<th scope="row">제목</th>
-	 
-	 	<input class="form-control" type="text" id ="TITLE" name="title"  maxlength="20">
-	 
-	 	<td scope="row">내용</td>
-	 	<p>
-		<textarea  class="form-control" rows="5" cols="50" name="content" required maxlength="1000"></textarea>
-	
-		
-		
-		<div class="form-group" id="file-list">
-        	<button class="btn btn-primary" type="button" onclick="addFile()" >파일추가</button>
-        	
-	        <div class="file-group"><input class="form-control" type="file" name="file"><a href='#this' name='file-delete'>삭제</a></div>
-    	</div>
-		<p>
-		<input class="form-control" type="submit"  value="작성하기">
-	</form>
-	<p>
-		<button class="btn btn-primary" onclick="window.history.back();">돌아가기</button>
-</div>
+  <c:if test="${not empty errorMessages}">
+    <ul id="error-messages" style="display:none;">
+      <c:forEach var="msg" items="${errorMessages}">
+        <li><c:out value="${msg}"/></li>
+      </c:forEach>
+    </ul>
+  </c:if>
+
+  <div class="container">
+    <form id="form1" class="form-group" action="<c:url value='/board/upload.do'/>" method="post" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="title">제목</label>
+        <input class="form-control" type="text" id="title" name="title" maxlength="20" required />
+      </div>
+
+      <div class="form-group">
+        <label for="content">내용</label>
+        <textarea class="form-control" id="content" name="content" rows="5" cols="50" maxlength="1000" required></textarea>
+      </div>
+
+      <div class="form-group" id="file-list">
+        <label>파일</label>
+        <div class="mb-2">
+          <button class="btn btn-primary" type="button" id="btnAddFile">파일추가</button>
+        </div>
+        <div class="file-group">
+          <input class="form-control" type="file" name="file" />
+          <button type="button" class="btn btn-delete-file">삭제</button>
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <input class="btn btn-primary" type="submit" value="작성하기" />
+        <button class="btn btn-secondary" type="button" onclick="window.history.back();">돌아가기</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="<c:url value='/js/board/board-write.js'/>"></script>
 </body>
-
- <script type="text/javascript">
- var i = 1;
- var max= 5;
-    $(document).ready(function() {
-        $("a[name='file-delete']").on("click", function(e) {
-            e.preventDefault();
-            deleteFile($(this));
-        });
-    })
- 
-    function addFile() {
-    	
-        
-         var str="<div class='file-group'><input class='form-control' type='file' name='file'><a href='#this' name='file-delete'>삭제</a></div>"
-        if(i<5){
-	        $("#file-list").append(str);
-	        i++;
-	        console.log(i);
-        }
-        $("a[name='file-delete']").on("click", function(e) {
-        	
-            e.preventDefault();
-            deleteFile($(this));
-            if(i>0){
-            	i=i-1;
-            	};
-	        console.log(i);
-
-	        
-	        e.preventDefault();
-            
-        });
-    }
- 
-    function deleteFile(obj) {
-        obj.parent().remove();
-    }
-</script>
 </html>

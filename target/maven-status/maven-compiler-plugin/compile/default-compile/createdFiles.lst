@@ -1,5 +1,14 @@
+board\vo\CriteriaVO.class
+board\filter\RequestWrapper.class
+board\filter\CrossScriptingFilter.class
+board\vo\BoardSearchRequestVO.class
 board\impl\BoardDAOImpl.class
+map\MapController.class
+board\vo\BoardVO.class
+board\ClientWebConfigJava.class
+common\PageUtil.class
 board\BoardService.class
+board\vo\FileVO.class
 board\BoardDAO.class
 board\impl\BoardServiceImpl.class
 common\FileUtils.class
