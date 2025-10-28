@@ -4,13 +4,7 @@
   const maxFiles = 5;
   let count = (fileList && fileList.querySelectorAll('.file-group').length) || 0;
 
-  (function alertErrors() {
-    const ul = document.getElementById('error-messages');
-    if (!ul) return;
-    const items = ul.querySelectorAll('li');
-    if (!items || items.length === 0) return;
-    items.forEach(li => alert(li.textContent || li.innerText || ''));
-  })();
+  
 
   if (addBtn && fileList) {
     addBtn.addEventListener('click', function () {
@@ -35,7 +29,6 @@
       const target = e.target;
       if (!target) return;
 
-      // 새로 추가한 파일 삭제
       if (target.classList.contains('btn-delete-file')) {
         e.preventDefault();
         const group = target.closest('.file-group');

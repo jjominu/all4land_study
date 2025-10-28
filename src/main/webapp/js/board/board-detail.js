@@ -25,8 +25,7 @@
   document.addEventListener('click', function (e) {
     var a = e.target.closest('a.bd-download');
     if (!a) return;
-    // 예: 특정 확장자 경고하고 싶다면 여기서 처리
-    // var name = a.getAttribute('data-filename') || '';
+    
   });
 
   var container = document.querySelector('.container');

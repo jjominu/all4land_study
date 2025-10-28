@@ -1,3 +1,4 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
@@ -16,5 +17,16 @@
   <label><input type="checkbox" id="chkWms"> WMS</label>
   <label><input type="checkbox" id="chkWfs" checked> WFS</label>
 </div>
+<label style="margin-left:12px">
+    클릭 타입
+    <select id="type">
+      <option value="click" selected>Click</option>
+      <option value="singleclick">SingleClick</option>
+      <option value="pointermove">PointerMove</option>
+    </select>
+  </label>
+</div>	
+
+<p id="featInfo" class="text-start"></p>
 </body>
 </html>

@@ -11,7 +11,7 @@ public class MapController {
 	@RequestMapping(value="/map.do", method=RequestMethod.GET)
 	public ModelAndView roadMap() {
 		
-		ModelAndView mav = new ModelAndView("map/test");
+		ModelAndView mav = new ModelAndView("map/map");
 		return mav;
 	   
 

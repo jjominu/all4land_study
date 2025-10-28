@@ -51,9 +51,15 @@ public class FileUtils {
 			byte[] imageBytes =FileCopyUtils.copyToByteArray(file);
 
 			String imageBase64 = Base64.getEncoder().encodeToString(imageBytes);
-
-			String imageUrl = "data:"+fileVO.getFileType()+";base64," + imageBase64;
-			System.out.println(imageUrl);
+			String imageUrl;
+			if(fileVO.getFileType().equals("image/png")){
+				 imageUrl = "data:"+fileVO.getFileType()+";base64," + imageBase64;
+				System.out.println(imageUrl);
+			}
+			else {
+				 imageUrl = null;
+			}
+			
 			return imageUrl;
 
 			}

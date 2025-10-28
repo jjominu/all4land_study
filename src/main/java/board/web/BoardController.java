@@ -76,6 +76,7 @@ public class BoardController {
         for(FileVO vo:fileVO ) {
             String resultFileVO = common.FileUtils.imgutil(vo);
             result.add(resultFileVO);
+            System.out.println(resultFileVO);
         }
         ModelAndView mav = new ModelAndView();
         mav.setViewName("board/detail");
@@ -152,7 +153,6 @@ public class BoardController {
             @RequestParam(value = "file", required = false) MultipartFile[] files
     ) throws Exception {
 
-        // 폼 검증
         if (errors.hasErrors()) {
             ModelAndView mav = new ModelAndView("board/boardWrite");
             List<String> fieldErrors = errors.getAllErrors().stream()
@@ -162,11 +162,10 @@ public class BoardController {
             return mav;
         }
 
-        // 파일 배열 검증(하나라도 실패하면 전체 실패)
         List<String> fileErrors = common.FileUtils.validateFiles(files);
         if (!fileErrors.isEmpty()) {
             ModelAndView mav = new ModelAndView("board/boardWrite");
-            mav.addObject("errorMessages", fileErrors); // JSP에서 alert로 출력
+            mav.addObject("errorMessages", fileErrors); 
             System.out.println(fileErrors);
             return mav;
         }

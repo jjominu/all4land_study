@@ -20,10 +20,10 @@
 		<div class="collapse navbar-collapse" id="navbarNav">
 			<ul class="navbar-nav">
 				<li class="nav-item"><a class="nav-link active"
-					aria-current="page" href="home">Home</a></li>
-				<li class="nav-item"><a class="nav-link" href="list.do">Board</a>
+					aria-current="page" href="home">홈</a></li>
+				<li class="nav-item"><a class="nav-link" href="/board-test/board/list.do">게시판</a>
 				</li>
-				<li class="nav-item"><a class="nav-link" href="/board-test/map/map.do">Board</a>
+				<li class="nav-item"><a class="nav-link" href="/board-test/map/map.do">지도</a>
 				</li>
 				<li class="nav-item"><a class="nav-link disabled" href="#">Disabled</a>
 				</li>

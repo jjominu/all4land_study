@@ -1,27 +1,22 @@
-var GEOSERVER_BASE = "http://localhost:9090/geoserver";  // 예: http://localhost:8080/geoserver
-var WORKSPACE      = "vworld";                            // 워크스페이스
-var LAYER_NAME     = "C_UQ155";                           // 레이어명
-var FULL_LAYER     = WORKSPACE + ":" + LAYER_NAME;
-
 var USE_WMS = true;   // 초기 표시 여부
 var USE_WFS = false;  // 초기 표시 여부
 
 var baseMap = null;
 var gsWms   = null;
 var gsVector= null;
+
+var container = document.getElementById('popup'); //팝업이 담길 컨테이너 요소
+var content1 = document.getElementById('popup-content'); //팝업 내용 요소
 $(document).ready(function () {
-  // 체크박스 상태 초기화
   $("#chkWms").prop("checked", USE_WMS);
   $("#chkWfs").prop("checked", USE_WFS);
 
-  // WMS 토글 이벤트
   $("#chkWms").on("change", function () {
-    if (gsWms) gsWms.setVisible(this.checked);
+    gsWms.setVisible(this.checked);
   });
 
-  // WFS 토글 이벤트
   $("#chkWfs").on("change", function () {
-    if (gsVector) gsVector.setVisible(this.checked);
+    gsVector.setVisible(this.checked);
   });
 
   // 지도 초기화
@@ -49,23 +44,23 @@ function initMap(){
 				maxResolution: 1954.597389
 	});
 
-	//베이스맵 설정
-	baseMap = new ol.Map({
+	
+	baseMap = new ol.Map({//베이스맵 설정
 		target: 'baseMap',
 		layers: [			
-			new ol.layer.Tile({
-				division : 'TILE',
+			new ol.layer.Tile({//레이어정의
+				division : 'TILE', //이건 뭐지 공식문서 안 나옴
 				layerName: 'BASEMAP',
 				visible: true,
 				
-				source: new ol.source.TileWMS({
-				matrixSet: 'EPSG:3857',
-				projection: 'EPSG:3857',		
-				hidpi: false,
-				tileGrid: new ol.tilegrid.TileGrid({
-						extent: tileExtent, 
-						origin: [ tileExtent[0], tileExtent[1] ],
-						resolutions: resolutions
+				source: new ol.source.TileWMS({//source 정의
+					matrixSet: 'EPSG:3857',
+					projection: 'EPSG:3857',		
+					hidpi: false,
+					tileGrid: new ol.tilegrid.TileGrid({//타일 grid정의
+							extent: tileExtent, 
+							origin: [ tileExtent[0], tileExtent[1] ],
+							resolutions: resolutions
 					}),
 				url:_vectorMapUrl,
 				serverType: "mapserver"
@@ -73,9 +68,9 @@ function initMap(){
 			})
 			
 		],
-		controls: ol.control.defaults({
+		controls: ol.control.defaults({//Map 속성 중 하나 
 						attributionOptions: ({
-							collapsible: false
+							collapsible: false //시작 시 속성을 축소할지 여부를 지정합니다. 기본값은 .입니다 true
 						})
 		}),
 		view: view
@@ -84,16 +79,14 @@ function initMap(){
     zIndex: 10,
     visible: USE_WMS,
     source: new ol.source.TileWMS({
-      url: GEOSERVER_BASE + "/" + WORKSPACE + "/wms",
+      url: "http://localhost:9090/geoserver/vworld/wms",
       params: {
         SERVICE: "WMS",
-        VERSION: "1.1.1",
+        VERSION: "1.1.0",
         REQUEST: "GetMap",
-        LAYERS: FULL_LAYER,
+        LAYERS: "C_UQ155",
         STYLES: "",
         FORMAT: "image/png",
-        TILED: true,
-        TRANSPARENT: true,
         SRS: "EPSG:3857"
       },
       serverType: "geoserver",
@@ -101,31 +94,69 @@ function initMap(){
     })
   });
   baseMap.addLayer(gsWms);
-
-	gsVector = new ol.layer.Vector({
-	  visible: USE_WFS,
-	  source: new ol.source.Vector({
+  gsVectorSource = new ol.source.Vector({
 	    format: new ol.format.GeoJSON(),
 	     url: function (extent) {
-      var base = GEOSERVER_BASE + "/" + WORKSPACE + "/ows";
-      var q =
-        "?service=WFS" +
-        "&version=2.0.0" +
-        "&request=GetFeature" +
-        // ⬇️ typename → typeNames
-        "&typeNames=" + encodeURIComponent(FULL_LAYER) +
-        "&outputFormat=application/json" +
-        // ⬇️ 좌표계 명시
-        "&srsName=EPSG:3857" +
-        // ⬇️ 화면 범위만 요청
-        "&bbox=" + extent.join(",") + ",EPSG:3857" 
-        // (선택) 한번에 너무 많이 안 받도록
-        ;
-      return base + q;
+			var a ="http://localhost:9090/geoserver/vworld/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=vworld%3AC_UQ155&outputFormat=application%2Fjson&srsname=EPSG:3857&"+
+              'bbox=' + extent.join(',') + ',EPSG:3857';
+
+      return a;
     }, strategy: ol.loadingstrategy.bbox
 	  })
+	  
+	  
+	  
+	gsVector = new ol.layer.Vector({
+	  visible: USE_WFS,
+	  source: gsVectorSource,
+	  style: new ol.style.Style({
+          stroke: new ol.style.Stroke({
+            color: 'rgba(64, 156, 255, 1.0)',
+            width: 3
+             }),
+      fill: new ol.style.Fill({
+     	 color: 'rgba(0, 0, 0, 0.001)'   
+    })
+        })
 	});
 	baseMap.addLayer(gsVector);
+	var select = null;
+ 
+    var selectSingleClick = new ol.interaction.Select({
+        multi: true
+    });
+ 
+    
+    var selectPointerMove = new ol.interaction.Select({
+        condition: ol.events.condition.pointerMove,
+        multi: true
+    });
+ 
+    
+ 
+    var selectElement = document.getElementById('type');
+ 
+    var changeInteraction = function() {
+        if (select !== null) {
+            baseMap.removeInteraction(select);
+        }
+        var value = selectElement.value;
+        if (value == 'singleclick') {
+            select = selectSingleClick;
+        }  else if (value == 'pointermove') {
+            select = selectPointerMove;
+        } else {
+            select = null;
+        }
+        if (select !== null) {
+            baseMap.addInteraction(select);
+            
+			 
+        }
+    };
+ 
+    selectElement.onchange = changeInteraction;
+    changeInteraction();    
 }
 //베이스맵 요청 시 사용
 function fn_fillzero(n, digits) {
