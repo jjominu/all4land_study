@@ -84,7 +84,11 @@
     <artifactId>hibernate-validator</artifactId>
     <version>6.0.10.Final</version>
 </dependency>
-
+<dependency>
+  <groupId>org.apache.httpcomponents</groupId>
+  <artifactId>httpclient</artifactId>
+  <version>4.5.14</version>
+</dependency>
 
         <dependency>
 		    <groupId>org.egovframe.rte</groupId>

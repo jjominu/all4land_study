@@ -13,24 +13,24 @@
 <jsp:include page="../include/footer.jsp"></jsp:include>
 
 <body>
-  <c:if test="${not empty errorMessages}">
-    <ul id="error-messages" style="display:none;">
-      <c:forEach var="msg" items="${errorMessages}">
-        <li><c:out value="${msg}"/></li>
-      </c:forEach>
-    </ul>
-  </c:if>
+ <c:if test="${not empty errorMessages}">
+  <script type="text/javascript">
+    <c:forEach var="msg" items="${errorMessages}">
+      alert("${msg}");
+    </c:forEach>
+  </script>
+</c:if>
 
   <div class="container">
     <form id="form1" class="form-group" action="<c:url value='/board/upload.do'/>" method="post" enctype="multipart/form-data">
       <div class="form-group">
         <label for="title">제목</label>
-        <input class="form-control" type="text" id="title" name="title" maxlength="20" required />
+        <input class="form-control" type="text" id="title" name="title"  />
       </div>
 
       <div class="form-group">
         <label for="content">내용</label>
-        <textarea class="form-control" id="content" name="content" rows="5" cols="50" maxlength="1000" required></textarea>
+        <textarea class="form-control" id="content" name="content" rows="5" cols="50" ></textarea>
       </div>
 
       <div class="form-group" id="file-list">

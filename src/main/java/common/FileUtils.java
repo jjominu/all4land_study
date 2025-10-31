@@ -123,6 +123,7 @@ public class FileUtils {
 
 	         
 	            String ct = f.getContentType();
+	            System.out.println(ct);
 	            if (ct == null || ct.isBlank()) ct = "text/plain";
 	            if (!ALLOWED_CONTENT_TYPES.contains(ct)) {
 	                errors.add(name + ": 허용되지 않은 MIME 타입(" + ct + ")입니다.");

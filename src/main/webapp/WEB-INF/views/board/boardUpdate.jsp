@@ -11,20 +11,26 @@
 
 <jsp:include page="../include/header.jsp"></jsp:include>
 <jsp:include page="../include/footer.jsp"></jsp:include>
-
+ <c:if test="${not empty errorMessages}">
+  <script type="text/javascript">
+    <c:forEach var="msg" items="${errorMessages}">
+      alert("${msg}");
+    </c:forEach>
+  </script>
+</c:if>
 <body>
 <div class="container">
-  <form id="boardForm" action="<c:url value='/board/updateBoard.do'/>" method="post" enctype="multipart/form-data" class="form-group">
+  <form id="boardForm" class="form-group" action="<c:url value='/board/updateBoard.do'/>" method="post" enctype="multipart/form-data" >
     <input type="hidden" id="boardId" name="boardId" value="${detail.boardId}"/>
 
     <div class="form-group">
       <label for="title">제목</label>
-      <input class="form-control" type="text" id="title" name="title" value="${detail.title}" required maxlength="20"/>
+      <input class="form-control" type="text" id="title" name="title" value="${detail.title}" />
     </div>
 
     <div class="form-group">
       <label for="content">내용</label>
-      <textarea class="form-control" id="content" name="content" rows="10" cols="50" required maxlength="1000">${detail.content}</textarea>
+      <textarea class="form-control" id="content" name="content" rows="10" cols="50" >${detail.content}</textarea>
     </div>
 
     <div class="form-group" id="file-list">

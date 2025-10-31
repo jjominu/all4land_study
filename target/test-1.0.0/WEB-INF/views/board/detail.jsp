@@ -46,9 +46,11 @@
 
             <c:if test="${not empty result}">
               <div class="d-flex flex-wrap gap-2">
-                <c:forEach items="${result}" var="imgSrc">
-                  <img src='${imgSrc}' class="img-thumbnail bd-img" style="max-width:20%; min-height:20px;" alt="첨부 이미지 미리보기">
-                </c:forEach>
+	                <c:forEach items="${result}" var="imgSrc">
+		                <c:if test="${not empty imgSrc}">
+		                  <img src='${imgSrc}' class="img-thumbnail bd-img" style="max-width:20%; min-height:20px;" alt="첨부 이미지 미리보기">
+	                  </c:if>
+	                </c:forEach>
               </div>
             </c:if>
 

@@ -7,6 +7,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="<c:url value='/js/board/board-list.js'/>"></script>
+
 <meta charset="UTF-8">
 <title>게시판</title>
 </head>
@@ -124,7 +126,6 @@
 </ul>
 </div>
 </body>
-<script src="<c:url value='/js/board/board-list.js'/>"></script>
 
 
 </html>

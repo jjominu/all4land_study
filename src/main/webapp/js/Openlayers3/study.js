@@ -1,26 +1,64 @@
 var USE_WMS = true;   // 초기 표시 여부
-var USE_WFS = false;  // 초기 표시 여부
+var USE_WFS = false; 
+var USE_DOG  = false; // 초기 표시 여부
 
 var baseMap = null;
 var gsWms   = null;
 var gsVector= null;
-
+var gsDog   = null;
+var dogWfsJson =null;
+var gsVectorSource = null;
+var dogSource = null
 var container = document.getElementById('popup'); //팝업이 담길 컨테이너 요소
 var content1 = document.getElementById('popup-content'); //팝업 내용 요소
 $(document).ready(function () {
   $("#chkWms").prop("checked", USE_WMS);
   $("#chkWfs").prop("checked", USE_WFS);
+  $("#chkDog").prop("checked",USE_DOG);
+$.ajax({ 
+	    url: "/board-test/api/map/getDogApi.do", 
+	    type: "GET", 
+	    contentType: "application/json;charset=UTF-8",
+	    dataType : "json",
+	    success:function(data,status){
+			
+			dogWfsJson= data.response.result.featureCollection;
+			console.log(dogWfsJson);
+			initMap();
 
+		},
+		error:function(status){
+			alert(status+"dsadsad")
+		}
+	
+    }) 
+    
+    	
   $("#chkWms").on("change", function () {
     gsWms.setVisible(this.checked);
+    
   });
 
   $("#chkWfs").on("change", function () {
     gsVector.setVisible(this.checked);
   });
+  
+ 
 
   // 지도 초기화
-  initMap();
+ 
+   $("#chkDog").on("change", function () {
+	
+   
+        gsDog.setVisible(this.checked);
+
+    }); 
+     
+    	 
+			
+
+    
+
 });
 function initMap(){
 	//뷰(좌표 및 줌 설정)
@@ -94,16 +132,18 @@ function initMap(){
     })
   });
   baseMap.addLayer(gsWms);
+  
+  
+  
   gsVectorSource = new ol.source.Vector({
 	    format: new ol.format.GeoJSON(),
 	     url: function (extent) {
-			var a ="http://localhost:9090/geoserver/vworld/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=vworld%3AC_UQ155&outputFormat=application%2Fjson&srsname=EPSG:3857&"+
-              'bbox=' + extent.join(',') + ',EPSG:3857';
+			var a ="http://localhost:9090/geoserver/vworld/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=vworld%3AC_UQ155&outputFormat=application%2Fjson&srsname=EPSG:3857&"
+              ;
 
       return a;
     }, strategy: ol.loadingstrategy.bbox
 	  })
-	  
 	  
 	  
 	gsVector = new ol.layer.Vector({
@@ -120,6 +160,33 @@ function initMap(){
         })
 	});
 	baseMap.addLayer(gsVector);
+	
+
+	  
+	   vectorSource = new ol.source.Vector({
+		features : (new ol.format.GeoJSON().readFeatures(dogWfsJson)),
+		
+    });
+    console.log(dogWfsJson);
+    console.log(vectorSource);
+    
+	gsDog = new ol.layer.Vector({
+	  visible: true,
+	  source: vectorSource,
+	  style: new ol.style.Style({
+          stroke: new ol.style.Stroke({
+            color: 'rgba(64, 156, 255, 1.0)',
+            width: 3
+             }),
+      fill: new ol.style.Fill({
+     	 color: 'rgba(0, 0, 0, 0.001)'   
+    })
+        })
+	});
+	baseMap.addLayer(gsDog);
+	
+	
+	
 	var select = null;
  
     var selectSingleClick = new ol.interaction.Select({

@@ -108,16 +108,15 @@ public class BoardController {
     @RequestMapping(value ="/updateBoard.do" , method=RequestMethod.POST)
     public ModelAndView boardUpdate(
             MultipartFile[] file,
-            @RequestParam int boardId,
-            @NotNull @RequestParam String title,
-            @RequestParam String content,
+           @Valid@ModelAttribute("board") BoardVO boardVO,
             @RequestParam(value = "deleteFileIds", required = false) List<Integer> deleteFileIds
     ) throws Exception {
         try {
-            BoardVO boardVO = new BoardVO();
-            boardVO.setBoardId(boardId);
-            boardVO.setTitle(title);
-            boardVO.setContent(content);
+            //BoardVO boardVO = new BoardVO();
+            //boardVO.setBoardId(boardId);
+            //boardVO.setTitle(title);
+            //boardVO.setContent(content);
+        	System.out.println(boardVO);
             bs.updateBoard(boardVO);
 
             int insertId = boardVO.getBoardId();
@@ -159,6 +158,7 @@ public class BoardController {
                     .map(e -> e.getDefaultMessage())
                     .toList();
             mav.addObject("errorMessages", fieldErrors);
+            System.out.println(fieldErrors);
             return mav;
         }
 

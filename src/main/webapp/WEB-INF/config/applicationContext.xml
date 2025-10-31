@@ -27,5 +27,13 @@
 
     <context:component-scan base-package="board"/>
     <context:component-scan base-package="map"/>
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+    <property name="requestFactory">
+        <bean class="org.springframework.http.client.SimpleClientHttpRequestFactory">
+            <property name="connectTimeout" value="5000"/>
+            <property name="readTimeout" value="10000"/>
+        </bean>
+    </property>
+</bean>
     
 </beans>

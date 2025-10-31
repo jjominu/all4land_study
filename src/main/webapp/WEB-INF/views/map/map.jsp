@@ -25,6 +25,7 @@
 	<div class="map-toolbar">
   <label><input type="checkbox" id="chkWms"></input> WMS</label>
   <label><input type="checkbox" id="chkWfs" checked></input>  WFS</label>
+  <label><input type="checkbox" id="chkDog" ></input>  DogWFS</label>
 </div>
 <div>
 <label class="label">
