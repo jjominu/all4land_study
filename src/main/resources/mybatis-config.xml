@@ -11,6 +11,9 @@
        <typeAlias alias="CriteriaVO" type="board.vo.CriteriaVO"/>
        <typeAlias alias="FileVO" type="board.vo.FileVO"/>
        
+              <typeAlias alias="DogParkVO" type="map.vo.DogParkVO"/>
+       
+       
     </typeAliases>
 
 </configuration>

@@ -21,16 +21,10 @@ public class MapServiceImpl implements MapService {
 
 	// 외부 API 호출 메서드
     public String callApi() {
+
         // ✅ vWorld API URL
-        String url = "https://api.vworld.kr/req/data?" +
-                "service=data&version=2.0&request=GetFeature&format=json&errorformat=json" +
-                "&data=LT_C_DOGPARK" +
-                "&geometry=true&attribute=true" +
-                "&columns=sd_nm,sgg_nm,park_nm,oper_tm,hldy,fcs,fcar,oper_inst,telno,addr,use_amt,ag_geom" +
-                "&size=1000&page=1&crs=EPSG:3857" +
-                "&geomfilter=BOX(13803616.8584,3895303.9634,14694172.7847,4721671.5726)" +
-                "&key=17C7EB57-45CC-3193-9DB9-AADAC973D076" +
-                "&domain=http://localhost:8080";
+        String url = "http://localhost:9090/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=DogPark:dog_park&outputFormat=application/json\r\n"
+        		+ "";
 
         // ✅ 헤더 설정
         HttpHeaders headers = new HttpHeaders();
@@ -50,4 +44,5 @@ public class MapServiceImpl implements MapService {
         
         return response.getBody();
     }
+   
 }

@@ -4,7 +4,11 @@ var baseMap = null;
 var gsDog   = null;
 var dogWfsJson = null;
 var dogSource = null;
-
+//  팝업 관련 전역 변수
+var popupOverlay = null;
+var popupContainer = null;
+var popupContent = null;
+var popupCloser = null;
 // 동그란 마커 스타일
 var dogMarkerStyle = new ol.style.Style({
   image: new ol.style.Circle({
@@ -40,9 +44,127 @@ function dogMarkerStyleFn(feature) {
 
   return dogMarkerStyle;
 }
+function updateDogList(features) {
+    var html = "";
 
+    features.forEach(f => {
+        var name = f.get("park_nm") || "(이름 없음)";
+        var addr = f.get("addr") || "";
+
+        html += `
+          <div class="dog-item">
+            <b>${name}</b><br>
+            <small>${addr}</small>
+            <hr/>
+          </div>
+        `;
+    });
+
+    $("#dog-list").html(html);
+}
+
+// ✅ 클릭한 피처 정보 팝업에 표시 + 마커위에 위치
+function showDogPopup(feature) {
+  if (!feature || !popupOverlay || !popupContent) return;
+
+  // 클러스터 레이어인 경우, 안에 실제 피처 목록이 들어있음
+  var originalFeatures = feature.get('features');
+  if (originalFeatures && originalFeatures.length) {
+    feature = originalFeatures[0];
+  }
+
+  var props = feature.getProperties();
+  delete props.geometry;
+
+  var sd_nm   = props.sd_nm   || '';
+  var sgg_nm  = props.sgg_nm  || '';
+  var park_nm = props.park_nm || '';
+  var addr    = props.addr    || '';
+  var oper_tm = props.oper_tm || '';
+  var hldy    = props.hldy    || '';
+  var fcar    = props.fcar    || '';
+  var telno   = props.telno   || '';
+
+  var html = ''
+    + '<b>' + park_nm + '</b><br/>'
+    + (sd_nm || sgg_nm ? sd_nm + ' ' + sgg_nm + '<br/>' : '')
+    + (addr    ? '주소: ' + addr    + '<br/>' : '')
+    + (oper_tm ? '운영시간: ' + oper_tm + '<br/>' : '')
+    + (hldy    ? '휴무일: ' + hldy    + '<br/>' : '')
+    + (fcar    ? '면적: ' + fcar    + '<br/>' : '')
+    + (telno   ? '연락처: ' + telno   + '<br/>' : '');
+
+  popupContent.innerHTML = html;
+
+  // 위치: 포인트면 그대로, 폴리곤/멀티폴리곤이면 중심점
+  var geom = feature.getGeometry();
+  if (!geom) return;
+
+  var coord;
+  if (geom.getType() === 'Point') {
+    coord = geom.getCoordinates();
+  } else {
+    coord = ol.extent.getCenter(geom.getExtent());
+  }
+
+  popupOverlay.setPosition(coord);
+}
+
+// 선택한 피처 위치로 확대 (원하면 같이 사용)
+function zoomToDogFeature(feature) {
+  if (!feature || !baseMap) return;
+
+  var originalFeatures = feature.get('features');
+  if (originalFeatures && originalFeatures.length) {
+    feature = originalFeatures[0];
+  }
+
+  var geom = feature.getGeometry();
+  if (!geom) return;
+
+  var extent = geom.getExtent ? geom.getExtent() : null;
+  if (!extent) return;
+
+  baseMap.getView().fit(extent, {
+    padding: [50, 50, 50, 50],
+    maxZoom: 16,
+    duration: 500
+  });
+}
+$(".layer-btn").on("click", function () {
+    var type = $(this).data("type");
+
+    switch (type) {
+        case "base":
+            baseLayer.setSource(new ol.source.TileWMS({
+                url: _vectorMapUrl,
+                serverType: "mapserver"
+            }));
+            break;
+
+        case "sat":
+            baseLayer.setSource(
+                new ol.source.XYZ({
+                    url: "https://map.pstatic.net/nrb/styles/satellite/{z}/{x}/{y}.jpg"
+                })
+            );
+            break;
+
+        case "terrain":
+            baseLayer.setSource(
+                new ol.source.XYZ({
+                    url: "https://map.pstatic.net/nrb/styles/terrain/{z}/{x}/{y}.png"
+                })
+            );
+            break;
+    }
+});
 
 $(document).ready(function () {
+	popupContainer = document.getElementById('popup');
+  popupContent   = document.getElementById('popup-content');
+  popupCloser    = document.getElementById('popup-closer');
+
   $("#chkDog").prop("checked", USE_DOG);
 
   $.ajax({
@@ -51,7 +173,7 @@ $(document).ready(function () {
     contentType: "application/json;charset=UTF-8",
     dataType: "json",
     success: function (data, status) {
-      dogWfsJson = data.response.result.featureCollection;
+      dogWfsJson = data;
       initMap();
     },
     error: function (status) {
@@ -121,12 +243,20 @@ function initMap() {
     }),
     view: view
   });
-
+popupOverlay = new ol.Overlay({
+  element: popupContainer,
+  autoPan: true,
+  autoPanAnimation: {
+    duration: 250
+  }
+});
+baseMap.addOverlay(popupOverlay)
   // ✅ 1) WFS GeoJSON → Feature 변환 (이미 3857이므로 재투영 X)
   var dogFeatures = new ol.format.GeoJSON().readFeatures(dogWfsJson, {
     dataProjection: 'EPSG:3857',
     featureProjection: 'EPSG:3857'
   });
+updateDogList(dogFeatures);
 
   // ✅ 2) 소스 생성
   dogSource = new ol.source.Vector({
@@ -152,50 +282,33 @@ function initMap() {
   }
 
   // (아래 선택 인터랙션 부분은 네 코드 그대로 유지)
-  var select = null;
 
   var selectSingleClick = new ol.interaction.Select({
     multi: true
   });
 
-  var selectPointerMove = new ol.interaction.Select({
-    condition: ol.events.condition.pointerMove,
-    multi: true
-  });
 
-  var selectElement = document.getElementById('type');
+baseMap.addInteraction(selectSingleClick);
 
-  var changeInteraction = function () {
-    if (select !== null) {
-      baseMap.removeInteraction(select);
-    }
-    var value = selectElement.value;
-    if (value == 'singleclick') {
-      select = selectSingleClick;
-    } else if (value == 'pointermove') {
-      select = selectPointerMove;
-    } else {
-      select = null;
-    }
-    if (select !== null) {
-      baseMap.addInteraction(select);
-    }
-  };
+ 
 
-  selectElement.onchange = changeInteraction;
-  changeInteraction();
+selectSingleClick.on('select', function (e) {
+  var selected = e.selected;
+
+  if (!selected || selected.length === 0) {
+    if (popupOverlay) popupOverlay.setPosition(undefined);
+    return;
+  }
+
+  var feature = selected[0];
+
+  // 마커 위 팝업
+  showDogPopup(feature);
+
+  // 확대
+  zoomToDogFeature(feature);
+});
 }
 
-//베이스맵 요청 시 사용
-function fn_fillzero(n, digits) {
-	var zero = '';
-	n = n.toString();
-	if (digits > n.length) {
-		for (var i = 0; digits - n.length > i; i++) {
-			zero += '0';
-		}
-	}
-	return zero + n;
-}
 
 
