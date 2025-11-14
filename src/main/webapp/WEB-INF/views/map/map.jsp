@@ -23,8 +23,7 @@
 <body>
 	<div id="baseMap" class="baseMap"style="width:100%; height:700px;"></div>	
 	<div class="map-toolbar">
-  <label><input type="checkbox" id="chkWms"></input> WMS</label>
-  <label><input type="checkbox" id="chkWfs" checked></input>  WFS</label>
+
   <label><input type="checkbox" id="chkDog" ></input>  DogWFS</label>
 </div>
 <div>
