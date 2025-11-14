@@ -8,15 +8,30 @@ var gsVector= null;
 var gsDog   = null;
 var dogWfsJson =null;
 var gsVectorSource = null;
-var dogSource = null
-var container = document.getElementById('popup'); //팝업이 담길 컨테이너 요소
-var content1 = document.getElementById('popup-content'); //팝업 내용 요소
+var dogSource = null;
+var popupContainer = null;
+var popupContent = null;
+var popupCloseButton = null;
 $(document).ready(function () {
+  popupContainer = document.getElementById('popup');
+  popupContent = document.getElementById('popup-content');
+  popupCloseButton = document.getElementById('popup-close');
+
+  if (popupCloseButton) {
+    popupCloseButton.addEventListener('click', hideWfsPopup);
+  }
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+      hideWfsPopup();
+    }
+  });
+
   $("#chkWms").prop("checked", USE_WMS);
   $("#chkWfs").prop("checked", USE_WFS);
   $("#chkDog").prop("checked",USE_DOG);
-$.ajax({ 
-	    url: "/board-test/api/map/getDogApi.do", 
+$.ajax({
+            url: "/board-test/api/map/getDogApi.do",
 	    type: "GET", 
 	    contentType: "application/json;charset=UTF-8",
 	    dataType : "json",
@@ -35,15 +50,24 @@ $.ajax({
     
     	
   $("#chkWms").on("change", function () {
-    gsWms.setVisible(this.checked);
-    
+    if (gsWms) {
+      gsWms.setVisible(this.checked);
+    }
+
   });
 
   $("#chkWfs").on("change", function () {
-    gsVector.setVisible(this.checked);
+    if (gsVector) {
+      gsVector.setVisible(this.checked);
+    }
+    if (this.checked) {
+      showWfsPopup();
+    } else {
+      hideWfsPopup();
+    }
   });
-  
- 
+
+
 
   // 지도 초기화
  
@@ -223,12 +247,16 @@ function initMap(){
     };
  
     selectElement.onchange = changeInteraction;
-    changeInteraction();    
+    changeInteraction();
+
+    if (USE_WFS) {
+      showWfsPopup();
+    }
 }
 //베이스맵 요청 시 사용
 function fn_fillzero(n, digits) {
-	var zero = '';
-	n = n.toString();
+        var zero = '';
+        n = n.toString();
 	if (digits > n.length) {
 		for (var i = 0; digits - n.length > i; i++) {
 			zero += '0';
@@ -238,3 +266,71 @@ function fn_fillzero(n, digits) {
 }
 
 
+function showWfsPopup() {
+  if (!popupContainer || !popupContent) {
+    return;
+  }
+  popupContent.innerHTML = buildWfsPopupContent();
+  popupContainer.classList.add('open');
+}
+
+function hideWfsPopup() {
+  if (!popupContainer) {
+    return;
+  }
+  popupContainer.classList.remove('open');
+}
+
+function buildWfsPopupContent() {
+  var count = getWfsFeatureCount();
+  var html = '<p>WFS 레이어가 활성화되었습니다.</p>';
+  if (count > 0) {
+    html += '<p>총 <strong>' + count + '</strong>개의 객체가 로딩되었습니다.</p>';
+  } else {
+    html += '<p>객체를 불러오는 중입니다. 잠시만 기다려 주세요.</p>';
+  }
+
+  var sample = buildSamplePropertiesHtml();
+  if (sample) {
+    html += sample;
+  }
+  return html;
+}
+
+function getWfsFeatureCount() {
+  if (gsVectorSource && typeof gsVectorSource.getFeatures === 'function') {
+    var features = gsVectorSource.getFeatures();
+    if (features && features.length) {
+      return features.length;
+    }
+  }
+
+  if (dogWfsJson && dogWfsJson.features && dogWfsJson.features.length) {
+    return dogWfsJson.features.length;
+  }
+
+  return 0;
+}
+
+function buildSamplePropertiesHtml() {
+  if (!dogWfsJson || !dogWfsJson.features || !dogWfsJson.features.length) {
+    return '';
+  }
+
+  var firstFeature = dogWfsJson.features[0];
+  var properties = firstFeature && firstFeature.properties ? firstFeature.properties : null;
+  if (!properties) {
+    return '';
+  }
+
+  var keys = Object.keys(properties).slice(0, 5);
+  if (!keys.length) {
+    return '';
+  }
+
+  var items = keys.map(function (key) {
+    return '<li><strong>' + key + '</strong>: ' + properties[key] + '</li>';
+  });
+
+  return '<div class="popup-sample"><p>첫 번째 객체 예시</p><ul>' + items.join('') + '</ul></div>';
+}
