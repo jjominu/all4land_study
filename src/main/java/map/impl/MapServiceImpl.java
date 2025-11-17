@@ -1,5 +1,7 @@
 package map.impl;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.http.HttpEntity;
@@ -10,12 +12,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import map.DogParkDAO;
 import map.MapService;
+import map.vo.DogParkVO;
 @Service
 public class MapServiceImpl implements MapService {
 
     @Resource
 	RestTemplate restTemplate;
+    @Resource
+    DogParkDAO dogParkDAO;
 
    
 
@@ -43,6 +49,10 @@ public class MapServiceImpl implements MapService {
 
         
         return response.getBody();
+    }
+    
+    public List<DogParkVO> getDogParkList() {
+    	return dogParkDAO.findAll();
     }
    
 }

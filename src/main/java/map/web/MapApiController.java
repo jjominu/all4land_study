@@ -22,7 +22,7 @@ public class MapApiController {
 	
 	@RequestMapping(value="/getDogApi.do", method=RequestMethod.GET)
 	public String getDogApi() {
-		System.out.println(ms.callApi());
+		System.out.println("API: "+ms.callApi());
 		return ms.callApi();
 	}
 }

@@ -19,72 +19,7 @@
 	<script src="<c:url value='/js/Openlayers3/study.js'/>"></script>
 	
 		
-  <style>
-/* 화면 전체 레이아웃 */
-#map-wrapper {
-    display: flex;
-    width: 100%;
-    height: calc(100vh - 60px);   /* 상단 header 공간 제외한 높이 */
-    margin-top: 60px;             /* header 실제 높이만큼 밀기 */
-    overflow: hidden;
-}
 
-/* 왼쪽 패널 */
-#left-panel {
-    width: 350px;
-    background: #fff;
-    border-right: 1px solid #ddd;
-    overflow-y: auto;
-    padding: 15px;
-}
-
-/* 오른쪽 지도 영역 */
-#right-map-area {
-    flex: 1;
-    position: relative;
-}
-
-#baseMap {
-    width: 100%;
-    height: 100%;
-}
-
-/* 레이어 스위치 UI */
-#layer-switcher {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: white;
-    padding: 8px;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-}
-
-.layer-btn {
-    display: block;
-    padding: 6px 10px;
-    margin-bottom: 5px;
-    border: 1px solid #ccc;
-    background: white;
-    cursor: pointer;
-    border-radius: 4px;
-}
-.layer-btn:hover {
-    background: #f2f2f2;
-}
-
-/* 팝업 스타일 */
-.ol-popup {
-  position: absolute;
-  background-color: white;
-  padding: 10px;
-  border-radius: 4px;
-  border: 1px solid #cccccc;
-  bottom: 12px;
-  left: -50px;
-  min-width: 200px;
-}
-</style>
 
 </head>
 
@@ -92,26 +27,81 @@
 
 <!-- ⭐ 여기부터 레이아웃 시작 -->
 <div id="map-wrapper">
+<!-- 왼쪽 목록 -->
+<div id="left-panel">
+    <h4>반려견 놀이터 목록</h4>
 
-    <!-- 왼쪽 목록 -->
-    <div id="left-panel">
-        <h4>반려견 놀이터 목록</h4>
-        <div id="dog-list"></div>
-    </div>
+    <div id="dog-list">
+    
+        <c:if test="${not empty dogList}">
+            <c:forEach var="dog" items="${dogList}">
+                
+                <div class="card mb-3">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+
+                        <!-- 왼쪽 텍스트 -->
+                        <div>
+                            <h6 class="card-title">
+                                <c:out value="${dog.parkNm}" />
+                            </h6>
+                            <p class="card-text">
+                                <c:out value="${dog.addr}" />
+                            </p>
+                        </div>
+
+                        <!-- 오른쪽 화살표 버튼 -->
+                        <button class="btn"
+                                onclick="focusDogOnMap('dog_park.${dog.id}')">
+                            ➜
+                        </button>
+
+                    </div>
+                </div>
+
+            </c:forEach>
+        </c:if>
+
+      
+   
+</div>
+</div>
 
     <!-- 오른쪽 지도 -->
-    <div id="right-map-area">
-        <div id="baseMap"></div>
-<div id="layer-switcher">
-    <label class="chk-label">
-        <input type="checkbox" id="chkDog">
-        🐶 반려견 놀이터
-    </label>
-</div>
+<div id="right-map-area">
+    <div id="baseMap"></div>
+
+    <!-- ⭐ 레이어 스위처 카드 -->
+    <div id="layer-switcher" class="card shadow-sm p-2"
+         style="position:absolute; top:15px; right:15px; z-index:999;">
+        
+        <!-- 체크박스: 반려견 놀이터 on/off -->
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" id="chkDog" checked>
+            <label class="form-check-label" for="chkDog">
+                🐶 반려견 놀이터
+            </label>
+        </div>
+
+        <hr class="my-2"/>
+
+        <!-- 베이스맵 선택 버튼 -->
+        <div class="btn-group-vertical" role="group" aria-label="베이스맵 선택">
+            <button type="button"
+                    class="btn btn-sm  layer-btn mb-1"
+                    data-type="base">
+                기본 지도
+            </button>
+            <button type="button"
+                    class="btn btn-sm  layer-btn mb-1"
+                    data-type="sat">
+                위성 지도
+            </button>
+        </div>
+    </div>
 </div>
 
         <div id="popup" class="ol-popup">
-            <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+            <a href="#" id="popup-closer" class="ol-popup-closer" style="">X</a>
             <div id="popup-content"></div>
         </div>
     </div>

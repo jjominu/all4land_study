@@ -2,7 +2,7 @@
 const VWORLD_KEY = "17C7EB57-45CC-3193-9DB9-AADAC973D076";
 
 // ======================= 전역 변수 ============================
-var USE_DOG  = false; // 초기 표시 여부
+var USE_DOG  = true; // 초기 표시 여부
 
 var baseMap = null;
 var baseLayer = null;   // 베이스맵 레이어
@@ -53,27 +53,21 @@ function dogMarkerStyleFn(feature) {
   return dogMarkerStyle;
 }
 
-// ======================= 목록 & 팝업 ==========================
+// ======================= 팝업 ==========================
 function updateDogList(features) {
-  var html = "";
 
   features.forEach(f => {
+	var id = f.get("id");
     var name = f.get("park_nm") || "(이름 없음)";
     var addr = f.get("addr") || "";
+    
 
-    html += `
-      <div class="dog-item">
-        <b>${name}</b><br>
-        <small>${addr}</small>
-        <hr/>
-      </div>
-    `;
+  
   });
 
-  $("#dog-list").html(html);
 }
 
-// ✅ 클릭한 피처 정보 팝업에 표시 + 마커위에 위치
+//팝업
 function showDogPopup(feature) {
   if (!feature || !popupOverlay || !popupContent) return;
 
@@ -86,23 +80,23 @@ function showDogPopup(feature) {
   var props = feature.getProperties();
   delete props.geometry;
 
-  var sd_nm   = props.sd_nm   || '';
-  var sgg_nm  = props.sgg_nm  || '';
-  var park_nm = props.park_nm || '';
-  var addr    = props.addr    || '';
-  var oper_tm = props.oper_tm || '';
-  var hldy    = props.hldy    || '';
-  var fcar    = props.fcar    || '';
-  var telno   = props.telno   || '';
+  var sd_nm   = props.sd_nm   || '정보 없음';
+  var sgg_nm  = props.sgg_nm  || '정보 없음';
+  var park_nm = props.park_nm || '정보 없음';
+  var addr    = props.addr    || '정보 없음';
+  var oper_tm = props.oper_tm || '정보 없음';
+  var hldy    = props.hldy    || '정보 없음';
+  var fcar    = props.fcar    || '정보 없음';
+  var telno   = props.telno   || '정보 없음';
 
   var html = ''
     + '<b>' + park_nm + '</b><br/>'
     + (sd_nm || sgg_nm ? sd_nm + ' ' + sgg_nm + '<br/>' : '')
-    + (addr    ? '주소: ' + addr    + '<br/>' : '')
-    + (oper_tm ? '운영시간: ' + oper_tm + '<br/>' : '')
-    + (hldy    ? '휴무일: ' + hldy    + '<br/>' : '')
-    + (fcar    ? '면적: ' + fcar    + '<br/>' : '')
-    + (telno   ? '연락처: ' + telno   + '<br/>' : '');
+    + ( '주소: ' + addr    + '<br/>' )
+    + ( '운영시간: ' + oper_tm + '<br/>' )
+    + ( '휴무일: ' + hldy    + '<br/>' )
+    + ( '면적: ' + fcar    + '<br/>' )
+    + ( '연락처: ' + telno   + '<br/>' );
 
   popupContent.innerHTML = html;
 
@@ -119,6 +113,39 @@ function showDogPopup(feature) {
 
   popupOverlay.setPosition(coord);
 }
+
+
+
+function focusDogOnMap(id) {
+  if (!dogSource || !baseMap) return;
+
+  // id가 문자열이면 그대로, 숫자면 String 변환해서 사용하는 것도 안전
+  var feature = dogSource.getFeatureById(String(id));
+
+  if (!feature) {
+    alert("지도에 해당 지점이 없습니다. (id=" + id + ")");
+    return;
+  }
+
+  var geom = feature.getGeometry();
+  if (!geom) return;
+
+  var coord;
+  if (geom.getType() === "Point") {
+    // 포인트면 그대로 좌표 사용
+    coord = geom.getCoordinates();
+  } else {
+    // Polygon, MultiPolygon 같은 경우는 extent 중심 사용
+    coord = ol.extent.getCenter(geom.getExtent());
+  }
+
+  // 팝업 같이 띄우기
+  showDogPopup(feature);
+  zoomToDogFeature(feature);
+}
+
+
+
 
 // 선택한 피처 위치로 확대 (원하면 같이 사용)
 function zoomToDogFeature(feature) {
@@ -142,6 +169,29 @@ function zoomToDogFeature(feature) {
   });
 }
 
+
+
+// ======================= 문서 로딩 ============================
+$(document).ready(function () {
+  popupContainer = document.getElementById('popup');
+  popupContent   = document.getElementById('popup-content');
+  popupCloser    = document.getElementById('popup-closer');
+ // ⭐ 여기 추가
+  if (popupCloser) {
+    popupCloser.onclick = function () {
+      popupOverlay.setPosition(undefined);
+      popupCloser.blur();
+      return false;
+    };
+  }
+  if (popupCloser && popupOverlay) {
+    popupCloser.onclick = function () {
+      popupOverlay.setPosition(undefined);
+      return false;
+    };
+  }
+
+  $("#chkDog").prop("checked", USE_DOG);
 // ======================= 레이어 버튼 (VWorld 베이스맵 스위칭) ======================
 $(".layer-btn").on("click", function () {
   var type = $(this).data("type");
@@ -160,29 +210,8 @@ $(".layer-btn").on("click", function () {
       }));
       break;
 
-    case "terrain":  // 지형/gray 계열
-      baseLayer.setSource(new ol.source.XYZ({
-        url: 'http://api.vworld.kr/req/wmts/1.0.0/' + VWORLD_KEY + '/gray/{z}/{y}/{x}.png'
-      }));
-      break;
   }
 });
-
-// ======================= 문서 로딩 ============================
-$(document).ready(function () {
-  popupContainer = document.getElementById('popup');
-  popupContent   = document.getElementById('popup-content');
-  popupCloser    = document.getElementById('popup-closer');
-
-  if (popupCloser && popupOverlay) {
-    popupCloser.onclick = function () {
-      popupOverlay.setPosition(undefined);
-      return false;
-    };
-  }
-
-  $("#chkDog").prop("checked", USE_DOG);
-
   // GeoServer WFS(JSON) 호출
   $.ajax({
     url: "/board-test/api/map/getDogApi.do",
@@ -208,16 +237,15 @@ $(document).ready(function () {
 
 // ======================= 지도 초기화 ==========================
 function initMap() {
-  // VWorld WMTS는 기본적으로 EPSG:3857 이라서 proj4 별도 설정 없어도 됨
   var view = new ol.View({
     projection: 'EPSG:3857',
-    center: [14177553.107181, 4308348.8448386], // 적당히 한반도 중앙
+    center: [14177553.107181, 4308348.8448386], 
     zoom: 7,
     minZoom: 6,
     maxZoom: 19
   });
 
-  // ✅ 1) VWorld 기본지도 레이어
+  //VWorld 기본지도 레이어
   baseLayer = new ol.layer.Tile({
     division: 'TILE',
     layerName: 'VWORLD_BASE',
@@ -227,9 +255,9 @@ function initMap() {
     })
   });
 
-  // ✅ 2) 지도 생성
+  //지도 생성
   baseMap = new ol.Map({
-    target: 'baseMap',   // <div id="baseMap"> 이어야 함
+    target: 'baseMap',  
     layers: [
       baseLayer
     ],
@@ -241,7 +269,7 @@ function initMap() {
     view: view
   });
 
-  // ✅ 3) 팝업 오버레이 생성
+  //팝업 오버레이 생성
   popupOverlay = new ol.Overlay({
     element: popupContainer,
     autoPan: true,
@@ -258,14 +286,21 @@ function initMap() {
     };
   }
 
-  // ✅ 4) WFS GeoJSON → Feature 변환 (이미 3857이므로 재투영 X)
+  //WFS GeoJSON → Feature 변환
   var dogFeatures = new ol.format.GeoJSON().readFeatures(dogWfsJson, {
     dataProjection: 'EPSG:3857',
     featureProjection: 'EPSG:3857'
   });
+  dogFeatures.forEach(function (f) {
+    var attrId = f.get("id");  
+    console.log(f.get("id"))   // GeoJSON 속성 id
+    if (attrId !== undefined && attrId !== null) {
+        f.setId(String(attrId));  // OL feature ID로 설정
+    }
+});
   updateDogList(dogFeatures);
 
-  // ✅ 5) 벡터 소스 & 레이어 생성
+  //벡터 소스 레이어 생성
   dogSource = new ol.source.Vector({
     features: dogFeatures
   });
@@ -276,10 +311,10 @@ function initMap() {
     style: dogMarkerStyleFn  // 중심에 마커 찍는 스타일
   });
 
-  // ✅ 6) 지도에 추가
+  // 지도에 추가
   baseMap.addLayer(gsDog);
 
-  // ✅ 7) WFS 영역으로 줌 맞추기
+  //WFS 영역으로 줌 맞추기
   if (dogSource.getFeatures().length > 0) {
     baseMap.getView().fit(dogSource.getExtent(), {
       padding: [50, 50, 50, 50],
@@ -287,7 +322,7 @@ function initMap() {
     });
   }
 
-  // ✅ 8) 클릭 선택 인터랙션
+  //  8) 클릭 선택 인터랙션
   var selectSingleClick = new ol.interaction.Select({
     multi: true
   });

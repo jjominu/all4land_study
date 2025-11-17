@@ -26,5 +26,66 @@
 
     <!-- JQuery -->	
     <script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js></script>
+  <style>
+#map-wrapper {
+    display: flex;
+    width: 100%;
+    height: calc(100vh - 60px);   
+    margin-top: 60px;             
+    overflow: hidden;
+}
 
+#left-panel {
+    width: 350px;
+    background: #fff;
+    border-right: 1px solid #ddd;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+#right-map-area {
+    flex: 1;
+    position: relative;
+}
+
+#baseMap {
+    width: 100%;
+    height: 100%;
+}
+
+#layer-switcher {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: white;
+    padding: 8px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+.layer-btn {
+    display: block;
+    padding: 6px 10px;
+    margin-bottom: 5px;
+    border: 1px solid #ccc;
+    background: white;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.layer-btn:hover {
+    background: #f2f2f2;
+}
+
+.ol-popup {
+  position: absolute;
+  background-color: white;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #cccccc;
+  bottom: 50px;
+  left: -300px;
+  min-width: 500px;
+  min-height: 190px;
+}
+</style>
 </head>

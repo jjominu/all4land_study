@@ -2,9 +2,7 @@ package board.impl;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
-import org.apache.ibatis.session.SqlSession;
+import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
 import org.springframework.stereotype.Repository;
 
 import board.BoardDAO;
@@ -13,94 +11,81 @@ import board.vo.BoardVO;
 import board.vo.CriteriaVO;
 import board.vo.FileVO;
 
-@Repository
-public class BoardDAOImpl implements BoardDAO {
+@Repository("boardDAO")
+public class BoardDAOImpl extends EgovAbstractMapper implements BoardDAO {
 
-	@Resource
-	SqlSession sqlSession;
-	
-	@Override
-	public List<BoardVO> getList(CriteriaVO cri) {
-		return sqlSession.selectList("board.getList",cri);
-		
-	}
-	
-	@Override
-	public void deleteBoard(int boardId) {
-		sqlSession.delete("board.deleteBoard",boardId);
-		
-	}
-	
-	@Override
-	public int insertBoard(BoardVO boardVO) {
-		return sqlSession.selectOne("board.insertBoard",boardVO);
-		
-	}
-	
-	@Override
-	public BoardVO getDetail(int boardId) {
-		System.out.println(boardId);
-		
-		sqlSession.update("board.increaseView",boardId);
-		return sqlSession.selectOne("board.getDetail",boardId); 
-	}
+    @Override
+    public List<BoardVO> getList(CriteriaVO cri) {
+        return selectList("board.getList", cri);
+    }
 
-	@Override
-	public void updateBoard(BoardVO boardVO) {
-		sqlSession.update("board.updateBoard", boardVO);
-		
-	}
+    @Override
+    public void deleteBoard(int boardId) {
+        delete("board.deleteBoard", boardId);
+    }
 
-	@Override
-	public List<BoardVO> searchBoard(BoardSearchRequestVO vo) {
-		List<BoardVO> ls = sqlSession.selectList("board.searchBoard",vo);
-		return ls;
-	}
+    @Override
+    public int insertBoard(BoardVO boardVO) {
+        // Mapper에서 insert 후 selectKey로 PK 리턴하면 insert 대신 selectOne 쓸 수도 있지만,
+        // 보통은 insert()가 반영된 row 수(int) 리턴함.
+        return insert("board.insertBoard", boardVO);
+    }
 
-	@Override
-	public int totalBoardCnt() {
-		
-		return sqlSession.selectOne("board.totalBoardCnt");
-	}
+    @Override
+    public BoardVO getDetail(int boardId) {
+        // 조회수 증가
+        update("board.increaseView", boardId);
+        // 상세 조회
+        return selectOne("board.getDetail", boardId);
+    }
 
-	@Override
-	public int totalBoardCntbySearch(BoardSearchRequestVO vo) {
-		
-		return  sqlSession.selectOne("board.totalBoardCntbySearch",vo);
-	}
+    @Override
+    public void updateBoard(BoardVO boardVO) {
+        update("board.updateBoard", boardVO);
+    }
 
-	@Override
-	public void uploadFile(FileVO fileVO) {
+    @Override
+    public List<BoardVO> searchBoard(BoardSearchRequestVO vo) {
+        return selectList("board.searchBoard", vo);
+    }
 
-		sqlSession.insert("board.uploadFile",fileVO);
-	}
+    @Override
+    public int totalBoardCnt() {
+        return selectOne("board.totalBoardCnt");
+    }
 
-	@Override
-	public List<FileVO> getFile(int boardId) {
-		return sqlSession.selectList("board.getFiles",boardId);
-	}
+    @Override
+    public int totalBoardCntbySearch(BoardSearchRequestVO vo) {
+        return selectOne("board.totalBoardCntbySearch", vo);
+    }
 
-	@Override
-	public void deleteFile(int fileId) {
+    @Override
+    public void uploadFile(FileVO fileVO) {
+        insert("board.uploadFile", fileVO);
+    }
 
-		sqlSession.delete("board.deleteFile",fileId);
-	}
+    @Override
+    public List<FileVO> getFile(int boardId) {
+        return selectList("board.getFiles", boardId);
+    }
 
-	@Override
-	public  BoardVO nextBoard(int id) {
-		return sqlSession.selectOne("board.nextBoard",id);
-	}
+    @Override
+    public void deleteFile(int fileId) {
+        delete("board.deleteFile", fileId);
+    }
 
-	@Override
-	public BoardVO previousBoard(int boardId) {
-		
-		return sqlSession.selectOne("board.previousBoard",boardId);
-	}
-	 @Override
-	    public FileVO getFileById(int fileId) {
-	        return sqlSession.selectOne("board.getFileById", fileId);
-	    }
-	
-	
+    @Override
+    public BoardVO nextBoard(int id) {
+        return selectOne("board.nextBoard", id);
+    }
 
+    @Override
+    public BoardVO previousBoard(int boardId) {
+        return selectOne("board.previousBoard", boardId);
+    }
+
+    @Override
+    public FileVO getFileById(int fileId) {
+        return selectOne("board.getFileById", fileId);
+    }
 }

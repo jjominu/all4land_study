@@ -30,14 +30,6 @@
 	<bean id="jsonView" class="org.springframework.web.servlet.view.json.MappongJackson2JsonView">
 	<property name="contentType" value="text/html;charset=UTF-8"/>
 	</bean> -->
-	<bean id="httpRequestFactory"
-      class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory">
-    <property name="connectTimeout" value="5000"/>
-    <property name="readTimeout" value="10000"/>
-</bean>
 
-<bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
-    <constructor-arg ref="httpRequestFactory"/>
-</bean>
 
 </beans>

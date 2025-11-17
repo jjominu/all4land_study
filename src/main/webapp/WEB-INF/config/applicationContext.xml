@@ -14,16 +14,18 @@
         <property name="password" value="0000"/>
     </bean>
 
-    <!-- MyBatis -->
-    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="dataSource"/>
-        <property name="configLocation" value="classpath:/mybatis-config.xml"/>
-        <property name="mapperLocations" value="classpath*:mappers/*Mapper.xml"/>
-    </bean>
+  <!-- MyBatis (EgovAbstractMapper 방식) -->
+<bean id="sqlSession" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <property name="dataSource" ref="dataSource"/>
+    <property name="configLocation" value="classpath:/mybatis-config.xml"/>
+    <property name="mapperLocations" value="classpath*:mappers/*Mapper.xml"/>
+</bean>
 
-    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate" destroy-method="clearCache">
-        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"/>
-    </bean>
+<!-- 필요하면 쓰는 SqlSessionTemplate -->
+<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+    <constructor-arg ref="sqlSession"/>
+</bean>
+
 
     <context:component-scan base-package="board"/>
     <context:component-scan base-package="map"/>
