@@ -54,5 +54,12 @@ public class MapServiceImpl implements MapService {
     public List<DogParkVO> getDogParkList() {
     	return dogParkDAO.findAll();
     }
+
+	@Override
+	public List<DogParkVO> getParkByParkName(String parkName) {
+		
+		return dogParkDAO.findByParkName(parkName);
+	}
+    
    
 }

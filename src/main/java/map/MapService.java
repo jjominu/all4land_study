@@ -8,5 +8,6 @@ public interface MapService {
 
 	public String callApi();
 	public List<DogParkVO> getDogParkList();
+	public List<DogParkVO> getParkByParkName(String parkName);
 	
 }
