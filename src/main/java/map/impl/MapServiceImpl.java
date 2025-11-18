@@ -28,18 +28,18 @@ public class MapServiceImpl implements MapService {
 	// 외부 API 호출 메서드
     public String callApi() {
 
-        // ✅ vWorld API URL
+        //  vWorld API URL
         String url = "http://localhost:9090/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=DogPark:dog_park&outputFormat=application/json\r\n"
         		+ "";
 
-        // ✅ 헤더 설정
+        //  헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        // ✅ HttpEntity 생성 (GET 요청이므로 body는 null)
+        //  HttpEntity 생성 (GET 요청이므로 body는 null)
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        // ✅ GET 요청 보내기
+        // GET 요청 보내기
         ResponseEntity<String> response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,

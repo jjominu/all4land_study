@@ -29,12 +29,6 @@ public class MapController {
 	   
 	}
 	
-	@RequestMapping(value="/getParkByParkName.do",method=RequestMethod.GET)
-	public ModelAndView getParkByParkName( @RequestParam(value="park_nm", required=false) String parkNm) {
-		List<DogParkVO> dogParkList = ms.getParkByParkName(parkNm);
-		ModelAndView mav = new ModelAndView("map/map");
-		mav.addObject("dogList",dogParkList);
-		return mav;
-	}
+
 	
 }

@@ -15,13 +15,9 @@ public class DogParkVO {
     private String addr;
     private String useAmt;
 
-    /**
-     * PostGIS geometry(MultiPolygon, 3857)
-     * WKT 포맷으로 주고 받기 (예: MULTIPOLYGON(((...))))
-     */
+
     private String geomWkt;
 
-    // ===== Getter / Setter =====
 
     public Integer getId() {
         return id;

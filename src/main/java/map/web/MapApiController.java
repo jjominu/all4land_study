@@ -1,5 +1,7 @@
 package map.web;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Controller;
@@ -10,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
 import map.MapService;
+import map.vo.DogParkVO;
 
 @RestController
 @RequestMapping("/api/map")
@@ -25,4 +28,16 @@ public class MapApiController {
 		System.out.println("API: "+ms.callApi());
 		return ms.callApi();
 	}
+	
+	@RequestMapping(value="/ajaxDogList.do",method=RequestMethod.POST)
+	public ModelAndView ajaxDogList(DogParkVO dogParkVO) {
+		System.out.println(dogParkVO);
+		String parkNm = dogParkVO.getParkNm();
+		List<DogParkVO> dogParkList = ms.getParkByParkName(dogParkVO.getParkNm());
+		ModelAndView mav = new ModelAndView("map/fragment/dogList");
+		mav.addObject("dogList",dogParkList);
+		mav.addObject("parkNm",parkNm);
+		return mav;
+	}
+	
 }

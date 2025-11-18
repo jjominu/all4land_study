@@ -1,7 +1,5 @@
 // ======================= VWORLD 설정 ==========================
 const VWORLD_KEY = "17C7EB57-45CC-3193-9DB9-AADAC973D076";
-
-// ======================= 전역 변수 ============================
 var USE_DOG  = true; // 초기 표시 여부
 
 var baseMap = null;
@@ -9,15 +7,11 @@ var baseLayer = null;   // 베이스맵 레이어
 var gsDog   = null;
 var dogWfsJson = null;
 var dogSource = null;
-
-//  팝업 관련 전역 변수
 var popupOverlay = null;
 var popupContainer = null;
 var popupContent = null;
 var popupCloser = null;
-
-// ======================= 스타일 ===============================
-// 동그란 마커 스타일
+//마커 스타일
 var dogMarkerStyle = new ol.style.Style({
   image: new ol.style.Circle({
     radius: 6,
@@ -31,7 +25,7 @@ var dogMarkerStyle = new ol.style.Style({
   })
 });
 
-// Polygon / MultiPolygon 중심에 마커 찍는 스타일 함수
+//중심에 마커 찍기
 function dogMarkerStyleFn(feature) {
   var geom = feature.getGeometry();
   var type = geom.getType();
@@ -41,7 +35,7 @@ function dogMarkerStyleFn(feature) {
     return dogMarkerStyle;
   }
 
-  // Polygon, MultiPolygon이면 중심점에 Point를 새로 찍어서 그려줌
+  //중심점에 Point를 새로 찍어서 그려줌
   if (type === 'Polygon' || type === 'MultiPolygon') {
     var center = ol.extent.getCenter(geom.getExtent());
     return new ol.style.Style({
@@ -53,7 +47,7 @@ function dogMarkerStyleFn(feature) {
   return dogMarkerStyle;
 }
 
-// ======================= 팝업 ==========================
+// 팝업
 function updateDogList(features) {
 
   features.forEach(f => {
@@ -71,7 +65,6 @@ function updateDogList(features) {
 function showDogPopup(feature) {
   if (!feature || !popupOverlay || !popupContent) return;
 
-  // 클러스터 레이어인 경우, 안에 실제 피처 목록이 들어있음
   var originalFeatures = feature.get('features');
   if (originalFeatures && originalFeatures.length) {
     feature = originalFeatures[0];
@@ -100,7 +93,6 @@ function showDogPopup(feature) {
 
   popupContent.innerHTML = html;
 
-  // 위치: 포인트면 그대로, 폴리곤/멀티폴리곤이면 중심점
   var geom = feature.getGeometry();
   if (!geom) return;
 
@@ -119,7 +111,7 @@ function showDogPopup(feature) {
 function focusDogOnMap(id) {
   if (!dogSource || !baseMap) return;
 
-  // id가 문자열이면 그대로, 숫자면 String 변환해서 사용하는 것도 안전
+  // 
   var feature = dogSource.getFeatureById(String(id));
 
   if (!feature) {
@@ -132,14 +124,14 @@ function focusDogOnMap(id) {
 
   var coord;
   if (geom.getType() === "Point") {
-    // 포인트면 그대로 좌표 사용
+    
     coord = geom.getCoordinates();
   } else {
     // Polygon, MultiPolygon 같은 경우는 extent 중심 사용
     coord = ol.extent.getCenter(geom.getExtent());
   }
 
-  // 팝업 같이 띄우기
+  
   showDogPopup(feature);
   zoomToDogFeature(feature);
 }
@@ -147,7 +139,6 @@ function focusDogOnMap(id) {
 
 
 
-// 선택한 피처 위치로 확대 (원하면 같이 사용)
 function zoomToDogFeature(feature) {
   if (!feature || !baseMap) return;
 
@@ -169,14 +160,10 @@ function zoomToDogFeature(feature) {
   });
 }
 
-
-
-// ======================= 문서 로딩 ============================
 $(document).ready(function () {
   popupContainer = document.getElementById('popup');
   popupContent   = document.getElementById('popup-content');
   popupCloser    = document.getElementById('popup-closer');
- // ⭐ 여기 추가
   if (popupCloser) {
     popupCloser.onclick = function () {
       popupOverlay.setPosition(undefined);
@@ -192,7 +179,7 @@ $(document).ready(function () {
   }
 
   $("#chkDog").prop("checked", USE_DOG);
-// ======================= 레이어 버튼 (VWorld 베이스맵 스위칭) ======================
+//레이어 버튼
 $(".layer-btn").on("click", function () {
   var type = $(this).data("type");
   if (!baseLayer) return;
@@ -212,7 +199,6 @@ $(".layer-btn").on("click", function () {
 
   }
 });
-  // GeoServer WFS(JSON) 호출
   $.ajax({
     url: "/board-test/api/map/getDogApi.do",
     type: "GET",
@@ -226,16 +212,26 @@ $(".layer-btn").on("click", function () {
       alert("반려견 놀이터 WFS 호출 실패: " + status);
     }
   });
-
   // 체크박스로 레이어 on/off
   $("#chkDog").on("change", function () {
     if (gsDog) {
       gsDog.setVisible(this.checked);
     }
   });
+  
+  $("#parkSearchForm").on("submit", function (e) {
+    e.preventDefault();
+    
+    var parkNm = $("input[name='parkNm']").val();
+
+    $("#dog-list").load(
+        "/board-test/api/map/ajaxDogList.do",
+        { parkNm: parkNm }
+    );
+});
 });
 
-// ======================= 지도 초기화 ==========================
+//지도 초기화============================================================================================================
 function initMap() {
   var view = new ol.View({
     projection: 'EPSG:3857',
@@ -286,7 +282,6 @@ function initMap() {
     };
   }
 
-  //WFS GeoJSON → Feature 변환
   var dogFeatures = new ol.format.GeoJSON().readFeatures(dogWfsJson, {
     dataProjection: 'EPSG:3857',
     featureProjection: 'EPSG:3857'
@@ -322,7 +317,6 @@ function initMap() {
     });
   }
 
-  //  8) 클릭 선택 인터랙션
   var selectSingleClick = new ol.interaction.Select({
     multi: true
   });

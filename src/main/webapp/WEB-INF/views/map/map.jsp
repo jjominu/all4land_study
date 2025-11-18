@@ -25,21 +25,33 @@
 
 <body>
 
-<!-- ⭐ 여기부터 레이아웃 시작 -->
 <div id="map-wrapper">
-<!-- 왼쪽 목록 -->
+<!--리스트-->
 <div id="left-panel">
-    <h4>반려견 놀이터 목록</h4>
 
+<div class="card p-3 mb-3">
+    <form id="parkSearchForm" method="post">
+
+        <div class="mb-2">
+            <label class="form-label">놀이터 이름 검색</label>
+            <input type="text"
+                   class="form-control"
+                   name="parkNm"
+                   placeholder="예) 어린이대공원"
+                   value="${parkNm}">
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">검색</button>
+    </form>
+</div>	
+
+
+    <h4>반려견 놀이터 목록</h4>
     <div id="dog-list">
-    
         <c:if test="${not empty dogList}">
             <c:forEach var="dog" items="${dogList}">
-                
                 <div class="card mb-3">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-
-                        <!-- 왼쪽 텍스트 -->
+                    <div class="card-body">
                         <div>
                             <h6 class="card-title">
                                 <c:out value="${dog.parkNm}" />
@@ -48,34 +60,26 @@
                                 <c:out value="${dog.addr}" />
                             </p>
                         </div>
-
-                        <!-- 오른쪽 화살표 버튼 -->
                         <button class="btn"
                                 onclick="focusDogOnMap('dog_park.${dog.id}')">
                             ➜
                         </button>
-
                     </div>
                 </div>
-
             </c:forEach>
         </c:if>
 
-      
-   
 </div>
 </div>
 
-    <!-- 오른쪽 지도 -->
 <div id="right-map-area">
     <div id="baseMap"></div>
 
-    <!-- ⭐ 레이어 스위처 카드 -->
-    <div id="layer-switcher" class="card shadow-sm p-2"
+    <div id="layer-switcher" class="card "
          style="position:absolute; top:15px; right:15px; z-index:999;">
         
         <!-- 체크박스: 반려견 놀이터 on/off -->
-        <div class="form-check mb-2">
+        <div class="form-check">
             <input class="form-check-input" type="checkbox" id="chkDog" checked>
             <label class="form-check-label" for="chkDog">
                 🐶 반려견 놀이터
@@ -84,15 +88,14 @@
 
         <hr class="my-2"/>
 
-        <!-- 베이스맵 선택 버튼 -->
-        <div class="btn-group-vertical" role="group" aria-label="베이스맵 선택">
+        <div class="btn" role="group" aria-label="베이스맵 선택">
             <button type="button"
-                    class="btn btn-sm  layer-btn mb-1"
+                     class="btn btn-sm  layer-btn "
                     data-type="base">
                 기본 지도
             </button>
             <button type="button"
-                    class="btn btn-sm  layer-btn mb-1"
+                     class="btn btn-sm  layer-btn"
                     data-type="sat">
                 위성 지도
             </button>
@@ -107,6 +110,5 @@
     </div>
 
 </div>
-<!-- ⭐ 여기까지 전체 지도 UI -->
 </body>
 </html>
