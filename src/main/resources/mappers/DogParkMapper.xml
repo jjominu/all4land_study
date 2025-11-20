@@ -37,25 +37,52 @@
         ORDER BY id
     </select>
 
-    <select id="selectDogParkByParkName" parameterType="string" resultMap="dogParkResultMap">
-        SELECT
-            id,
-            sd_nm,
-            sgg_nm,
-            park_nm,
-            oper_tm,
-            hldy,
-            fcs,
-            fcar,
-            oper_inst,
-            telno,
-            addr,
-            use_amt,
-            ST_AsText(geom) AS geom_wkt
-        FROM dog_park
-        WHERE park_nm LIKE CONCAT('%',#{parkName},'%')
-        		;
-    </select>
+    <select id="searchDogParkList" parameterType="DogParkVO" resultMap="dogParkResultMap">
+    SELECT
+        id,
+        sd_nm,
+        sgg_nm,
+        park_nm,
+        oper_tm,
+        hldy,
+        fcs,
+        fcar,
+        oper_inst,
+        telno,
+        addr,
+        use_amt,
+        ST_AsText(geom) AS geom_wkt
+    FROM dog_park
+  	WHERE 1=1
+
+        <if test="parkNm != null and parkNm != ''">
+            AND park_nm LIKE CONCAT('%', #{parkNm}, '%')
+        </if>
+
+        <if test="sdNm != null and sdNm != ''">
+            AND sd_nm = #{sdNm}
+        </if>
+
+        <if test="sggNm != null and sggNm != ''">
+            AND sgg_nm = #{sggNm}
+        </if>
+
+        <if test="operTm != null and operTm != ''">
+            AND oper_tm LIKE CONCAT('%', #{operTm}, '%')
+        </if>
+
+        <if test="useAmt != null and useAmt != ''">
+            AND use_amt LIKE CONCAT('%', #{useAmt}, '%')
+        </if>
+
+        <if test="fcs != null and fcs != ''">
+            AND fcs LIKE CONCAT('%', #{fcs}, '%')
+        </if>
+
+    
+    ORDER BY id ASC
+</select>
+
 
    
 </mapper>

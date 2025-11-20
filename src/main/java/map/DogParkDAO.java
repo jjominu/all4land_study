@@ -9,5 +9,5 @@ public interface DogParkDAO {
 
     List<DogParkVO> findAll();
 
-    List<DogParkVO> findByParkName(String parkName);
+    List<DogParkVO> findDogParksByFilter(DogParkVO DogParkVO);
 }

@@ -19,8 +19,8 @@ public class DogParkDAOImpl extends EgovAbstractMapper implements DogParkDAO {
     }
 
     @Override
-    public List<DogParkVO> findByParkName(String parkName) {
-    	List<DogParkVO> list =selectList("mappers.DogParkMapper.selectDogParkByParkName", parkName);
+    public List<DogParkVO> findDogParksByFilter(DogParkVO DogParkVO) {
+    	List<DogParkVO> list =selectList("mappers.DogParkMapper.searchDogParkList", DogParkVO);
     	System.out.println(list);
         return list ;
     }

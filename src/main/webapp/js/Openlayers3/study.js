@@ -1,342 +1,361 @@
 // ======================= VWORLD 설정 ==========================
 const VWORLD_KEY = "17C7EB57-45CC-3193-9DB9-AADAC973D076";
-var USE_DOG  = true; // 초기 표시 여부
+var USE_DOG = true; // 초기 표시 여부
 
+// 전역 변수 선언
 var baseMap = null;
-var baseLayer = null;   // 베이스맵 레이어
-var gsDog   = null;
-var dogWfsJson = null;
+var baseLayer = null;
+var gsDog = null;
 var dogSource = null;
+var dogWfsJson = null; // 데이터 저장용
+
+// 팝업 관련 변수
 var popupOverlay = null;
 var popupContainer = null;
 var popupContent = null;
 var popupCloser = null;
-//마커 스타일
-var dogMarkerStyle = new ol.style.Style({
-  image: new ol.style.Circle({
+
+// ======================= 스타일 정의 (핵심 수정) ==========================
+
+// 1. 마커 이미지 (점)
+var baseMarkerImage = new ol.style.Circle({
     radius: 6,
-    fill: new ol.style.Fill({
-      color: 'rgba(64, 156, 255, 1)'    // 안쪽 색
-    }),
-    stroke: new ol.style.Stroke({
-      color: 'rgba(255, 255, 255, 1)',  // 테두리 흰색
-      width: 2
-    })
-  })
+    fill: new ol.style.Fill({ color: '#ffffff' }),
+    stroke: new ol.style.Stroke({ color: '#0d6efd', width: 2 })
 });
 
-//중심에 마커 찍기
-function dogMarkerStyleFn(feature) {
-  var geom = feature.getGeometry();
-  var type = geom.getType();
+var selectedMarkerImage = new ol.style.Circle({
+    radius: 8,
+    fill: new ol.style.Fill({ color: '#dc3545' }),
+    stroke: new ol.style.Stroke({ color: '#ffffff', width: 3 })
+});
 
-  // 이미 Point면 그대로 마커 스타일
-  if (type === 'Point') {
-    return dogMarkerStyle;
-  }
+// 2. 폴리곤 스타일 (면)
+var polygonStyle = new ol.style.Style({
+    stroke: new ol.style.Stroke({
+        color: 'rgba(13, 110, 253, 0.6)',
+        width: 2
+    }),
+    fill: new ol.style.Fill({
+        color: 'rgba(13, 110, 253, 0.1)'
+    })
+});
 
-  //중심점에 Point를 새로 찍어서 그려줌
-  if (type === 'Polygon' || type === 'MultiPolygon') {
-    var center = ol.extent.getCenter(geom.getExtent());
-    return new ol.style.Style({
-      geometry: new ol.geom.Point(center),
-      image: dogMarkerStyle.getImage()
-    });
-  }
+var selectedPolygonStyle = new ol.style.Style({
+    stroke: new ol.style.Stroke({
+        color: '#dc3545',
+        width: 3
+    }),
+    fill: new ol.style.Fill({
+        color: 'rgba(220, 53, 69, 0.2)'
+    })
+});
 
-  return dogMarkerStyle;
+// ★ [평상시 스타일] 폴리곤이면 "면 + 중심점"을 배열로 반환
+function dogStyleFunction(feature) {
+    var geom = feature.getGeometry();
+    var type = geom.getType();
+    var styles = [];
+
+    // 1. 폴리곤인 경우: 면도 그리고 + 중심에 점도 찍음
+    if (type === 'Polygon' || type === 'MultiPolygon') {
+        styles.push(polygonStyle); // 면 그리기
+
+        var center = ol.extent.getCenter(geom.getExtent());
+        styles.push(new ol.style.Style({
+            geometry: new ol.geom.Point(center),
+            image: baseMarkerImage // 점 그리기
+        }));
+    } 
+    // 2. 점인 경우: 점만 찍음
+    else if (type === 'Point') {
+        styles.push(new ol.style.Style({
+            image: baseMarkerImage
+        }));
+    }
+
+    return styles;
 }
 
-// 팝업
-function updateDogList(features) {
+// ★ [선택시 스타일] 빨간색 면 + 빨간색 점
+function selectStyleFunction(feature) {
+    var geom = feature.getGeometry();
+    var type = geom.getType();
+    var styles = [];
 
-  features.forEach(f => {
-	var id = f.get("id");
-    var name = f.get("park_nm") || "(이름 없음)";
-    var addr = f.get("addr") || "";
-    
+    if (type === 'Polygon' || type === 'MultiPolygon') {
+        styles.push(selectedPolygonStyle); // 빨간 면
 
-  
-  });
-
+        var center = ol.extent.getCenter(geom.getExtent());
+        styles.push(new ol.style.Style({
+            geometry: new ol.geom.Point(center),
+            image: selectedMarkerImage, // 빨간 점
+            zIndex: 999
+        }));
+    } else {
+        styles.push(new ol.style.Style({
+            image: selectedMarkerImage,
+            zIndex: 999
+        }));
+    }
+    return styles;
 }
 
-//팝업
+
+// ======================= 기능 함수들 ==========================
+
 function showDogPopup(feature) {
-  if (!feature || !popupOverlay || !popupContent) return;
+    if (!feature || !popupContent) return;
 
-  var originalFeatures = feature.get('features');
-  if (originalFeatures && originalFeatures.length) {
-    feature = originalFeatures[0];
-  }
+    var props = feature.getProperties();
+    // geometry 속성은 제외하고 가져오기
+    var park_nm = props.park_nm || '이름 없음';
+    var addr    = props.addr    || '주소 없음';
+    var oper_tm = props.oper_tm || '';
+    var telno   = props.telno   || '-';
+    var fcs     = props.fcs     || '-';
 
-  var props = feature.getProperties();
-  delete props.geometry;
+    // Bootstrap 스타일 팝업 HTML
+    var html = `
+        <div class="text-start" style="min-width: 220px;">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <h6 class="fw-bold mb-0" style="font-size:1.1rem; color:#333;">${park_nm}</h6>
+            </div>
+            <p class="text-secondary small mb-2" style="font-size:0.85rem;">
+                <i class="bi bi-geo-alt-fill text-danger me-1"></i>${addr}
+            </p>
+            <hr class="my-2" style="opacity:0.1">
+            <div style="font-size: 0.85rem; line-height: 1.6;">
+                ${ oper_tm ? `<div><span class="text-muted me-2">운영시간</span>${oper_tm}</div>` : '' }
+                <div><span class="text-muted me-2">연락처</span>${telno}</div>
+                <div><span class="text-muted me-2">시설</span><span class="d-inline-block text-truncate" style="max-width:150px; vertical-align:bottom;">${fcs}</span></div>
+            </div>
+        </div>
+    `;
 
-  var sd_nm   = props.sd_nm   || '정보 없음';
-  var sgg_nm  = props.sgg_nm  || '정보 없음';
-  var park_nm = props.park_nm || '정보 없음';
-  var addr    = props.addr    || '정보 없음';
-  var oper_tm = props.oper_tm || '정보 없음';
-  var hldy    = props.hldy    || '정보 없음';
-  var fcar    = props.fcar    || '정보 없음';
-  var telno   = props.telno   || '정보 없음';
+    popupContent.innerHTML = html;
 
-  var html = ''
-    + '<b>' + park_nm + '</b><br/>'
-    + (sd_nm || sgg_nm ? sd_nm + ' ' + sgg_nm + '<br/>' : '')
-    + ( '주소: ' + addr    + '<br/>' )
-    + ( '운영시간: ' + oper_tm + '<br/>' )
-    + ( '휴무일: ' + hldy    + '<br/>' )
-    + ( '면적: ' + fcar    + '<br/>' )
-    + ( '연락처: ' + telno   + '<br/>' );
-
-  popupContent.innerHTML = html;
-
-  var geom = feature.getGeometry();
-  if (!geom) return;
-
-  var coord;
-  if (geom.getType() === 'Point') {
-    coord = geom.getCoordinates();
-  } else {
-    coord = ol.extent.getCenter(geom.getExtent());
-  }
-
-  popupOverlay.setPosition(coord);
+    // 팝업 위치 설정
+    var geom = feature.getGeometry();
+    var coord = ol.extent.getCenter(geom.getExtent());
+    popupOverlay.setPosition(coord);
 }
-
-
 
 function focusDogOnMap(id) {
-  if (!dogSource || !baseMap) return;
-
-  // 
-  var feature = dogSource.getFeatureById(String(id));
-
-  if (!feature) {
-    alert("지도에 해당 지점이 없습니다. (id=" + id + ")");
-    return;
-  }
-
-  var geom = feature.getGeometry();
-  if (!geom) return;
-
-  var coord;
-  if (geom.getType() === "Point") {
+    if (!dogSource || !baseMap) return;
     
-    coord = geom.getCoordinates();
-  } else {
-    // Polygon, MultiPolygon 같은 경우는 extent 중심 사용
-    coord = ol.extent.getCenter(geom.getExtent());
-  }
-
-  
-  showDogPopup(feature);
-  zoomToDogFeature(feature);
+    var feature = dogSource.getFeatureById(String(id));
+    if (!feature) {
+        alert("지도에 해당 지점이 없습니다. (id=" + id + ")");
+        return;
+    }
+    
+    // 팝업 표시 및 이동
+    showDogPopup(feature);
+    zoomToDogFeature(feature);
+    
+    // (선택적) 강제 선택 효과를 주려면 interaction 객체를 전역으로 빼서 selectInteraction.getFeatures().push(feature) 해야 함
 }
-
-
-
 
 function zoomToDogFeature(feature) {
-  if (!feature || !baseMap) return;
+    if (!feature || !baseMap) return;
+    var geom = feature.getGeometry();
+    if (!geom) return;
 
-  var originalFeatures = feature.get('features');
-  if (originalFeatures && originalFeatures.length) {
-    feature = originalFeatures[0];
-  }
-
-  var geom = feature.getGeometry();
-  if (!geom) return;
-
-  var extent = geom.getExtent ? geom.getExtent() : null;
-  if (!extent) return;
-
-  baseMap.getView().fit(extent, {
-    padding: [50, 50, 50, 50],
-    maxZoom: 16,
-    duration: 500
-  });
+    baseMap.getView().fit(geom.getExtent(), {
+        padding: [100, 100, 100, 100],
+        maxZoom: 16,
+        duration: 600
+    });
 }
 
+// ======================= 초기화 및 이벤트 (DOM Ready) ==========================
+
 $(document).ready(function () {
-  popupContainer = document.getElementById('popup');
-  popupContent   = document.getElementById('popup-content');
-  popupCloser    = document.getElementById('popup-closer');
-  if (popupCloser) {
-    popupCloser.onclick = function () {
-      popupOverlay.setPosition(undefined);
-      popupCloser.blur();
-      return false;
-    };
-  }
-  if (popupCloser && popupOverlay) {
-    popupCloser.onclick = function () {
-      popupOverlay.setPosition(undefined);
-      return false;
-    };
-  }
+    console.log("✅ study.js 초기화 시작");
 
-  $("#chkDog").prop("checked", USE_DOG);
-//레이어 버튼
-$(".layer-btn").on("click", function () {
-  var type = $(this).data("type");
-  if (!baseLayer) return;
+    // 1. 팝업 요소 바인딩
+    popupContainer = document.getElementById('popup');
+    popupContent   = document.getElementById('popup-content');
+    popupCloser    = document.getElementById('popup-closer');
 
-  switch (type) {
-    case "base":
-      baseLayer.setSource(new ol.source.XYZ({
-        url: 'http://api.vworld.kr/req/wmts/1.0.0/' + VWORLD_KEY + '/Base/{z}/{y}/{x}.png'
-      }));
-      break;
+    if (popupCloser) {
+        popupCloser.onclick = function () {
+            popupOverlay.setPosition(undefined);
+            popupCloser.blur();
+            return false;
+        };
+    }
 
-    case "sat":
-      baseLayer.setSource(new ol.source.XYZ({
-        url: 'http://api.vworld.kr/req/wmts/1.0.0/' + VWORLD_KEY + '/Satellite/{z}/{y}/{x}.jpeg'
-      }));
-      break;
+    // 2. 체크박스 초기화
+    $("#chkDog").prop("checked", USE_DOG);
 
-  }
-});
+    // 3. 레이어 버튼 클릭 이벤트
+    $(".layer-btn").on("click", function () {
+        $(".layer-btn").removeClass("active btn-primary text-white").addClass("btn-outline-secondary");
+        $(this).addClass("active btn-primary text-white").removeClass("btn-outline-secondary");
+
+        var type = $(this).data("type");
+        if (baseLayer) {
+            var url = (type === 'base') 
+                ? 'http://api.vworld.kr/req/wmts/1.0.0/' + VWORLD_KEY + '/Base/{z}/{y}/{x}.png'
+                : 'http://api.vworld.kr/req/wmts/1.0.0/' + VWORLD_KEY + '/Satellite/{z}/{y}/{x}.jpeg';
+            baseLayer.setSource(new ol.source.XYZ({ url: url }));
+        }
+    });
+
+    // 4. 데이터 로드
+    $.ajax({
+        url: "/board-test/api/map/getDogApi.do",
+        type: "GET",
+        contentType: "application/json;charset=UTF-8",
+        dataType: "json",
+        success: function (data) {
+            console.log("✅ 데이터 수신 완료:", data);
+            dogWfsJson = data;
+            initMap(); 
+        },
+        error: function (xhr, status, err) {
+            console.error("데이터 로드 실패:", status);
+            alert("지도 데이터를 불러오지 못했습니다.");
+        }
+    });
+
+    // 5. 레이어 On/Off
+    $("#chkDog").on("change", function () {
+        if (gsDog) gsDog.setVisible(this.checked);
+    });
+
+    // 6. 검색 폼 (AJAX Load)
+   $("#parkSearchForm").on("submit", function (e) {
+  e.preventDefault();
+
+  var formData = $(this).serialize();   
+
   $.ajax({
-    url: "/board-test/api/map/getDogApi.do",
-    type: "GET",
-    contentType: "application/json;charset=UTF-8",
-    dataType: "json",
-    success: function (data, status) {
-      dogWfsJson = data;
-      initMap();   // 데이터 받은 뒤 지도 초기화
+    url: "/board-test/api/map/ajaxDogList.do",
+    type: "POST",              
+    data: formData,           
+    success: function (html) {
+      $("#dog-list").html(html); 
     },
     error: function (xhr, status, err) {
-      alert("반려견 놀이터 WFS 호출 실패: " + status);
+      console.error("ajaxDogList 실패:", status, err);
+      alert("목록 조회 중 오류가 발생했습니다.");
     }
   });
-  // 체크박스로 레이어 on/off
-  $("#chkDog").on("change", function () {
-    if (gsDog) {
-      gsDog.setVisible(this.checked);
-    }
-  });
-  
-  $("#parkSearchForm").on("submit", function (e) {
-    e.preventDefault();
-    
-    var parkNm = $("input[name='parkNm']").val();
-
-    $("#dog-list").load(
-        "/board-test/api/map/ajaxDogList.do",
-        { parkNm: parkNm }
-    );
 });
-});
-
-//지도 초기화============================================================================================================
-function initMap() {
-  var view = new ol.View({
-    projection: 'EPSG:3857',
-    center: [14177553.107181, 4308348.8448386], 
-    zoom: 7,
-    minZoom: 6,
-    maxZoom: 19
-  });
-
-  //VWorld 기본지도 레이어
-  baseLayer = new ol.layer.Tile({
-    division: 'TILE',
-    layerName: 'VWORLD_BASE',
-    visible: true,
-    source: new ol.source.XYZ({
-      url: 'http://api.vworld.kr/req/wmts/1.0.0/' + VWORLD_KEY + '/Base/{z}/{y}/{x}.png'
-    })
-  });
-
-  //지도 생성
-  baseMap = new ol.Map({
-    target: 'baseMap',  
-    layers: [
-      baseLayer
-    ],
-    controls: ol.control.defaults({
-      attributionOptions: {
-        collapsible: false
-      }
-    }),
-    view: view
-  });
-
-  //팝업 오버레이 생성
-  popupOverlay = new ol.Overlay({
-    element: popupContainer,
-    autoPan: true,
-    autoPanAnimation: {
-      duration: 250
-    }
-  });
-  baseMap.addOverlay(popupOverlay);
-
-  if (popupCloser) {
-    popupCloser.onclick = function () {
-      popupOverlay.setPosition(undefined);
-      return false;
+    // 7. 시군구 선택 로직
+    const sggData = {
+        "서울": ["강북구", "광진구", "마포구", "동작구", "영등포구", "구로구", "송파구", "도봉구", "동대문구", "강서구"],
+        "인천": ["미추홀구", "계양구", "연수구", "남동구"]
     };
-  }
 
-  var dogFeatures = new ol.format.GeoJSON().readFeatures(dogWfsJson, {
-    dataProjection: 'EPSG:3857',
-    featureProjection: 'EPSG:3857'
-  });
-  dogFeatures.forEach(function (f) {
-    var attrId = f.get("id");  
-    console.log(f.get("id"))   // GeoJSON 속성 id
-    if (attrId !== undefined && attrId !== null) {
-        f.setId(String(attrId));  // OL feature ID로 설정
-    }
-});
-  updateDogList(dogFeatures);
+    $("#sdNm").on("change", function () {
+        const sd = $(this).val();
+        const $sggSelect = $("#sggNm");
+        $sggSelect.empty().append('<option value="">시군구 선택</option>');
 
-  //벡터 소스 레이어 생성
-  dogSource = new ol.source.Vector({
-    features: dogFeatures
-  });
-
-  gsDog = new ol.layer.Vector({
-    visible: USE_DOG,        // 초기 표시 여부
-    source: dogSource,
-    style: dogMarkerStyleFn  // 중심에 마커 찍는 스타일
-  });
-
-  // 지도에 추가
-  baseMap.addLayer(gsDog);
-
-  //WFS 영역으로 줌 맞추기
-  if (dogSource.getFeatures().length > 0) {
-    baseMap.getView().fit(dogSource.getExtent(), {
-      padding: [50, 50, 50, 50],
-      maxZoom: 12
+        if (sd && sggData[sd]) {
+            sggData[sd].forEach(function (sgg) {
+                $sggSelect.append('<option value="' + sgg + '">' + sgg + '</option>');
+            });
+        }
     });
-  }
+    // ★ 필터 초기화 버튼 클릭 이벤트
+    $("#btnReset").on("click", function() {
+        // 1. 폼 내부의 모든 입력값 초기화 (텍스트, 셀렉트박스 등)
+        $("#parkSearchForm")[0].reset();
 
-  var selectSingleClick = new ol.interaction.Select({
-    multi: true
-  });
+        // 2. 시/군/구 셀렉트박스도 강제로 초기화 (옵션 날리기)
+        $("#sggNm").empty().append('<option value="">시군구 선택</option>');
 
-  baseMap.addInteraction(selectSingleClick);
+        // 3. 지도와 리스트를 '전체 상태'로 되돌리기 위해 검색(submit) 강제 실행
+        //    (빈 값으로 검색하면 전체 리스트가 나오도록 백엔드가 되어있다고 가정)
+        $("#parkSearchForm").trigger("submit");
+        
+        // 만약 지도를 처음에 로드했던 상태(줌 레벨 등)로 돌리고 싶다면:
+        
+    });
 
-  selectSingleClick.on('select', function (e) {
-    var selected = e.selected;
+}); // ready 끝
 
-    if (!selected || selected.length === 0) {
-      if (popupOverlay) popupOverlay.setPosition(undefined);
-      return;
+
+// ======================= 지도 초기화 함수 ==========================
+
+function initMap() {
+    var view = new ol.View({
+        projection: 'EPSG:3857',
+        center: [14177553.107181, 4308348.8448386],
+        zoom: 7,
+        minZoom: 6,
+        maxZoom: 19
+    });
+
+    baseLayer = new ol.layer.Tile({
+        source: new ol.source.XYZ({
+            url: 'http://api.vworld.kr/req/wmts/1.0.0/' + VWORLD_KEY + '/Base/{z}/{y}/{x}.png'
+        })
+    });
+
+    baseMap = new ol.Map({
+        target: 'baseMap',
+        layers: [baseLayer],
+        controls: ol.control.defaults({ attribution: false, zoom: false }),
+        view: view
+    });
+
+    popupOverlay = new ol.Overlay({
+        element: popupContainer,
+        autoPan: true,
+        autoPanAnimation: { duration: 250 },
+        offset: [0, -10]
+    });
+    baseMap.addOverlay(popupOverlay);
+
+    // 데이터 파싱
+    var dogFeatures = new ol.format.GeoJSON().readFeatures(dogWfsJson, {
+        dataProjection: 'EPSG:3857', // 3857로 잘 나온다 하셨으므로 유지
+        featureProjection: 'EPSG:3857'
+    });
+
+    // ID 세팅
+    dogFeatures.forEach(function (f) {
+        var attrId = f.get("id");
+        if (attrId) f.setId(String(attrId));
+    });
+
+    dogSource = new ol.source.Vector({ features: dogFeatures });
+
+    // 벡터 레이어 생성 (여기서 styleFunction 연결)
+    gsDog = new ol.layer.Vector({
+        visible: USE_DOG,
+        source: dogSource,
+        style: dogStyleFunction // ★ 평상시 스타일 함수
+    });
+    baseMap.addLayer(gsDog);
+
+    // 인터랙션 설정 (클릭 시 스타일 변경)
+    var selectInteraction = new ol.interaction.Select({
+        multi: true,
+        style: selectStyleFunction // ★ 선택시 스타일 함수 (여기에 폴리곤+점 로직 포함됨)
+    });
+
+    baseMap.addInteraction(selectInteraction);
+
+    selectInteraction.on('select', function (e) {
+        var selected = e.selected;
+        if (selected.length > 0) {
+            var feature = selected[0];
+            showDogPopup(feature);
+            zoomToDogFeature(feature);
+        } else {
+            popupOverlay.setPosition(undefined);
+        }
+    });
+    
+    // 초기 줌 설정
+    if (dogSource.getFeatures().length > 0) {
+        baseMap.getView().fit(dogSource.getExtent(), { padding: [50,50,50,50], maxZoom: 12 });
     }
-
-    var feature = selected[0];
-
-    // 마커 위 팝업
-    showDogPopup(feature);
-
-    // 확대
-    zoomToDogFeature(feature);
-  });
 }

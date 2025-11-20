@@ -31,9 +31,9 @@ public class MapApiController {
 	
 	@RequestMapping(value="/ajaxDogList.do",method=RequestMethod.POST)
 	public ModelAndView ajaxDogList(DogParkVO dogParkVO) {
-		System.out.println(dogParkVO);
+		
 		String parkNm = dogParkVO.getParkNm();
-		List<DogParkVO> dogParkList = ms.getParkByParkName(dogParkVO.getParkNm());
+		List<DogParkVO> dogParkList = ms.searchDogPark(dogParkVO);
 		ModelAndView mav = new ModelAndView("map/fragment/dogList");
 		mav.addObject("dogList",dogParkList);
 		mav.addObject("parkNm",parkNm);
