@@ -108,23 +108,50 @@ function showDogPopup(feature) {
     if (!feature || !popupContent) return;
 
     var props = feature.getProperties();
-    // geometry 속성은 제외하고 가져오기
+    
+    // 1. 속성 값 가져오기
     var park_nm = props.park_nm || '이름 없음';
     var addr    = props.addr    || '주소 없음';
     var oper_tm = props.oper_tm || '';
     var telno   = props.telno   || '-';
     var fcs     = props.fcs     || '-';
+    
+    // DB 컬럼명 'park_img' 가져오기
+    var park_img = props.park_img; 
 
-    // Bootstrap 스타일 팝업 HTML
+    // 2. 이미지 HTML 생성
+    // 이미지가 있으면 <img> 태그 생성, 없으면 빈 문자열
+    var imgHtml = '';
+    if (park_img) {
+        imgHtml = `
+            <div style="width:100%; height:120px; overflow:hidden; border-radius:8px; margin-bottom:12px; border:1px solid #eee;">
+                <img src="/uploads/${park_img}" 
+                     style="width:100%; height:100%; object-fit:cover;" 
+                     alt="${park_nm}"
+                     onerror="this.parentElement.style.display='none'"> 
+            </div>
+        `;
+    }
+
+    // 3. 전체 HTML 조립
     var html = `
         <div class="text-start" style="min-width: 220px;">
+            
+            ${imgHtml}
+
             <div class="d-flex align-items-center justify-content-between mb-2">
                 <h6 class="fw-bold mb-0" style="font-size:1.1rem; color:#333;">${park_nm}</h6>
+                <a href="/board-test/map/detail.do?id=${feature.getId()}" class="text-decoration-none text-primary fw-bold small">
+                    상세보기 <i class="bi bi-chevron-right"></i>
+                </a>
             </div>
+            
             <p class="text-secondary small mb-2" style="font-size:0.85rem;">
                 <i class="bi bi-geo-alt-fill text-danger me-1"></i>${addr}
             </p>
+            
             <hr class="my-2" style="opacity:0.1">
+            
             <div style="font-size: 0.85rem; line-height: 1.6;">
                 ${ oper_tm ? `<div><span class="text-muted me-2">운영시간</span>${oper_tm}</div>` : '' }
                 <div><span class="text-muted me-2">연락처</span>${telno}</div>

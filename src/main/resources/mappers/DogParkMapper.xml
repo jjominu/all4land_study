@@ -16,6 +16,9 @@
         <result column="addr"     property="addr"/>
         <result column="use_amt"  property="useAmt"/>
         <result column="geom_wkt" property="geomWkt"/>
+        <result column="view_count" property="viewCount"/>
+        <result column="park_img" property="parkImg"/>
+        
     </resultMap>
 
     <select id="selectDogParkList" resultMap="dogParkResultMap">
@@ -32,6 +35,8 @@
             telno,
             addr,
             use_amt,
+            view_count,
+            park_img,
             ST_AsText(geom) AS geom_wkt
         FROM dog_park
         ORDER BY id
@@ -82,7 +87,19 @@
     
     ORDER BY id ASC
 </select>
+<update id="updateViewCount" parameterType="int">
+    UPDATE dog_park
+    SET view_count = COALESCE(view_count, 0) + 1
+    WHERE id = #{id}
+</update>
 
+<select id="selectDogParkById" parameterType="int" resultType="map.vo.DogParkVO">
+    SELECT 
+        id, park_nm AS parkNm, addr, oper_tm AS operTm, 
+        telno, fcs, view_count AS viewCount,park_img AS parkImg
+        FROM dog_park
+    WHERE id = #{id}
+</select>
 
    
 </mapper>

@@ -10,4 +10,8 @@ public interface DogParkDAO {
     List<DogParkVO> findAll();
 
     List<DogParkVO> findDogParksByFilter(DogParkVO DogParkVO);
+    
+    void updateViewCount(int id);
+    
+    DogParkVO selectDogParkById(int id);
 }

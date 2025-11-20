@@ -14,8 +14,8 @@ public class DogParkVO {
     private String telno;
     private String addr;
     private String useAmt;
-
-
+    private Integer viewCount;
+    private String parkImg;
     private String geomWkt;
 
 
@@ -123,7 +123,23 @@ public class DogParkVO {
         this.geomWkt = geomWkt;
     }
 
-    @Override
+    public Integer getViewCount() {
+		return viewCount;
+	}
+
+	public void setViewCount(Integer viewCount) {
+		this.viewCount = viewCount;
+	}
+
+	public String getParkImg() {
+		return parkImg;
+	}
+
+	public void setParkImg(String parkImg) {
+		this.parkImg = parkImg;
+	}
+
+	@Override
     public String toString() {
         return "DogParkVO{" +
                 "id=" + id +

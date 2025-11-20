@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mappers.VisitLogMapper">
+
+    <insert id="insertVisitLog" parameterType="map.vo.ParkVisitLogVO">
+        INSERT INTO park_visit_log (
+            park_id, 
+            mem_id, 
+            visit_ip
+        ) VALUES (
+            #{parkId}, 
+            #{memId, jdbcType=INTEGER},  #{visitIp}
+        )
+    </insert>
+
+    <select id="checkDuplicateVisit" parameterType="map.vo.ParkVisitLogVO" resultType="int">
+        SELECT COUNT(*)
+        FROM park_visit_log
+        WHERE park_id = #{parkId}
+          AND visit_ip = #{visitIp}
+          AND DATE(visit_dt) = CURRENT_DATE
+    </select>
+    
+    <select id="countTodayVisit" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM park_visit_log
+        WHERE park_id = #{parkId}
+          AND DATE(visit_dt) = CURRENT_DATE
+    </select>
+
+</mapper>

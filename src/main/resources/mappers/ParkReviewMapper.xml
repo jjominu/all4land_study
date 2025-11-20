@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mappers.ParkReviewMapper">
+
+    <resultMap id="reviewResultMap" type="map.vo.ParkReviewVO">
+        <id property="reviewId" column="review_id"/>      <result property="parkId" column="park_id"/>
+        <result property="memId" column="mem_id"/>
+        <result property="reviewContent" column="review_content"/>
+        <result property="rating" column="rating"/>
+        <result property="likeCount" column="like_count"/>
+        <result property="createdAt" column="created_at"/>
+        
+        <result property="memName" column="mem_name"/>
+        <result property="memImg" column="mem_img"/>
+
+        <collection property="photoList" ofType="map.vo.ReviewPhotoVO">
+            <id property="photoId" column="photo_id"/>    <result property="reviewId" column="photo_review_id"/> <result property="filePath" column="file_path"/>
+            <result property="originalName" column="original_name"/>
+            <result property="imgOrder" column="img_order"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="selectReviewList" parameterType="int" resultMap="reviewResultMap">
+        SELECT 
+            /* 리뷰 정보 */
+            r.review_id,
+            r.park_id,
+            r.mem_id,
+            r.review_content,
+            r.rating,
+            r.like_count,
+            r.created_at,
+            
+            /* 작성자 정보 */
+            m.mem_name,
+            m.mem_img,
+            
+            /* 사진 정보 (NULL일 수도 있으므로 LEFT JOIN) */
+            p.photo_id,
+            p.review_id AS photo_review_id,  /* 이름 충돌 방지 별칭 */
+            p.file_path,
+            p.original_name,
+            p.img_order
+            
+        FROM park_review r
+        
+        /* 작성자 정보 조인 (필수) */
+        JOIN member m ON r.mem_id = m.mem_id
+        
+        /* 사진 정보 조인 (사진 없어도 리뷰는 나와야 하므로 LEFT JOIN) */
+        LEFT JOIN review_photo p ON r.review_id = p.review_id
+        
+        WHERE r.park_id = #{parkId}
+        
+        /* 정렬: 최신 리뷰 순 -> 같은 리뷰 내에서는 사진 순서대로 */
+        ORDER BY r.created_at DESC, p.img_order ASC
+    </select>
+
+
+    <insert id="insertReview" parameterType="map.vo.ParkReviewVO" useGeneratedKeys="true" keyProperty="reviewId" keyColumn="review_id">
+        INSERT INTO park_review (
+            park_id, 
+            mem_id, 
+            review_content, 
+            rating
+        ) VALUES (
+            #{parkId}, 
+            #{memId}, 
+            #{reviewContent}, 
+            #{rating}
+        )
+    </insert>
+
+
+    <insert id="insertReviewPhoto" parameterType="map.vo.ReviewPhotoVO">
+        INSERT INTO review_photo (
+            review_id, 
+            file_path, 
+            original_name, 
+            img_order
+        ) VALUES (
+            #{reviewId}, 
+            #{filePath}, 
+            #{originalName}, 
+            #{imgOrder}
+        )
+    </insert>
+
+</mapper>

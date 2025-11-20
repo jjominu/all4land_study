@@ -1,4 +1,4 @@
-package map.impl;
+package map.impl.service;
 
 import java.util.List;
 
@@ -60,6 +60,26 @@ public class MapServiceImpl implements MapService {
 		
 		return dogParkDAO.findDogParksByFilter(DogParkVO);
 	}
-    
+//	public DogParkVO getParkDetail(int parkId, String userIp, Integer memId) {
+//	    
+//	    // 1. 로그용 VO 생성
+//	    ParkVisitLogVO logVO = new ParkVisitLogVO();
+//	    logVO.setParkId(parkId);
+//	    logVO.setVisitIp(userIp);
+//	    logVO.setMemId(memId); // 로그인 안했으면 null
+//
+//	    // 2. 오늘 이미 방문했는지 체크
+//	    int visitCount = parkVisitLogDAO.checkDuplicateVisit(logVO);
+//
+//	    if (visitCount == 0) {
+//	        // 3. 오늘 첫 방문이면 -> 조회수 증가 + 로그 저장
+//	        dogParkDAO.updateViewCount(parkId); // 조회수 +1
+//	        parkVisitLogDAO.insertVisitLog(logVO); // 로그 기록
+//	    }
+//
+//	    // 4. 공원 정보 리턴
+//	    return dogParkDAO.selectDogParkById(parkId);
+//	}
+//    
    
 }
