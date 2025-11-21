@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mappers.MemberMapper">
+
+    <select id="selectMemberByUid" parameterType="string" resultType="map.vo.MemberVO">
+        SELECT 
+            mem_id AS memId,
+            mem_uid AS memUid,
+            mem_pw  AS memPw,
+            mem_name AS memName,
+            mem_img AS memImg,
+            created_at AS createdAt
+        FROM member
+        WHERE mem_uid = #{memUid}
+    </select>
+
+    <insert id="insertMember" parameterType="map.vo.MemberVO">
+        INSERT INTO member (
+            mem_uid, mem_pw, mem_name, mem_img
+        ) VALUES (
+            #{memUid}, #{memPw}, #{memName}, #{memImg}
+        )
+    </insert>
+</mapper>

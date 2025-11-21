@@ -141,7 +141,7 @@ function showDogPopup(feature) {
 
             <div class="d-flex align-items-center justify-content-between mb-2">
                 <h6 class="fw-bold mb-0" style="font-size:1.1rem; color:#333;">${park_nm}</h6>
-                <a href="/board-test/map/detail.do?id=${feature.getId()}" class="text-decoration-none text-primary fw-bold small">
+                <a href="/board-test/map/detail.do?id=${feature.getId()}"target="_blank" class="text-decoration-none text-primary fw-bold small">
                     상세보기 <i class="bi bi-chevron-right"></i>
                 </a>
             </div>
