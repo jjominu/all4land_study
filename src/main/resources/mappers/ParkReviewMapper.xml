@@ -87,5 +87,30 @@
             #{imgOrder}
         )
     </insert>
-
+<select id="selectReviewDetail" parameterType="int" resultMap="reviewResultMap">
+        SELECT 
+            r.review_id,
+            r.park_id,
+            r.mem_id,
+            r.review_content,
+            r.rating,
+            r.like_count,
+            r.created_at,
+            
+            m.mem_name,
+            m.mem_img,
+            
+            p.photo_id,
+            p.review_id AS photo_review_id,
+            p.file_path,
+            p.original_name,
+            p.img_order
+            
+        FROM park_review r
+        JOIN member m ON r.mem_id = m.mem_id
+        LEFT JOIN review_photo p ON r.review_id = p.review_id
+        
+        WHERE r.review_id = #{reviewId}
+        ORDER BY p.img_order ASC
+    </select>
 </mapper>

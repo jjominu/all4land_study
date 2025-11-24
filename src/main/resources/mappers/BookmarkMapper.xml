@@ -19,12 +19,23 @@
         WHERE mem_id = #{memId} AND park_id = #{parkId}
     </select>
 
-    <select id="selectMyBookmarkList" parameterType="int" resultType="map.vo.DogParkVO">
+ <select id="selectMyBookmarkList" parameterType="int" resultType="map.vo.DogParkVO">
         SELECT 
-            d.id, 
+            d.id,
+            d.sd_nm AS sdNm,
+            d.sgg_nm AS sggNm,
             d.park_nm AS parkNm,
+            d.oper_tm AS operTm,
+            d.hldy,
+            d.fcs,
+            d.fcar,
+            d.oper_inst AS operInst,
+            d.telno,
             d.addr,
-            d.view_count AS viewCount
+            d.use_amt AS useAmt,
+            d.view_count AS viewCount,
+            d.park_img AS parkImg,
+            ST_AsText(d.geom) AS geomWkt
         FROM park_bookmark b
         JOIN dog_park d ON b.park_id = d.id
         WHERE b.mem_id = #{memId}

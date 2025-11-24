@@ -17,6 +17,7 @@
 	</licenses>
 
 	<properties>
+		<!-- 스프링 버전을 5.3.37로 통일 -->
 		<spring.maven.artifact.version>5.3.37</spring.maven.artifact.version>
 		<org.egovframe.rte.version>4.3.0</org.egovframe.rte.version>
 	</properties>
@@ -50,63 +51,66 @@
     </repositories>
 
 	<dependencies>
-		<!-- 표준프레임워크 실행환경 -->
-
-
+		<!-- ============================================== -->
+		<!-- ★ 핵심: Spring Framework 버전 강제 통일 (5.3.37) ★ -->
+		<!-- 이 부분이 없으면 전자정부프레임워크 내부의 구버전과 충돌남 -->
+		<!-- ============================================== -->
 		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>42.7.3</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.maven.artifact.version}</version>
 		</dependency>
-
 		<dependency>
-			<groupId>org.mybatis</groupId>
-			<artifactId>mybatis-spring</artifactId>
-			<version>2.1.2</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.maven.artifact.version}</version>
 		</dependency>
-
-		<!-- commons io 파일 관련 의존성-->
-		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
 		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.11.0</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.maven.artifact.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>${spring.maven.artifact.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>${spring.maven.artifact.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${spring.maven.artifact.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring.maven.artifact.version}</version>
 		</dependency>
 		
 		<dependency>
-	 		<groupId>commons-fileupload</groupId>
-	 		<artifactId>commons-fileupload</artifactId>
-	 		<version>1.4</version>
- 		</dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.maven.artifact.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-expression</artifactId>
+			<version>${spring.maven.artifact.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.maven.artifact.version}</version>
+			<scope>test</scope>
+		</dependency>
 
-<dependency>
-    <groupId>org.hibernate.validator</groupId>
-    <artifactId>hibernate-validator</artifactId>
-    <version>6.0.10.Final</version>
-</dependency>
-<dependency>
-  <groupId>org.apache.httpcomponents</groupId>
-  <artifactId>httpclient</artifactId>
-  <version>4.5.14</version>
-</dependency>
-
-
-<dependency>
-    <groupId>org.springframework.security</groupId>
-    <artifactId>spring-security-web</artifactId>
-    <version>5.7.3</version> </dependency>
-<dependency>
-    <groupId>org.springframework.security</groupId>
-    <artifactId>spring-security-config</artifactId>
-    <version>5.7.3</version>
-</dependency>
-<dependency>
-    <groupId>org.springframework.security</groupId>
-    <artifactId>spring-security-taglibs</artifactId>
-    <version>5.7.3</version>
-</dependency>
-
-
+		<!-- ============================================== -->
+		<!-- 전자정부프레임워크 실행환경 -->
+		<!-- ============================================== -->
         <dependency>
 		    <groupId>org.egovframe.rte</groupId>
 		    <artifactId>org.egovframe.rte.ptl.mvc</artifactId>
@@ -133,7 +137,66 @@
 			<artifactId>org.egovframe.rte.fdl.property</artifactId>
 			<version>${org.egovframe.rte.version}</version>
 		</dependency>
+<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.13.5</version>
+		</dependency>
+		<!-- DB / MyBatis -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.7.3</version>
+		</dependency>
 
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-spring</artifactId>
+			<version>2.1.2</version>
+		</dependency>
+
+		<!-- Commons IO / File Upload -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.11.0</version>
+		</dependency>
+		
+		<dependency>
+	 		<groupId>commons-fileupload</groupId>
+	 		<artifactId>commons-fileupload</artifactId>
+	 		<version>1.4</version>
+ 		</dependency>
+
+		<dependency>
+		    <groupId>org.hibernate.validator</groupId>
+		    <artifactId>hibernate-validator</artifactId>
+		    <version>6.0.10.Final</version>
+		</dependency>
+		<dependency>
+		  <groupId>org.apache.httpcomponents</groupId>
+		  <artifactId>httpclient</artifactId>
+		  <version>4.5.14</version>
+		</dependency>
+
+		<!-- Spring Security -->
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-web</artifactId>
+		    <version>5.7.3</version> 
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-config</artifactId>
+		    <version>5.7.3</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-taglibs</artifactId>
+		    <version>5.7.3</version>
+		</dependency>
+
+		<!-- Servlet / JSP -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
@@ -173,32 +236,23 @@
 			<version>1.1.4</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+		<!-- Test / Utils -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
 			<version>5.11.0</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>1.18.34</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
 			<version>4.13.0</version>
-			<scope>test</scope>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-test -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${spring.maven.artifact.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -227,7 +281,6 @@
                 		<failOnMissingWebXml>false</failOnMissingWebXml>
                 	</configuration>
                 </plugin>
-				<!-- PMD manven plugin -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-pmd-plugin</artifactId>
@@ -236,7 +289,6 @@
             </plugins>
         </pluginManagement>
         <plugins>
-			<!-- maven-surefire-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -252,11 +304,10 @@
         			</systemPropertyVariables> 
                 </configuration>
             </plugin>
-			<!-- JavaDoc -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-		<version>3.7.0</version>
+				<version>3.7.0</version>
             </plugin>
         </plugins>
     </build>

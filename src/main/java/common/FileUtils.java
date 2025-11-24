@@ -25,8 +25,7 @@ import board.vo.FileVO;
 
 public class FileUtils {
 	//@Resource(name = "upload_path") // Servlet-content.xml 의 이름과 맞아야함! bean등록필수
-	public static final String  UPLOAD_PATH ="D:\\upload\\";
-	
+	public static final String UPLOAD_PATH ="C:\\Users\\dadsd\\Desktop\\upload\\";	
 	  public static FileVO uploadFile(MultipartFile file,int insertId) throws Exception{
 	        
 		  	FileVO fileVO= new FileVO();	        

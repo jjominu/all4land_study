@@ -154,6 +154,8 @@ public class DogParkVO {
                 ", telno='" + telno + '\'' +
                 ", addr='" + addr + '\'' +
                 ", useAmt='" + useAmt + '\'' +
+                ", viewCount=" + viewCount +  // ★ 추가됨
+                ", parkImg='" + parkImg + '\'' + // ★ 추가됨
                 ", geomWkt='" + geomWkt + '\'' +
                 '}';
     }

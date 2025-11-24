@@ -77,11 +77,15 @@
     <button type="submit" class="btn btn-primary flex-grow-1">
         <i class="bi bi-search"></i> 검색
     </button>
+    
 </div>                    </div>
                 </form>
 
                 <div class="d-flex justify-content-between align-items-center mt-3">
-                    <span class="text-muted small">검색 결과 <strong>${dogList != null ? dogList.size() : 0}</strong>건</span>
+                    <span class="text-muted small">검색 결과 <strong>${dogList != null ? dogList.size() : 0}</strong>건</span> 
+                    <button type="button" id="btnFilterBookmark" class="btn btn-warning text-white">
+    <i class="bi bi-star-fill"></i> 즐겨찾기 모아보기
+</button>
                     </div>
             </div>
 

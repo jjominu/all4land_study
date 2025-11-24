@@ -92,14 +92,24 @@
     SET view_count = COALESCE(view_count, 0) + 1
     WHERE id = #{id}
 </update>
-
-<select id="selectDogParkById" parameterType="int" resultType="map.vo.DogParkVO">
+<select id="selectDogParkById" parameterType="int" resultMap="dogParkResultMap">
     SELECT 
-        id, park_nm AS parkNm, addr, oper_tm AS operTm, 
-        telno, fcs, view_count AS viewCount,park_img AS parkImg
-        FROM dog_park
+        id,
+        sd_nm,      sgg_nm,
+        park_nm,
+        oper_tm,
+        hldy,
+        fcs,
+        fcar,
+        oper_inst,
+        telno,
+        addr,
+        use_amt,
+        view_count,
+        park_img,
+        ST_AsText(geom) AS geom_wkt
+    FROM dog_park
     WHERE id = #{id}
 </select>
-
    
 </mapper>

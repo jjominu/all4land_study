@@ -98,6 +98,7 @@ public class LoginController {
             session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
             
             // (선택) JSP 등에서 쉽게 쓰기 위해 별도 세션값도 저장 (시큐리티 태그 쓰면 없어도 됨)
+            session.setAttribute("memId", member.getMemId());     // ★ 필수
             session.setAttribute("memName", member.getMemName());
             session.setAttribute("memImg", member.getMemImg());
             

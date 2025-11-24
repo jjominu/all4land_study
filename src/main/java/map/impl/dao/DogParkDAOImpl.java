@@ -33,6 +33,7 @@ public class DogParkDAOImpl extends EgovAbstractMapper implements DogParkDAO {
     @Override
     // 상세 조회 (기존에 없다면 추가)
     public DogParkVO selectDogParkById(int id) {
+    	System.out.println("DAO========================="+selectOne("mappers.DogParkMapper.selectDogParkById", id));
         return selectOne("mappers.DogParkMapper.selectDogParkById", id);
     }
 }
