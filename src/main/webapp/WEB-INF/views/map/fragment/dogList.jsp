@@ -27,6 +27,7 @@
                     <i class="bi bi-geo-alt-fill text-danger me-1"></i>
                     <c:out value="${dog.addr}" />
                 </p>
+                
 
                 <div>
                     <span class="info-badge">반려견 놀이터</span>
@@ -34,7 +35,9 @@
                          <span class="info-badge"><c:out value="${dog.operTm}" /></span>
                     </c:if>
                 </div>
-
+<c:if test="${not empty dog.fcs}">
+        <span class="info-badge"><c:out value="${dog.fcs}" /></span>
+    </c:if>
                 <button class="btn-focus" type="button" title="지도에서 위치 보기">
                     <i class="bi bi-arrow-right"></i>
                 </button>

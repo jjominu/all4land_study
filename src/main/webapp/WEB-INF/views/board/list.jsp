@@ -7,7 +7,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="<c:url value='/js/board/board-list.js'/>"></script>
 
 <meta charset="UTF-8">
 <title>게시판</title>
@@ -18,6 +17,8 @@
 <%@ include file="../include/style.jsp"%>
 <jsp:include page="../include/header.jsp"></jsp:include>
 <jsp:include page="../include/footer.jsp"></jsp:include>
+<script src="<c:url value='/js/board/board-list.js'/>"></script>
+
 
 
 <div class="container">

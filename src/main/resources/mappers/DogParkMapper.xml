@@ -2,8 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="mappers.DogParkMapper">
 
-    <resultMap id="dogParkResultMap" type="DogParkVO">
-        <id     column="id"       property="id"/>
+    <resultMap id="dogParkResultMap" type="map.vo.DogParkVO"> <id     column="id"       property="id"/>
         <result column="sd_nm"    property="sdNm"/>
         <result column="sgg_nm"   property="sggNm"/>
         <result column="park_nm"  property="parkNm"/>
@@ -18,7 +17,8 @@
         <result column="geom_wkt" property="geomWkt"/>
         <result column="view_count" property="viewCount"/>
         <result column="park_img" property="parkImg"/>
-        
+        <result column="avg_rating" property="avgRating"/>
+        <result column="centerGeomWkt" property="centerGeomWkt"/>        
     </resultMap>
 
     <select id="selectDogParkList" resultMap="dogParkResultMap">
@@ -37,28 +37,28 @@
             use_amt,
             view_count,
             park_img,
-            ST_AsText(geom) AS geom_wkt
-        FROM dog_park
-        ORDER BY id
+            ST_AsText(d.center_geom) AS centerGeomWkt,
+            ST_AsText(d.geom) AS geom_wkt
+        FROM dog_park d  ORDER BY id
     </select>
 
-    <select id="searchDogParkList" parameterType="DogParkVO" resultMap="dogParkResultMap">
-    SELECT
-        id,
-        sd_nm,
-        sgg_nm,
-        park_nm,
-        oper_tm,
-        hldy,
-        fcs,
-        fcar,
-        oper_inst,
-        telno,
-        addr,
-        use_amt,
-        ST_AsText(geom) AS geom_wkt
-    FROM dog_park
-  	WHERE 1=1
+    <select id="searchDogParkList" parameterType="map.vo.DogParkVO" resultMap="dogParkResultMap">
+        SELECT
+            id,
+            sd_nm,
+            sgg_nm,
+            park_nm,
+            oper_tm,
+            hldy,
+            fcs,
+            fcar,
+            oper_inst,
+            telno,
+            addr,
+            use_amt,
+            ST_AsText(d.center_geom) AS centerGeomWkt,
+            ST_AsText(d.geom) AS geom_wkt
+        FROM dog_park d  WHERE 1=1
 
         <if test="parkNm != null and parkNm != ''">
             AND park_nm LIKE CONCAT('%', #{parkNm}, '%')
@@ -83,33 +83,32 @@
         <if test="fcs != null and fcs != ''">
             AND fcs LIKE CONCAT('%', #{fcs}, '%')
         </if>
+        
+        ORDER BY id ASC
+    </select>
 
-    
-    ORDER BY id ASC
-</select>
-<update id="updateViewCount" parameterType="int">
-    UPDATE dog_park
-    SET view_count = COALESCE(view_count, 0) + 1
-    WHERE id = #{id}
-</update>
-<select id="selectDogParkById" parameterType="int" resultMap="dogParkResultMap">
-    SELECT 
-        id,
-        sd_nm,      sgg_nm,
-        park_nm,
-        oper_tm,
-        hldy,
-        fcs,
-        fcar,
-        oper_inst,
-        telno,
-        addr,
-        use_amt,
-        view_count,
-        park_img,
-        ST_AsText(geom) AS geom_wkt
-    FROM dog_park
-    WHERE id = #{id}
-</select>
+    <update id="updateViewCount" parameterType="int">
+        UPDATE dog_park
+        SET view_count = COALESCE(view_count, 0) + 1
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectDogParkById" parameterType="int" resultMap="dogParkResultMap">
+        SELECT 
+            d.id,
+            d.park_nm,
+            d.addr,
+            d.oper_tm,
+            d.telno,
+            d.fcs,
+            d.view_count,
+            d.park_img,
+            ST_AsText(d.center_geom) AS centerGeomWkt,
+            ST_AsText(d.geom) AS geom_wkt,
+            
+            COALESCE(ROUND( (SELECT AVG(rating) FROM park_review WHERE park_id = d.id), 1 ), 0.0) AS avg_rating
+            
+        FROM dog_park d  WHERE d.id = #{id}
+    </select>
    
 </mapper>

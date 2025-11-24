@@ -50,26 +50,91 @@ var selectedPolygonStyle = new ol.style.Style({
         color: 'rgba(220, 53, 69, 0.2)'
     })
 });
+// ★ [추가] 클러스터(뭉침) 스타일 캐시
+var styleCache = {};
 
+// ★ [핵심] 클러스터 스타일 함수
+function clusterStyleFunction(feature) {
+    var size = feature.get('features').length; // 뭉친 개수
+
+    // 1. 개별 아이템 (1개만 있을 때) -> 폴리곤 + 핀 보여주기
+    if (size === 1) {
+        var originalFeature = feature.get('features')[0];
+        var props = originalFeature.getProperties();
+        var styles = [];
+
+        // (1) 폴리곤 그리기
+        styles.push(new ol.style.Style({
+            stroke: new ol.style.Stroke({ color: 'rgba(13, 110, 253, 0.6)', width: 2 }),
+            fill: new ol.style.Fill({ color: 'rgba(13, 110, 253, 0.1)' }),
+            geometry: originalFeature.getGeometry() // 원래의 MultiPolygon 사용
+        }));
+
+        // (2) 중심점 핀 그리기 (DB 좌표 사용)
+        if (props.center_geom && props.center_geom.coordinates) {
+            styles.push(new ol.style.Style({
+                image: baseMarkerImage,
+                geometry: new ol.geom.Point(props.center_geom.coordinates)
+            }));
+        }
+
+        return styles;
+    }
+
+    // 2. 클러스터 (2개 이상 뭉쳤을 때) -> 원 + 숫자
+    var style = styleCache[size];
+    if (!style) {
+        style = new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 15, // 원 크기
+                stroke: new ol.style.Stroke({ color: '#fff', width: 2 }),
+                fill: new ol.style.Fill({ color: '#0d6efd' }) // 파란색
+            }),
+            text: new ol.style.Text({
+                text: size.toString(), // 개수 표시
+                fill: new ol.style.Fill({ color: '#fff' }),
+                font: 'bold 12px "Noto Sans KR", sans-serif'
+            })
+        });
+        styleCache[size] = style;
+    }
+    return style;
+}
 // [평상시 스타일]
 function dogStyleFunction(feature) {
     var geom = feature.getGeometry();
     var type = geom.getType();
     var styles = [];
+    var props = feature.getProperties();
 
+    // 1. 폴리곤 그리기
     if (type === 'Polygon' || type === 'MultiPolygon') {
-        styles.push(polygonStyle);
-        var center = ol.extent.getCenter(geom.getExtent());
+        styles.push(polygonStyle); // 면 스타일
+
+        // ★ [수정] 마커 위치 결정
+        var pointGeom;
+        if (props.center_geom && props.center_geom.coordinates) {
+            // GeoJSON 좌표로 바로 Point 생성
+            pointGeom = new ol.geom.Point(props.center_geom.coordinates);
+        } else {
+            // 없으면 계산
+            var center = ol.extent.getCenter(geom.getExtent());
+            pointGeom = new ol.geom.Point(center);
+        }
+
+        // 마커 스타일 추가
         styles.push(new ol.style.Style({
-            geometry: new ol.geom.Point(center),
+            geometry: pointGeom,
             image: baseMarkerImage
         }));
-    } else if (type === 'Point') {
+    } 
+    // 2. 점 데이터인 경우
+    else if (type === 'Point') {
         styles.push(new ol.style.Style({ image: baseMarkerImage }));
     }
+
     return styles;
 }
-
 // [선택시 스타일]
 function selectStyleFunction(feature) {
     var geom = feature.getGeometry();
@@ -96,21 +161,22 @@ function selectStyleFunction(feature) {
 
 // ======================= 팝업 관련 기능 ==========================
 
+// ======================= 팝업 표시 함수 (수정완료) ==========================
 function showDogPopup(feature) {
     if (!feature || !popupContent) return;
 
     var props = feature.getProperties();
-    
-    // 속성 값 가져오기
+    var id = feature.getId(); // Feature ID
+
+    // 1. 속성 값 가져오기 (값이 없을 경우를 대비한 기본값 처리)
     var park_nm = props.park_nm || '이름 없음';
     var addr    = props.addr    || '주소 없음';
     var oper_tm = props.oper_tm || '';
     var telno   = props.telno   || '-';
     var fcs     = props.fcs     || '-';
     var park_img = props.park_img; 
-    var id      = feature.getId(); // Feature ID
 
-    // 이미지 HTML
+    // 2. 이미지 HTML 생성
     var imgHtml = '';
     if (park_img) {
         imgHtml = `
@@ -123,7 +189,7 @@ function showDogPopup(feature) {
         `;
     }
 
-    // ★ 팝업 HTML 조립 (즐겨찾기 아이콘 추가)
+    // 3. 팝업 내용 HTML 조립
     var html = `
         <div class="text-start" style="min-width: 220px;">
             ${imgHtml}
@@ -156,17 +222,34 @@ function showDogPopup(feature) {
         </div>
     `;
 
+    // 4. HTML 적용
     popupContent.innerHTML = html;
 
-    // ★ 팝업을 띄울 때 현재 이 공원이 즐겨찾기 되어있는지 확인 (AJAX)
+    // 5. 즐겨찾기 상태 확인 (비동기 호출)
     checkPopupBookmarkStatus(id);
 
-    // 팝업 위치 설정
-    var geom = feature.getGeometry();
-    var coord = ol.extent.getCenter(geom.getExtent());
-    popupOverlay.setPosition(coord);
-}
+    // 6. ★ [핵심 수정] 팝업 위치 좌표 설정 로직 ★
+    var coord = null;
 
+    // (1) DB에서 가져온 포인트 좌표가 있으면 최우선 사용
+    if (props.center_geom && props.center_geom.coordinates) {
+        coord = props.center_geom.coordinates;
+    } 
+    // (2) 없다면 도형(Polygon/MultiPolygon)의 물리적 중심점 계산
+    else {
+        var geom = feature.getGeometry();
+        if (geom) {
+            coord = ol.extent.getCenter(geom.getExtent());
+        }
+    }
+
+    // 7. 좌표가 유효하면 팝업 위치 지정
+    if (coord) {
+        popupOverlay.setPosition(coord);
+    } else {
+        console.error("팝업 좌표를 결정할 수 없습니다. Feature:", feature);
+    }
+}
 // [기능] 팝업 내 즐겨찾기 토글
 function togglePopupBookmark(parkId) {
     // 1. ID 값 검증 및 정제 (숫자가 아닌 문자가 섞여있으면 제거)
@@ -430,6 +513,7 @@ function initMap() {
     });
     baseMap.addOverlay(popupOverlay);
 
+   // 1. 원본 데이터 소스 (Vector)
     var dogFeatures = new ol.format.GeoJSON().readFeatures(dogWfsJson, {
         dataProjection: 'EPSG:3857',
         featureProjection: 'EPSG:3857'
@@ -442,31 +526,75 @@ function initMap() {
 
     dogSource = new ol.source.Vector({ features: dogFeatures });
 
+    // ★ [핵심] 2. 클러스터 소스 생성 (DB의 center_geom 이용!)
+    var clusterSource = new ol.source.Cluster({
+        distance: 40, // 뭉치는 거리 (픽셀 단위)
+        source: dogSource,
+        // ★ 중요: 폴리곤 대신 DB에서 가져온 중심점(center_geom)을 기준으로 클러스터링함
+        geometryFunction: function(feature) {
+            var props = feature.getProperties();
+            if (props.center_geom && props.center_geom.coordinates) {
+                return new ol.geom.Point(props.center_geom.coordinates);
+            }
+            return null; // 좌표 없으면 무시
+        }
+    });
+
+    // 3. 레이어 생성 (Cluster Source 연결)
     gsDog = new ol.layer.Vector({
         visible: USE_DOG,
-        source: dogSource,
-        style: dogStyleFunction
+        source: clusterSource, // clusterSource 사용
+        style: clusterStyleFunction // 위에서 만든 스타일 함수
     });
     baseMap.addLayer(gsDog);
 
+    // 4. 인터랙션 (클릭 이벤트)
     var selectInteraction = new ol.interaction.Select({
-        multi: true,
-        style: selectStyleFunction
+        // 스타일은 선택 시 빨간색 등으로 바꾸고 싶다면 별도 함수 필요 (여기선 기본 처리)
     });
-
     baseMap.addInteraction(selectInteraction);
 
     selectInteraction.on('select', function (e) {
         var selected = e.selected;
-        if (selected.length > 0) {
-            var feature = selected[0];
-            showDogPopup(feature);
-            zoomToDogFeature(feature);
-        } else {
+        if (selected.length === 0) {
             popupOverlay.setPosition(undefined);
+            return;
+        }
+
+        // 선택된 피처는 'Cluster' 피처임 (내부에 원본들이 들어있음)
+        var clusterFeature = selected[0];
+        var rawFeatures = clusterFeature.get('features'); // 묶인 개수 확인
+
+        if (rawFeatures.length > 1) {
+            // A. 여러 개 뭉친 걸 클릭함 -> 펼쳐지게 줌인(Zoom In)
+            var extent = ol.extent.createEmpty();
+            rawFeatures.forEach(function(f) {
+                // 각 피처의 중심점을 기준으로 영역 계산
+                var props = f.getProperties();
+                if(props.center_geom) {
+                    ol.extent.extend(extent, new ol.geom.Point(props.center_geom.coordinates).getExtent());
+                }
+            });
+            
+            // 해당 영역으로 부드럽게 이동 (여백 좀 주고)
+            baseMap.getView().fit(extent, { 
+                padding: [100, 100, 100, 100], 
+                duration: 500,
+                maxZoom: 15 
+            });
+            
+            // 선택 해제 (팝업 안 뜨게)
+            selectInteraction.getFeatures().clear();
+            
+        } else {
+            // B. 딱 1개 남은 걸 클릭함 -> 팝업 표시
+            var originalFeature = rawFeatures[0];
+            showDogPopup(originalFeature);
+            zoomToDogFeature(originalFeature);
         }
     });
     
+    // 초기 줌
     if (dogSource.getFeatures().length > 0) {
         baseMap.getView().fit(dogSource.getExtent(), { padding: [50,50,50,50], maxZoom: 12 });
     }

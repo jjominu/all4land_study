@@ -11,15 +11,23 @@
     <http pattern="/images/**" security="none"/>
     <http pattern="/js/**" security="none"/>
 
-    <http auto-config="true" use-expressions="true">
+  <http auto-config="true" use-expressions="true">
         
-        <intercept-url pattern="/login/**" access="permitAll" /> <intercept-url pattern="/home" access="permitAll" />
-        <intercept-url pattern="/map/**" access="hasRole('ROLE_USER')" /> <intercept-url pattern="/**" access="permitAll" />
+        <intercept-url pattern="/map/detail.do" access="hasRole('ROLE_USER')" />          <intercept-url pattern="/api/map/ajaxBookmarkList.do" access="hasRole('ROLE_USER')" /> <intercept-url pattern="/api/bookmark/**" access="hasRole('ROLE_USER')" />        <intercept-url pattern="/review/**" access="hasRole('ROLE_USER')" />              <intercept-url pattern="/map/**" access="permitAll" />       <intercept-url pattern="/api/map/**" access="permitAll" />   <intercept-url pattern="/login/**" access="permitAll" />
+        <intercept-url pattern="/home" access="permitAll" />
+        <intercept-url pattern="/**" access="permitAll" />
+
+        <form-login 
+            login-page="/home" 
+            authentication-failure-url="/home?error=true"
+            username-parameter="uid"
+            password-parameter="pwd" 
+        />
 
         <csrf disabled="true"/>
         
         <logout logout-url="/login/logout.do" 
-                logout-success-url="/home" 
+                logout-success-url="/map/map.do" 
                 invalidate-session="true" 
                 delete-cookies="JSESSIONID"/>
     </http>

@@ -186,30 +186,34 @@
                         <img src="/uploads/${park.parkImg}" 
                              class="profile-img" 
                              alt="${park.parkNm}"
-                             onerror="this.src='<c:url value="/images/park_default.png"/>'">
+                             onerror="this.src='/uploads/park_default.png'">
                     </div>
                 </div>
 
                 <div class="profile-info">
-                    <div class="profile-title-row">
-                        <h2 class="park-name">${park.parkNm}</h2>
-                        
-                        <c:if test="${sessionScope.memId != null}">
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-primary btn-sm fw-bold px-3" onclick="openReviewModal()">리뷰 쓰기</button>
-                                <button class="btn btn-outline-secondary btn-sm" onclick="toggleBookmark(${park.id})">
-                                    <i class="bi ${isBookmarked ? 'bi-bookmark-fill text-warning' : 'bi-bookmark'}" id="detailBmIcon"></i>
-                                </button>
-                            </div>
-                        </c:if>
-                    </div>
+    <div class="profile-title-row">
+        <h2 class="park-name">${park.parkNm}</h2>
+        
+        <c:if test="${sessionScope.memId != null}">
+            <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-primary fw-bold px-3" onclick="openReviewModal()">리뷰 쓰기</button>
+                <button class="btn btn-sm btn-outline-secondary" onclick="toggleBookmark(${park.id})">
+                    <i class="bi ${isBookmarked ? 'bi-bookmark-fill text-warning' : 'bi-bookmark'}" id="detailBmIcon"></i>
+                </button>
+            </div>
+        </c:if>
+    </div>
 
-                    <ul class="profile-stats">
-                        <li>게시물 <span class="stat-count">${fn:length(reviewList)}</span></li>
-                        <li>조회수 <span class="stat-count">${park.viewCount}</span></li>
-                        <li>즐겨찾기 <span class="stat-count">0</span></li> </ul>
+    <ul class="profile-stats">
+        <li>게시물 <span class="stat-count">${fn:length(reviewList)}</span></li>
+        <li>조회수 <span class="stat-count">${park.viewCount}</span></li>
+        <li>즐겨찾기 <span class="stat-count" id="bookmarkCount">${bookmarkCount}</span></li>
+        <li>평점 <span class="stat-count"><i class="bi bi-star-fill text-warning"></i> ${park.avgRating}</span></li>
+    </ul>
 
-                    <div class="profile-bio">
+    <div class="profile-bio">
+     
+
                         <div class="category">반려견 놀이터 · 공원</div>
                         <div><i class="bi bi-geo-alt-fill text-danger me-1"></i>${park.addr}</div>
                         <div><i class="bi bi-clock me-1"></i>${park.operTm} / ${park.useAmt}</div>
@@ -221,8 +225,6 @@
         </div>
 
         <div class="gallery-nav">
-            <div class="nav-item active"><i class="bi bi-grid-3x3"></i> 게시물</div>
-            <div class="nav-item"><i class="bi bi-bookmark"></i> 태그됨</div>
         </div>
 
        <div class="gallery-grid">
@@ -239,7 +241,7 @@
                             <img src="/uploads/${thumbImg}" 
                                  class="gallery-image" 
                                  alt="Review Thumbnail"
-                                 onerror="this.src='<c:url value="/images/park_default.png"/>'">
+                                 onerror="this.src='/uploads/park_default.png'">
                         </c:when>
                         <c:otherwise>
                             <div class="gallery-image d-flex align-items-center justify-content-center bg-light text-muted border">
@@ -375,163 +377,8 @@
         </div>
     </div>
 </div>
-    <script>
- // 이미지 미리보기 함수
- 
- // 피드 상세 보기 모달 열기
-function openFeedModal(reviewId) {
-    
-    $.ajax({
-        url: "/test/review/detail.do", // 컨트롤러 URL 확인
-        type: "POST",
-        data: { reviewId: reviewId },
-        dataType: "json",
-        success: function(data) {
-            // 1. 데이터 바인딩
-            
-            // 작성자 정보
-            var userImg = data.memImg ? data.memImg : '/images/user_default.png';
-            $("#modalUserImg").attr("src", userImg);
-            $("#modalUserImgSmall").attr("src", userImg);
-            $("#modalUserName").text(data.memName);
-            $("#modalUserNameSmall").text(data.memName);
-            
-            // 내용 및 날짜
-            $("#modalContent").text(data.reviewContent);
-            // 날짜 포맷팅 (yyyy-MM-dd) - timestamp로 올 경우 변환 필요
-            var date = new Date(data.createdAt);
-            $("#modalDate").text(date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate());
-            
-            $("#modalLikeCount").text(data.likeCount);
-            
-            // 평점 별 표시
-            var stars = "";
-            for(var i=0; i<data.rating; i++) stars += "★";
-            $("#modalRating").text(stars);
-
-            // 2. 이미지 슬라이드(Carousel) 구성
-            var html = "";
-            var photos = data.photoList;
-            
-            if(photos && photos.length > 0) {
-                for(var i=0; i<photos.length; i++) {
-                    var active = (i === 0) ? "active" : "";
-                    html += `
-                        <div class="carousel-item ${active} h-100" style="background:#000;">
-                            <div class="d-flex align-items-center justify-content-center" style="height: 600px;">
-                                <img src="/uploads/${photos[i].filePath}" class="d-block" style="max-width:100%; max-height:100%; object-fit:contain;" alt="Review Image">
-                            </div>
-                        </div>
-                    `;
-                }
-            } else {
-                // 사진 없을 때
-                html = `
-                    <div class="carousel-item active h-100">
-                        <div class="d-flex align-items-center justify-content-center text-white" style="height: 600px;">
-                            <span>사진 없음</span>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            $("#modalCarouselInner").html(html);
-            
-            // 화살표 표시 여부 (사진 1장이면 숨김)
-            if(photos && photos.length > 1) {
-                $(".carousel-control-prev, .carousel-control-next").show();
-            } else {
-                $(".carousel-control-prev, .carousel-control-next").hide();
-            }
-
-            // 3. 모달 띄우기
-            var myModal = new bootstrap.Modal(document.getElementById('feedModal'));
-            myModal.show();
-        },
-        error: function(err) {
-            console.error(err);
-            alert("정보를 불러오는데 실패했습니다.");
-        }
-    });
-}
-    function previewImages() {
-        var previewContainer = document.getElementById("imagePreviewContainer");
-        var fileInput = document.getElementById("fileInput");
-        var files = fileInput.files;
-
-        // 초기화
-        previewContainer.innerHTML = "";
-
-        if (files.length > 5) {
-            alert("사진은 최대 5장까지만 업로드 가능합니다.");
-            fileInput.value = ""; // 선택 취소
-            return;
-        }
-
-        for (var i = 0; i < files.length; i++) {
-            var file = files[i];
-            var reader = new FileReader();
-
-            reader.onload = function(e) {
-                var imgDiv = document.createElement("div");
-                imgDiv.style.width = "80px";
-                imgDiv.style.height = "80px";
-                imgDiv.style.flexShrink = "0"; // 크기 줄어듦 방지
-                imgDiv.style.backgroundImage = "url('" + e.target.result + "')";
-                imgDiv.style.backgroundSize = "cover";
-                imgDiv.style.backgroundPosition = "center";
-                imgDiv.style.borderRadius = "4px";
-                imgDiv.style.border = "1px solid #ddd";
-                
-                previewContainer.appendChild(imgDiv);
-            }
-            reader.readAsDataURL(file);
-        }
-    }
-        function openReviewModal() {
-            $('#writeModal').modal('show');
-        }
-
-        function submitReview() {
-            var form = $('#reviewForm')[0];
-            var formData = new FormData(form);
-
-            $.ajax({
-                url: "<c:url value='/review/add.do'/>",
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(res) {
-                    if(res === "ok") {
-                        alert("등록되었습니다.");
-                        location.reload();
-                    } else {
-                        alert("등록 실패: " + res);
-                    }
-                },
-                error: function() {
-                    alert("오류 발생");
-                }
-            });
-        }
-
-        function toggleBookmark(id) {
-            $.ajax({
-                url: "<c:url value='/api/bookmark/toggle.do'/>",
-                type: "POST",
-                data: { parkId: id },
-                success: function(res) {
-                    var icon = $("#detailBmIcon");
-                    if(res === 'inserted') icon.removeClass('bi-bookmark').addClass('bi-bookmark-fill text-warning');
-                    else if(res === 'login_required') alert("로그인이 필요합니다.");
-                    else icon.removeClass('bi-bookmark-fill text-warning').addClass('bi-bookmark');
-                }
-            });
-        }
-        
-     
-    </script>
+   
+    <script src="<c:url value='/js/Openlayers3/detail.js'/>"></script>
 
 </body>
 </html>

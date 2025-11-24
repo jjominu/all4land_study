@@ -16,6 +16,8 @@ public class DogParkVO {
     private String useAmt;
     private Integer viewCount;
     private String parkImg;
+    private Double avgRating;
+    private String centerGeomWkt;
     private String geomWkt;
 
 
@@ -139,24 +141,27 @@ public class DogParkVO {
 		this.parkImg = parkImg;
 	}
 
+	public Double getAvgRating() {
+		return avgRating;
+	}
+
+	public void setAvgRating(Double avgRating) {
+		this.avgRating = avgRating;
+	}
+
+	public String getCenterGeomWkt() {
+		return centerGeomWkt;
+	}
+
+	public void setCenterGeomWkt(String centerGeomWkt) {
+		this.centerGeomWkt = centerGeomWkt;
+	}
+
 	@Override
-    public String toString() {
-        return "DogParkVO{" +
-                "id=" + id +
-                ", sdNm='" + sdNm + '\'' +
-                ", sggNm='" + sggNm + '\'' +
-                ", parkNm='" + parkNm + '\'' +
-                ", operTm='" + operTm + '\'' +
-                ", hldy='" + hldy + '\'' +
-                ", fcs='" + fcs + '\'' +
-                ", fcar='" + fcar + '\'' +
-                ", operInst='" + operInst + '\'' +
-                ", telno='" + telno + '\'' +
-                ", addr='" + addr + '\'' +
-                ", useAmt='" + useAmt + '\'' +
-                ", viewCount=" + viewCount +  // ★ 추가됨
-                ", parkImg='" + parkImg + '\'' + // ★ 추가됨
-                ", geomWkt='" + geomWkt + '\'' +
-                '}';
-    }
+	public String toString() {
+		return "DogParkVO [id=" + id + ", sdNm=" + sdNm + ", sggNm=" + sggNm + ", parkNm=" + parkNm + ", operTm="
+				+ operTm + ", hldy=" + hldy + ", fcs=" + fcs + ", fcar=" + fcar + ", operInst=" + operInst + ", telno="
+				+ telno + ", addr=" + addr + ", useAmt=" + useAmt + ", viewCount=" + viewCount + ", parkImg=" + parkImg
+				+ ", avgRating=" + avgRating + ", geomWkt=" + geomWkt + "]";
+	}
 }

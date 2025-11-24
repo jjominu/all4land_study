@@ -57,9 +57,8 @@ public class MapController {
     public ModelAndView detail(@RequestParam("id") String rawId, 
                                HttpServletRequest request, 
                                HttpSession session) {
-        System.out.println("=========================================");
+        
         // 1. ModelAndView 객체 생성 (이동할 JSP 경로 지정)
-        // /WEB-INF/jsp/map/detail.jsp 라면 "map/detail"
         ModelAndView mv = new ModelAndView("map/detail");
 
         // 2. ID 파싱 ("dog_park.34" -> 34)
@@ -68,7 +67,6 @@ public class MapController {
             String numStr = rawId.replaceAll("[^0-9]", "");
             parkId = Integer.parseInt(numStr);
         } catch (NumberFormatException e) {
-            // ID가 이상하면 지도로 리다이렉트
             mv.setViewName("redirect:/map/map.do");
             return mv;
         }
@@ -82,11 +80,14 @@ public class MapController {
         logVO.setVisitIp(userIp);
         logVO.setMemId(memId);
 
-        int visitCount = parkVisitLogDAO.checkDuplicateVisit(logVO);
-        if (visitCount == 0) {
-            dogParkDAO.updateViewCount(parkId);
-            parkVisitLogDAO.insertVisitLog(logVO);
-        }
+		/*
+		 * int visitCount = parkVisitLogDAO.checkDuplicateVisit(logVO); if (visitCount
+		 * == 0) { dogParkDAO.updateViewCount(parkId);
+		 * parkVisitLogDAO.insertVisitLog(logVO); }
+		 */
+        
+        dogParkDAO.updateViewCount(parkId);
+        parkVisitLogDAO.insertVisitLog(logVO);
 
         // 4. 데이터 조회
         // (1) 공원 상세 정보
@@ -95,7 +96,7 @@ public class MapController {
         // (2) 리뷰 리스트 (사진 포함)
         List<ParkReviewVO> reviewList = parkReviewDAO.selectReviewListByParkId(parkId);
         
-        // (3) 즐겨찾기 여부
+        // (3) 내가 즐겨찾기 했는지 여부 (로그인 한 경우만 체크)
         boolean isBookmarked = false;
         if (memId != null) {
             ParkBookmarkVO bmVO = new ParkBookmarkVO();
@@ -105,12 +106,14 @@ public class MapController {
             isBookmarked = (bmCount > 0);
         }
 
-        // 5. 데이터 담기 (addObject)
+        // ★ (4) [추가됨] 이 공원을 즐겨찾기한 총 사람 수 조회
+        int bookmarkCount = parkBookmarkDAO.countBookmarkByParkId(parkId);
+
+        // 5. 데이터 담기
         mv.addObject("park", park);           
         mv.addObject("reviewList", reviewList); 
-        System.out.println(reviewList);
         mv.addObject("isBookmarked", isBookmarked); 
-        System.out.println(park);
+        mv.addObject("bookmarkCount", bookmarkCount); // ★ JSP로 전달
 
         return mv;
     }

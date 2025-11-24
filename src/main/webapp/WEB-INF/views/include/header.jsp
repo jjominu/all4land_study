@@ -101,7 +101,7 @@
                     <c:otherwise>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="${sessionScope.memImg}" class="profile-img" onerror="this.src='/images/user_default.png'">
+                                <img src="${sessionScope.memImg}" class="profile-img" onerror="this.src='/uploads/user_default.png'">
                                 <span>${sessionScope.memName}님</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" aria-labelledby="navbarDropdown">

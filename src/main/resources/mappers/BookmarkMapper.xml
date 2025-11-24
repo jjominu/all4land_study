@@ -41,5 +41,11 @@
         WHERE b.mem_id = #{memId}
         ORDER BY b.created_at DESC
     </select>
+    
+    <select id="countBookmarkByParkId" parameterType="int" resultType="int">
+    SELECT COUNT(*) 
+    FROM park_bookmark 
+    WHERE park_id = #{parkId}
+</select>
 
 </mapper>

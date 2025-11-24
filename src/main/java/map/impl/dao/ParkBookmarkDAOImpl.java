@@ -30,4 +30,8 @@ public class ParkBookmarkDAOImpl extends EgovAbstractMapper implements ParkBookm
     public List<DogParkVO> selectMyBookmarkList(int memId) {
         return selectList("mappers.BookmarkMapper.selectMyBookmarkList", memId);
     }
+    
+    public int countBookmarkByParkId(int parkId) {
+        return selectOne("mappers.BookmarkMapper.countBookmarkByParkId", parkId);
+    }
 }
