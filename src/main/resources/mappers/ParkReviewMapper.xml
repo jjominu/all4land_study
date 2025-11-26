@@ -24,7 +24,6 @@
 
     <select id="selectReviewList" parameterType="int" resultMap="reviewResultMap">
         SELECT 
-            /* 리뷰 정보 */
             r.review_id,
             r.park_id,
             r.mem_id,
@@ -33,28 +32,23 @@
             r.like_count,
             r.created_at,
             
-            /* 작성자 정보 */
             m.mem_name,
             m.mem_img,
             
-            /* 사진 정보 (NULL일 수도 있으므로 LEFT JOIN) */
             p.photo_id,
-            p.review_id AS photo_review_id,  /* 이름 충돌 방지 별칭 */
+            p.review_id AS photo_review_id, 
             p.file_path,
             p.original_name,
             p.img_order
             
         FROM park_review r
         
-        /* 작성자 정보 조인 (필수) */
         JOIN member m ON r.mem_id = m.mem_id
         
-        /* 사진 정보 조인 (사진 없어도 리뷰는 나와야 하므로 LEFT JOIN) */
         LEFT JOIN review_photo p ON r.review_id = p.review_id
         
         WHERE r.park_id = #{parkId}
         
-        /* 정렬: 최신 리뷰 순 -> 같은 리뷰 내에서는 사진 순서대로 */
         ORDER BY r.created_at DESC, p.img_order ASC
     </select>
 

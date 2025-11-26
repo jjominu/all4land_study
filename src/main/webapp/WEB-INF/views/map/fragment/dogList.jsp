@@ -35,9 +35,7 @@
                          <span class="info-badge"><c:out value="${dog.operTm}" /></span>
                     </c:if>
                 </div>
-<c:if test="${not empty dog.fcs}">
-        <span class="info-badge"><c:out value="${dog.fcs}" /></span>
-    </c:if>
+
                 <button class="btn-focus" type="button" title="지도에서 위치 보기">
                     <i class="bi bi-arrow-right"></i>
                 </button>
@@ -55,11 +53,7 @@
         </div>
     </c:if>
 
-    <script>
-        // 이 페이지가 iframe 내부에서 로드되거나, AJAX로 로드될 경우를 대비해
-        // 부모 창의 함수를 호출하는 헬퍼 스크립트가 필요할 수 있습니다.
-        // (위 onclick 속성에서 window.parent 체크 로직을 이미 넣어두었습니다.)
-    </script>
+   
 
 </body>
 </html>

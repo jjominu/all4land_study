@@ -43,7 +43,7 @@
     <div class="container-fluid px-4">
 
         <a class="navbar-brand brand-logo fs-4" href="<c:url value='/home'/>">
-            <span class="text-primary"><i class="bi bi-geo-alt-fill"></i> 조민우</span> Map
+            <span class="text-primary"><i class="bi bi-geo-alt-fill"></i> 반려견 놀이터</span> Map
         </a>
 
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
@@ -78,7 +78,6 @@
                 </li>
 
                 <c:choose>
-                    <%-- [로그인 전]: 구글 로그인 버튼 표시 --%>
                     <c:when test="${sessionScope.memName == null}">
                         <li class="nav-item">
                             <div id="g_id_onload"
@@ -97,7 +96,6 @@
                         </li>
                     </c:when>
 
-                    <%-- [로그인 후]: 프로필 + 로그아웃 메뉴 표시 --%>
                     <c:otherwise>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -126,18 +124,15 @@
 
 <script>
     function handleCredentialResponse(response) {
-        const idToken = response.credential; // 구글이 준 인증 토큰
+        const idToken = response.credential; 
 
-        // 백엔드로 토큰 전송
         $.ajax({
             url: "<c:url value='/login/googleProc.do'/>",
             type: 'POST',
             data: { token: idToken },
             success: function(res) {
                 if(res === "ok") {
-                    // 로그인 성공! 
-                    // 이전에 보던 페이지가 있으면 거기로 가고, 없으면 홈으로 새로고침
-                    // (스프링 시큐리티가 튕겨낸 경우 다시 거기로 가기 위함)
+                   
                     location.reload(); 
                 } else {
                     alert("로그인 처리에 실패했습니다.");

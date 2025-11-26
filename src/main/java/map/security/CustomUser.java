@@ -13,7 +13,6 @@ public class CustomUser extends User {
     private MemberVO member; // 우리의 실제 회원 정보
 
     public CustomUser(MemberVO member) {
-        // 아이디, 패스워드, 권한리스트를 부모 생성자에 넘김
         super(member.getMemUid(), member.getMemPw(), Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
         this.member = member;
     }

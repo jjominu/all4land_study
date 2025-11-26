@@ -49,19 +49,14 @@ public class MapController {
 		return mav;
 	   
 	}
-	/**
-     * 반려견 놀이터 상세 페이지 (ModelAndView 사용)
-     * URL: /map/detail.do?id=dog_park.34
-     */
+	
     @RequestMapping(value = "/detail.do")
     public ModelAndView detail(@RequestParam("id") String rawId, 
                                HttpServletRequest request, 
                                HttpSession session) {
         
-        // 1. ModelAndView 객체 생성 (이동할 JSP 경로 지정)
         ModelAndView mv = new ModelAndView("map/detail");
 
-        // 2. ID 파싱 ("dog_park.34" -> 34)
         int parkId = 0;
         try {
             String numStr = rawId.replaceAll("[^0-9]", "");
@@ -71,7 +66,6 @@ public class MapController {
             return mv;
         }
 
-        // 3. 조회수 증가 로직 (중복 방지)
         Integer memId = (Integer) session.getAttribute("memId");
         String userIp = request.getRemoteAddr();
         
@@ -89,14 +83,11 @@ public class MapController {
         dogParkDAO.updateViewCount(parkId);
         parkVisitLogDAO.insertVisitLog(logVO);
 
-        // 4. 데이터 조회
-        // (1) 공원 상세 정보
+        
         DogParkVO park = dogParkDAO.selectDogParkById(parkId);
         
-        // (2) 리뷰 리스트 (사진 포함)
         List<ParkReviewVO> reviewList = parkReviewDAO.selectReviewListByParkId(parkId);
         
-        // (3) 내가 즐겨찾기 했는지 여부 (로그인 한 경우만 체크)
         boolean isBookmarked = false;
         if (memId != null) {
             ParkBookmarkVO bmVO = new ParkBookmarkVO();
@@ -106,10 +97,8 @@ public class MapController {
             isBookmarked = (bmCount > 0);
         }
 
-        // ★ (4) [추가됨] 이 공원을 즐겨찾기한 총 사람 수 조회
         int bookmarkCount = parkBookmarkDAO.countBookmarkByParkId(parkId);
 
-        // 5. 데이터 담기
         mv.addObject("park", park);           
         mv.addObject("reviewList", reviewList); 
         mv.addObject("isBookmarked", isBookmarked); 

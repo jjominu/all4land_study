@@ -40,6 +40,7 @@
                                 <option value="">시도 선택</option>
                                 <option value="서울">서울특별시</option>
                                 <option value="인천">인천광역시</option>
+                                <option value="경기">경기도</option>
                             </select>
                         </div>
                         <div class="col-6">
@@ -164,28 +165,23 @@
 
 <jsp:include page="../include/footer.jsp"></jsp:include>
 <script>
-    // 시간 선택 시 hidden input에 "시작 ~ 종료" 형식으로 값 주입
     function updateOperTm() {
         var start = document.getElementById('operTmStart').value;
         var end = document.getElementById('operTmEnd').value;
         var realInput = document.getElementById('realOperTm');
 
         if (start && end) {
-            // 데이터 형식(09:00 ~ 18:00)에 맞춰 공백과 물결표(~) 조합
             realInput.value = start + " ~ " + end; 
         } else {
-            // 둘 중 하나라도 선택 안되면 빈 값 처리 (전체 검색 유도)
             realInput.value = "";
         }
     }
 
-    // 초기화 버튼 클릭 시 select box도 초기화하는 로직 추가
     document.getElementById('btnReset').addEventListener('click', function() {
         document.getElementById('parkSearchForm').reset();
         document.getElementById('operTmStart').value = "";
         document.getElementById('operTmEnd').value = "";
         document.getElementById('realOperTm').value = "";
-        // 기존 초기화 로직이 있다면 여기에 이어서 작성...
     });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

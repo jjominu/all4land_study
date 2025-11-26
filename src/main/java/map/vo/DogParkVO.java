@@ -162,6 +162,8 @@ public class DogParkVO {
 		return "DogParkVO [id=" + id + ", sdNm=" + sdNm + ", sggNm=" + sggNm + ", parkNm=" + parkNm + ", operTm="
 				+ operTm + ", hldy=" + hldy + ", fcs=" + fcs + ", fcar=" + fcar + ", operInst=" + operInst + ", telno="
 				+ telno + ", addr=" + addr + ", useAmt=" + useAmt + ", viewCount=" + viewCount + ", parkImg=" + parkImg
-				+ ", avgRating=" + avgRating + ", geomWkt=" + geomWkt + "]";
+				+ ", avgRating=" + avgRating + ", centerGeomWkt=" + centerGeomWkt + ", geomWkt=" + geomWkt + "]";
 	}
+
+	
 }

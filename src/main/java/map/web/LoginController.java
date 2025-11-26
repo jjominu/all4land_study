@@ -28,19 +28,14 @@ public class LoginController {
     @Autowired
     private MemberDAO memberDAO;
 
-    /**
-     * 구글 로그인 프로세스 (AJAX)
-     * 1. 프론트에서 받은 JWT 토큰 파싱
-     * 2. DB 조회 및 회원가입
-     * 3. 스프링 시큐리티 강제 인증 처리
-     */
+  
     @ResponseBody
     @RequestMapping(value = "/login/googleProc.do", method = RequestMethod.POST)
     public String googleLoginProc(@RequestParam("token") String token, HttpServletRequest request) {
         
         try {
             // ==========================================
-            // 1. 구글 JWT 토큰 디코딩 (라이브러리 없이 수행)
+            // 1. 구글 JWT 토큰 디코딩 
             // ==========================================
             String[] chunks = token.split("\\.");
             Base64.Decoder decoder = Base64.getUrlDecoder();
@@ -77,7 +72,7 @@ public class LoginController {
             }
 
             // ==========================================
-            // 3. ★ 스프링 시큐리티 강제 로그인 처리 ★
+            // 3.  스프링 시큐리티 강제 로그인 처리 
             // ==========================================
             
             // 3-1. UserDetails 객체 생성 (우리가 만든 CustomUser)
@@ -98,7 +93,7 @@ public class LoginController {
             session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
             
             // (선택) JSP 등에서 쉽게 쓰기 위해 별도 세션값도 저장 (시큐리티 태그 쓰면 없어도 됨)
-            session.setAttribute("memId", member.getMemId());     // ★ 필수
+            session.setAttribute("memId", member.getMemId());    
             session.setAttribute("memName", member.getMemName());
             session.setAttribute("memImg", member.getMemImg());
             

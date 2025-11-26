@@ -1,5 +1,4 @@
- // 이미지 미리보기 함수
- 
+
  // 피드 상세 보기 모달 열기
 function openFeedModal(reviewId) {
     
@@ -9,16 +8,15 @@ function openFeedModal(reviewId) {
         data: { reviewId: reviewId },
         dataType: "json",
         success: function(data) {
-            // 1. 데이터 바인딩
             
-            // 작성자 정보
+            //작성자 정보
             var userImg = data.memImg ? data.memImg : '/images/user_default.png';
             $("#modalUserImg").attr("src", userImg);
             $("#modalUserImgSmall").attr("src", userImg);
             $("#modalUserName").text(data.memName);
             $("#modalUserNameSmall").text(data.memName);
             
-            // 내용 및 날짜
+            //내용 및 날짜
             $("#modalContent").text(data.reviewContent);
             // 날짜 포맷팅 (yyyy-MM-dd) - timestamp로 올 경우 변환 필요
             var date = new Date(data.createdAt);
@@ -26,12 +24,12 @@ function openFeedModal(reviewId) {
             
             $("#modalLikeCount").text(data.likeCount);
             
-            // 평점 별 표시
+            //평점 별 표시
             var stars = "";
             for(var i=0; i<data.rating; i++) stars += "★";
             $("#modalRating").text(stars);
 
-            // 2. 이미지 슬라이드(Carousel) 구성
+            //이미지 슬라이드
             var html = "";
             var photos = data.photoList;
             
@@ -47,7 +45,6 @@ function openFeedModal(reviewId) {
                     `;
                 }
             } else {
-                // 사진 없을 때
                 html = `
                     <div class="carousel-item active h-100">
                         <div class="d-flex align-items-center justify-content-center text-white" style="height: 600px;">
@@ -59,14 +56,12 @@ function openFeedModal(reviewId) {
             
             $("#modalCarouselInner").html(html);
             
-            // 화살표 표시 여부 (사진 1장이면 숨김)
             if(photos && photos.length > 1) {
                 $(".carousel-control-prev, .carousel-control-next").show();
             } else {
                 $(".carousel-control-prev, .carousel-control-next").hide();
             }
 
-            // 3. 모달 띄우기
             var myModal = new bootstrap.Modal(document.getElementById('feedModal'));
             myModal.show();
         },
@@ -86,7 +81,7 @@ function openFeedModal(reviewId) {
 
         if (files.length > 5) {
             alert("사진은 최대 5장까지만 업로드 가능합니다.");
-            fileInput.value = ""; // 선택 취소
+            fileInput.value = ""; 
             return;
         }
 
@@ -98,7 +93,7 @@ function openFeedModal(reviewId) {
                 var imgDiv = document.createElement("div");
                 imgDiv.style.width = "80px";
                 imgDiv.style.height = "80px";
-                imgDiv.style.flexShrink = "0"; // 크기 줄어듦 방지
+                imgDiv.style.flexShrink = "0"; 
                 imgDiv.style.backgroundImage = "url('" + e.target.result + "')";
                 imgDiv.style.backgroundSize = "cover";
                 imgDiv.style.backgroundPosition = "center";
@@ -140,7 +135,7 @@ function openFeedModal(reviewId) {
 
      
         
-        // 즐겨찾기 토글 함수 (숫자 카운팅 기능 추가)
+        // 즐겨찾기 토글 함수
 function toggleBookmark(id) {
     $.ajax({
         url: "/test/api/bookmark/toggle.do",
@@ -148,17 +143,15 @@ function toggleBookmark(id) {
         data: { parkId: id },
         success: function(res) {
             var icon = $("#detailBmIcon");
-            var countSpan = $("#bookmarkCount"); // ★ ID 추가 필요 (HTML 수정 참조)
+            var countSpan = $("#bookmarkCount"); 
             var currentCount = parseInt(countSpan.text()) || 0;
 
             if(res === 'inserted') {
-                // 추가됨: 아이콘 채우고 숫자 +1
                 icon.removeClass('bi-bookmark').addClass('bi-bookmark-fill text-warning');
                 countSpan.text(currentCount + 1);
             } else if(res === 'login_required') {
                 alert("로그인이 필요합니다.");
             } else {
-                // 취소됨: 아이콘 비우고 숫자 -1
                 icon.removeClass('bi-bookmark-fill text-warning').addClass('bi-bookmark');
                 countSpan.text(currentCount > 0 ? currentCount - 1 : 0);
             }

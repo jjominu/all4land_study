@@ -51,10 +51,7 @@
     </repositories>
 
 	<dependencies>
-		<!-- ============================================== -->
-		<!-- ★ 핵심: Spring Framework 버전 강제 통일 (5.3.37) ★ -->
-		<!-- 이 부분이 없으면 전자정부프레임워크 내부의 구버전과 충돌남 -->
-		<!-- ============================================== -->
+		<!--Spring Framework 버전 강제 통일 (5.3.37)-->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>

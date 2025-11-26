@@ -22,10 +22,10 @@ import map.vo.DogParkVO;
 @RequestMapping("/api/map")
 public class MapApiController {
 
-	@Resource
+	@Autowired
 	MapService ms;
 	@Autowired
-    private ParkBookmarkDAOImpl parkBookmarkDAO; // DAO 주입 확인
+    private ParkBookmarkDAOImpl parkBookmarkDAO;
 
 	
 	@RequestMapping(value="/getDogApi.do", method=RequestMethod.GET)
@@ -44,9 +44,7 @@ public class MapApiController {
 		mav.addObject("parkNm",parkNm);
 		return mav;
 	}
-	/**
-     * 내 즐겨찾기 목록을 HTML(JSP)로 반환
-     */
+	
     @RequestMapping(value = "/ajaxBookmarkList.do")
     public ModelAndView ajaxBookmarkList(HttpSession session) {
         
@@ -54,13 +52,10 @@ public class MapApiController {
         
        
 
-        // 1. 내가 찜한 공원 목록 가져오기 (List<DogParkVO>)
         List<DogParkVO> bookmarkList = parkBookmarkDAO.selectMyBookmarkList(memId);
         ModelAndView mav = new ModelAndView("map/fragment/dogList");
-        // 2. JSP가 사용하는 변수명("dogList")에 담기
         mav.addObject("dogList", bookmarkList);
         
-        // 3. JSP 경로 (fragment/dogList.jsp)
         return mav; 
     }
 	

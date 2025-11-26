@@ -53,7 +53,7 @@
         }
 
         /* 프사 테두리 & 크기 */
-        .profile-img-border {
+        .profile-main-img-border {
             width: 160px;
             height: 160px;
             border-radius: 50%;
@@ -65,12 +65,12 @@
             background-color: white;
         }
 
-        .profile-img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover; /* 이미지 비율 유지하며 꽉 채우기 */
-        }
+       .profile-main-img {
+    width: 160px !important;
+    height: 160px !important;
+    border-radius: 50%;
+    object-fit: cover;
+}
 
         .profile-info {
             flex-grow: 2;
@@ -184,7 +184,7 @@
                 <div class="profile-img-wrapper">
                     <div class="profile-img-border">
                         <img src="/uploads/${park.parkImg}" 
-                             class="profile-img" 
+                             class="profile-main-img" 
                              alt="${park.parkNm}"
                              onerror="this.src='/uploads/park_default.png'">
                     </div>
