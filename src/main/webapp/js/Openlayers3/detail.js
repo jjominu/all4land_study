@@ -18,7 +18,6 @@ function openFeedModal(reviewId) {
             
             //내용 및 날짜
             $("#modalContent").text(data.reviewContent);
-            // 날짜 포맷팅 (yyyy-MM-dd) - timestamp로 올 경우 변환 필요
             var date = new Date(data.createdAt);
             $("#modalDate").text(date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate());
             

@@ -4,7 +4,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<%-- 개행 → <br/> 치환용 --%>
 <%
   pageContext.setAttribute("replaceChar", "\n");
 %>

@@ -26,8 +26,7 @@ public class BoardDAOImpl extends EgovAbstractMapper implements BoardDAO {
 
     @Override
     public int insertBoard(BoardVO boardVO) {
-        // Mapper에서 insert 후 selectKey로 PK 리턴하면 insert 대신 selectOne 쓸 수도 있지만,
-        // 보통은 insert()가 반영된 row 수(int) 리턴함.
+
         return insert("board.insertBoard", boardVO);
     }
 

@@ -21,19 +21,17 @@
     <script src="<c:url value='/js/Openlayers3/proj4.js'/>"></script>
     <script src="<c:url value='/js/Openlayers3/transCoord.js'/>"></script>
     <script src="<c:url value='/js/Openlayers3/study.js'/>"></script>
-
-   
 </head>
 
 <body>
 
     <div id="map-wrapper">
-        
+
         <div id="left-panel">
             <div class="search-container">
                 <h5 class="fw-bold mb-3"><i class="bi bi-search me-2"></i>놀이터 검색</h5>
                 <form id="parkSearchForm" method="post" action="<c:url value='/map/getParkByParkName.do'/>">
-                    
+
                     <div class="row g-2 mb-2">
                         <div class="col-6">
                             <select class="form-select form-select-sm" id="sdNm" name="sdNm">
@@ -52,26 +50,26 @@
 
                     <div class="row g-2 mb-2">
                         <div class="col-6">
-    <input type="hidden" id="realOperTm" name="operTm" value="">
-    
-    <div class="input-group input-group-sm">
-        <select class="form-select px-1 text-center" id="operTmStart" onchange="updateOperTm()">
-            <option value="">시작</option>
-            <c:forEach var="i" begin="0" end="24">
-                <c:set var="timeStr" value="${i < 10 ? '0' : ''}${i}:00"/>
-                <option value="${timeStr}">${timeStr}</option>
-            </c:forEach>
-        </select>
-        <span class="input-group-text px-1">~</span>
-        <select class="form-select px-1 text-center" id="operTmEnd" onchange="updateOperTm()">
-            <option value="">종료</option>
-            <c:forEach var="i" begin="0" end="24">
-                <c:set var="timeStr" value="${i < 10 ? '0' : ''}${i}:00"/>
-                <option value="${timeStr}">${timeStr}</option>
-            </c:forEach>
-        </select>
-    </div>
-</div>
+                            <input type="hidden" id="realOperTm" name="operTm" value="">
+
+                            <div class="input-group input-group-sm">
+                                <select class="form-select px-1 text-center" id="operTmStart" onchange="updateOperTm()">
+                                    <option value="">시작</option>
+                                    <c:forEach var="i" begin="0" end="24">
+                                        <c:set var="timeStr" value="${i < 10 ? '0' : ''}${i}:00" />
+                                        <option value="${timeStr}">${timeStr}</option>
+                                    </c:forEach>
+                                </select>
+                                <span class="input-group-text px-1">~</span>
+                                <select class="form-select px-1 text-center" id="operTmEnd" onchange="updateOperTm()">
+                                    <option value="">종료</option>
+                                    <c:forEach var="i" begin="0" end="24">
+                                        <c:set var="timeStr" value="${i < 10 ? '0' : ''}${i}:00" />
+                                        <option value="${timeStr}">${timeStr}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                        </div>
                         <div class="col-6">
                             <select class="form-select form-select-sm" name="useAmt">
                                 <option value="">요금 전체</option>
@@ -87,24 +85,24 @@
 
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" name="parkNm" placeholder="놀이터 이름 검색">
-<div class="d-flex gap-2">
-    <button type="button" id="btnReset" class="btn btn-outline-secondary" title="필터 초기화">
-        <i class="bi bi-arrow-counterclockwise"></i> 초기화
-    </button>
-    
-    <button type="submit" class="btn btn-primary flex-grow-1">
-        <i class="bi bi-search"></i> 검색
-    </button>
-    
-</div>                    </div>
+                        <div class="d-flex gap-2">
+                            <button type="button" id="btnReset" class="btn btn-outline-secondary" title="필터 초기화">
+                                <i class="bi bi-arrow-counterclockwise"></i> 초기화
+                            </button>
+
+                            <button type="submit" class="btn btn-primary flex-grow-1">
+                                <i class="bi bi-search"></i> 검색
+                            </button>
+                        </div>
+                    </div>
                 </form>
 
                 <div class="d-flex justify-content-between align-items-center mt-3">
-                    <span class="text-muted small">검색 결과 <strong>${dogList != null ? dogList.size() : 0}</strong>건</span> 
+                    <span class="text-muted small">검색 결과 <strong>${dogList != null ? dogList.size() : 0}</strong>건</span>
                     <button type="button" id="btnFilterBookmark" class="btn btn-warning text-white">
-    <i class="bi bi-star-fill"></i> 즐겨찾기 모아보기
-</button>
-                    </div>
+                        <i class="bi bi-star-fill"></i> 즐겨찾기 모아보기
+                    </button>
+                </div>
             </div>
 
             <div id="dog-list">
@@ -116,7 +114,7 @@
                             <div class="d-flex gap-2 mt-2">
                                 <span class="badge bg-light text-dark border">반려견</span>
                                 <c:if test="${not empty dog.operTm}">
-                                    <span class="badge bg-light text-dark border text-truncate" style="max-width: 100px;"><c:out value="${dog.operTm}"/></span>
+                                    <span class="badge bg-light text-dark border text-truncate" style="max-width: 100px;"><c:out value="${dog.operTm}" /></span>
                                 </c:if>
                             </div>
                             <button class="btn-focus" title="지도에서 보기">
@@ -147,7 +145,7 @@
                     </div>
                 </div>
 
-                <hr class="my-2 text-muted"/>
+                <hr class="my-2 text-muted" />
 
                 <div class="btn-group w-100" role="group">
                     <button type="button" class="btn btn-outline-secondary btn-sm layer-btn active" data-type="base">기본</button>
@@ -163,28 +161,29 @@
 
     </div>
 
-<jsp:include page="../include/footer.jsp"></jsp:include>
-<script>
-    function updateOperTm() {
-        var start = document.getElementById('operTmStart').value;
-        var end = document.getElementById('operTmEnd').value;
-        var realInput = document.getElementById('realOperTm');
+    <jsp:include page="../include/footer.jsp"></jsp:include>
+    
+    <script>
+        function updateOperTm() {
+            var start = document.getElementById('operTmStart').value;
+            var end = document.getElementById('operTmEnd').value;
+            var realInput = document.getElementById('realOperTm');
 
-        if (start && end) {
-            realInput.value = start + " ~ " + end; 
-        } else {
-            realInput.value = "";
+            if (start && end) {
+                realInput.value = start + " ~ " + end;
+            } else {
+                realInput.value = "";
+            }
         }
-    }
 
-    document.getElementById('btnReset').addEventListener('click', function() {
-        document.getElementById('parkSearchForm').reset();
-        document.getElementById('operTmStart').value = "";
-        document.getElementById('operTmEnd').value = "";
-        document.getElementById('realOperTm').value = "";
-    });
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        document.getElementById('btnReset').addEventListener('click', function() {
+            document.getElementById('parkSearchForm').reset();
+            document.getElementById('operTmStart').value = "";
+            document.getElementById('operTmEnd').value = "";
+            document.getElementById('realOperTm').value = "";
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
